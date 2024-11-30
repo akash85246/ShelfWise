@@ -1,0 +1,167 @@
+.review-title {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+.review-author {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+
+.review-book-format > p {
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.review-quote {
+  position: relative;
+  line-height: 1.5;
+  padding: 20px;
+}
+
+.review-quote-text {
+  position: relative;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  height: 85%;
+  box-sizing: content-box;
+}
+
+.quote-image-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quote-image-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.review-moment {
+  position: relative;
+  background-color: #f5f3f0;
+}
+
+.review-moment-text {
+  position: relative;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  height: 88%;
+  box-sizing: content-box;
+  margin: 1em 0;
+}
+
+.moment-page-number {
+  color: #ad9d85;
+  font-weight: light;
+  font-size: 0.7rem;
+}
+
+.review-moment-page {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0;
+  padding: 5px;
+  color: #ad9d85;
+  font-weight: lighter;
+  font-size: 0.5rem;
+}
+
+.favourite-character,
+.least-favourite-character {
+  position: relative;
+
+  padding: 20px;
+}
+
+.favourite-character-text,
+.least-favourite-character-text {
+  position: relative;
+  padding-right: 40px;
+  line-height: 1.5; /* Adjust line spacing */
+}
+
+.character-image-overlay {
+  position: absolute;
+  bottom: -1rem;
+  right: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.character-image-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.edit-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding-top: 1rem;
+}
+
+#edit-button {
+  border: none;
+  background-color: transparent;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#edit-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#edit-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#edit-button > img {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: opacity 0.2s ease;
+}
+
+#edit-button:hover > img {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0.8;
+}
+
+@media (max-width: 1037) {
+  .review-book-format > p {
+    font-size: 0.7rem;
+    word-break: keep-all;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .review-book-format > p {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 435px) {
+  .review-book-format > p {
+    font-size: 1rem !important;
+  }
+}

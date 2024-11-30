@@ -1,0 +1,324 @@
+body {
+  margin: 0px;
+  background-color: #f5f3f0;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#navIcon {
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: small;
+  font-weight: 400;
+  letter-spacing: 0.5rem;
+  color: #1f1b14;
+  margin: 0px;
+  padding: 0px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+nav {
+  font-family: "Overpass", sans-serif;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(214, 206, 194, 0.7);
+  padding: 0rem 5vw;
+  position: fixed;
+  top: 0;
+  width: 90vw;
+  transition: top 0.3s;
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+}
+
+#menu > li > a {
+  text-decoration: none;
+  color: #1f1b14;
+  font-size: small;
+  cursor: pointer;
+}
+
+#menu > li > a:hover {
+  color: #f5f3f0;
+}
+
+#menu {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  list-style: none;
+}
+
+#menu-toggle {
+  display: none;
+}
+
+footer {
+  font-family: "Overpass", sans-serif;
+  background-color: #ad9d85;
+  color: white;
+  text-align: center;
+}
+
+.home-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.right-home-banner {
+  overflow: hidden;
+  width: 40vw;
+}
+
+.left-home-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  width: 60vw;
+  padding: 1rem;
+}
+
+.left-home-banner > h1 {
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: 1.5rem;
+  color: #1f1b14;
+  text-align: center;
+  font-weight: 500;
+}
+
+.left-home-banner > h2 {
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 0.8rem;
+  text-align: center;
+  color: #ad9d85;
+}
+
+.banner-image {
+  width: 40vw;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  width: 40vw;
+  background-color: #e0dad1;
+}
+
+.search-icon {
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.5rem;
+}
+
+#search {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  flex: 1;
+  padding: 0.5rem 0;
+  color: #333;
+  width: 40vw;
+  background-color: #e0dad1;
+}
+
+#search::placeholder {
+  color: #aaa;
+}
+
+/* Small screens */
+@media (max-width: 768px) {
+  .nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90vw;
+  }
+
+  #menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    right: 0rem;
+    top: 2vh;
+    background-color: rgba(214, 206, 194, 0.5);
+    backdrop-filter: blur(5px);
+    width: 100vw;
+    text-align: center;
+    gap: 0rem;
+  }
+  #menu > li {
+    padding: 0.5rem;
+    border-bottom: 1px solid #1f1b14;
+  }
+  #menu > li :hover {
+    background-color: #AD9D85;
+  }
+  #menu.show {
+    display: flex;
+  }
+
+  #menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: block;
+  }
+
+  #open-icon,
+  #close-icon {
+    font-size: 1.5rem;
+  }
+
+  .menuIcon {
+    width: 1rem;
+    height: 1rem;
+    object-fit: contain;
+  }
+
+  .menuIcon:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
+
+  .search-bar {
+    padding: 0.1rem 0.5rem;
+    width: 50vw;
+  }
+
+  .search-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.1rem;
+  }
+
+  #search {
+    width: 50vw;
+    font-size: 0.8rem;
+  }
+}
+.sidebar-container {
+  position: sticky;
+  top: 0vh;
+  left: 0;
+  height: 100vh;
+  width: 20vw;
+  overflow-y: scroll;
+  background-color: #f5f3f0;
+}
+
+.sidebar {
+  padding: 2rem;
+  padding-bottom: 5rem;
+  margin-bottom: 5rem;
+  background-color: #f5f3f0;
+  font-family: "Overpass", sans-serif;
+}
+
+.sidebar-section {
+  margin-bottom: 2rem;
+}
+
+.sidebar-heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-item {
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sidebar-item:hover {
+  color: #007bff;
+  font-weight: bold;
+}
+
+#home-container {
+  position: absolute;
+  top: 72vh;
+  right: 0vw;
+  width: 78vw;
+
+  font-family: "Overpass", sans-serif;
+}
+
+.home-sub-container {
+  border-radius: 0.3rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  margin-bottom: 5rem;
+}
+
+
+.save-button-container, .post-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding-top: 1rem;
+}
+
+#save-button,#post-button {
+  border: none;
+  background-color: transparent;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#save-button:hover,#post-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#save-button:active,#post-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#save-button > img ,#post-button > img {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: opacity 0.2s ease;
+}
+
+#save-button:hover > img,#post-button:hover > img {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0.8;
+}

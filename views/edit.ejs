@@ -1,0 +1,337 @@
+<div class="main-container">
+    <div class="main-container-heading">
+      <div>
+        <p class="review-publish-detail">
+          <span id="review-publisher"><%- review.publishers %></span>
+          <span id="review-publish-year"><%- review.publishYear %></span>
+        </p>
+        <input
+          type="text"
+          class="review-title"
+          placeholder="Title"
+          max="255"
+          id="review-title"
+          value="<%- review.title %>"
+        />
+        <input
+          type="text"
+          class="review-author"
+          id="review-author"
+          placeholder="Author"
+          max="255"
+          value="<%- review.author %>"
+        />
+      </div>
+      <div class="save-button-container">
+        <button id="save-button"><img src="/icons/saveIcon.png" alt=" save icon "></button>
+      </div>
+    </div>
+  
+    <div class="grid4">
+      <div class="review-rating">
+        <div class="rating-section" id="setting-rating" data-rating="0">
+          <h1 class="rating-title">Setting</h1>
+          <p class="rating-description">World-building, lore, atmosphere, etc</p>
+          <div class="rating-stars">
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 1 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 2 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 3 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 4 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 5 of 5 - Rating"
+              class="star-icon"
+            />
+          </div>
+        </div>
+        <div class="rating-section" id="plot-rating" data-rating="0">
+          <h1 class="rating-title">Plot</h1>
+          <p class="rating-description">
+            Structure, arcs, pacing, climax, tension, resolution, etc.
+          </p>
+          <div class="rating-stars">
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 1 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 2 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 3 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 4 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 5 of 5 - Rating"
+              class="star-icon"
+            />
+          </div>
+        </div>
+        <div class="rating-section" id="character-rating" data-rating="0">
+          <h1 class="rating-title">Characters</h1>
+          <p class="rating-description">
+            Development, relatability, depth, dynamics, arcs, etc.
+          </p>
+          <div class="rating-stars">
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 1 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 2 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 3 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 4 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 5 of 5 - Rating"
+              class="star-icon"
+            />
+          </div>
+        </div>
+        <div class="rating-section" id="style-rating" data-rating="0">
+          <h1 class="rating-title">Style</h1>
+          <p class="rating-description">
+            Writing, voice, point of view, narrator, etc.
+          </p>
+          <div class="rating-stars">
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 1 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 2 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 3 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 4 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 5 of 5 - Rating"
+              class="star-icon"
+            />
+          </div>
+        </div>
+        <div class="rating-section" id="engagement-rating" data-rating="0">
+          <h1 class="rating-title">Engagement</h1>
+          <p class="rating-description">
+            Immersion, Enjoyment, themes, genre, tropes, etc.
+          </p>
+          <div class="rating-stars">
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 1 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 2 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 3 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 4 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 5 of 5 - Rating"
+              class="star-icon"
+            />
+          </div>
+        </div>
+        <div class="rating-section final-rating" id="final-rating">
+          <h1 class="rating-title">Overall rating</h1>
+          <div class=" rating-stars final-rating-stars ">
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 1 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 2 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 3 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 4 of 5 - Rating"
+              class="star-icon"
+            />
+            <img
+              src="/icons/ratingStarIcon.svg"
+              alt="Star 5 of 5 - Rating"
+              class="star-icon"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="review-note">
+        <h1>Notes</h1>
+        <textarea
+          class="review-notes"
+          placeholder="✨ Your thoughts about the book here ✨"
+          rows="24"
+          id="review-notes"
+        ><%- review.note %></textarea>
+      </div>
+      <div class="review-book-detail">
+        <img src="<%- review.coverUrl %>" alt="book cover" id="book-cover" />
+        <div class="review-date">
+          <div class="review-date-container">
+            <p>Start date</p>
+            <p>Finish date</p>
+          </div>
+          <div class="review-date-container">
+            <div class="date-display" id="startDateDisplay"></div>
+            <input type="date" name="startDate" id="startDate" hidden />
+            <div class="date-display" id="endDateDisplay"></div>
+            <input type="date" name="endDate" id="endDate" hidden />
+          </div>
+        </div>
+        <div class="review-book-format">
+          <h1>Format</h1>
+          <select name="format" id="format">
+            <option value="Physical" <%- review.format === "Physical" ? "selected" : "" %>>Physical</option>
+            <option value="Ebook" <%- review.format === "Ebook" ? "selected" : "" %>>Ebook</option>
+            <option value="Audiobook" <%- review.format === "Audiobook" ? "selected" : "" %>>Audiobook</option>
+          </select>
+          
+        </div>
+
+        <div class="review-book-genre">
+          <h1>Genre</h1>
+          <textarea
+            name="genre"
+            id="genre"
+            rows="4"
+            placeholder="Mystery, Thriller, Contemporary, Adult, Humor, Romance etc"
+            maxlength="100"
+          ><%- review.genres %></textarea>
+        </div>
+
+
+        <div class="review-book-isbn">
+            <h1>ISBN</h1>
+            <textarea name="isbn" id="isbn" rows="4" readonly><%- review.ISBN%></textarea
+            >
+          </div>
+          
+      </div>
+      <div class="review-quote">
+        <h1>Quotes to remember</h1>
+        <textarea
+          class="review-quote-text"
+          placeholder="✨ Your favorite quote from the book here ✨"
+          id="review-quote"
+          rows="12"
+        ><%- review.quote %></textarea>
+        <img src="/icons/”.svg" alt="" />
+      </div>
+      <div class="review-moment">
+        <h1>Most surprising moment</h1>
+        <textarea
+          class="review-moment-text"
+          placeholder="✨ The most surprising moment in the book here ✨"
+          rows="12"
+          id="review-moment"
+        ><%- review.moment %></textarea>
+        <div class="review-moment-page">
+          <p>page</p>
+          <input type="number" placeholder="##" id="moment-page-number"  class="moment-page-number" value="<%- review.moment_page_number %>"/>
+        </div>
+      </div>
+      <div class="review-character">
+        <div class="favourite-character">
+          <h1>Favourite character</h1>
+          <textarea
+            class="favourite-character-text"
+            placeholder="✨ Your favorite character in the book here ✨"
+            rows="2"
+            id="favourite-character"
+            maxlength="255"
+          ><%- review.favorite_character %></textarea>
+          <img src="/icons/favourite.png" alt="favorite icon" />
+        </div>
+        <div class="least-favourite-character">
+          <h1>Least favourite character</h1>
+          <textarea
+            class="least-favourite-character-text"
+            placeholder="✨ Your least favorite character in the book here ✨"
+            rows="2"
+            id="least-favourite-character"
+            maxlength="255"
+          ><%- review.least_favorite_character %></textarea>
+          <img src="/icons/leastfavourite.png" alt="least favorite icon" />
+        </div>
+      </div>
+      <div class="review-ending">
+        <h1>The ending</h1>
+  
+        <textarea
+          name="ending"
+          id="ending"
+          placeholder="Liked it? Why? Why not? How should it have ended?"
+          rows="15"
+        ><%- review.ending%></textarea>
+      </div>
+    </div>
+  </div>
+  

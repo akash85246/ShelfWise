@@ -1,0 +1,738 @@
+.main-container {
+  padding: 3rem;
+  padding-top: 4rem;
+}
+html {
+  min-height: 100vh;
+}
+
+.main-container-heading {
+  display: grid;
+  grid-template-columns: 6fr 1fr;
+  margin: 2rem 0rem;
+}
+
+.main-container-button {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+}
+
+.main-container-button button {
+  font-family: "Arial", sans-serif;
+  font-size: 1rem;
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #ad9d85;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.main-container-button button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.main-container-button button:active {
+  transform: scale(0.95);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-title {
+  font-family: "Charm", cursive;
+  font-weight: 200;
+  font-style: normal;
+  font-size: 4rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2px;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  outline: none;
+}
+
+.review-author {
+  font-family: "Overpass", sans-serif;
+  font-size: 1.4rem;
+  font-weight: lighter;
+  color: #ad9d85;
+  margin-bottom: 10px;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  outline: none;
+}
+
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 2rem;
+  font-family: "Overpass", sans-serif;
+}
+
+.grid4 > div {
+  background-color: #ffffff;
+  border-radius: 5px;
+}
+.grid4 > div h1 {
+  font-size: 0.8rem;
+  font-weight: lighter;
+  color: #1f1b14;
+  margin: 0px;
+}
+.rating-section {
+  padding: 1.5rem;
+  padding-top: 1rem;
+  padding-bottom: 0rem;
+}
+
+.final-rating {
+  border-top: #e0dad1 0.1rem dashed;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.final-rating > .rating-stars {
+  margin-bottom: 0 !important;
+}
+
+.rating-section > p {
+  color: #ad9d85;
+  font-size: 0.6rem;
+  font-weight: lighter;
+  margin: 0.5rem 0;
+}
+
+.rating-stars {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-bottom: 1rem !important;
+}
+.review-note {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+.review-note > textarea {
+  box-sizing: border-box;
+  resize: none;
+  overflow-y: scroll;
+  font-size: 0.9rem;
+  line-height: 1.5rem;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 23px,
+    rgba(0, 0, 0, 0.2) 24px
+  );
+  background-attachment: local;
+  border: none;
+  background-color: transparent;
+  margin: 0 1rem;
+  padding: 0rem;
+  color: #1f1b14;
+  outline: none;
+  font-weight: bold;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.review-note > h1 {
+  padding: 1rem 1.5rem;
+}
+
+.review-book-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.review-book-detail > h1 {
+  font-size: 0.7rem;
+}
+
+.review-book-detail > img {
+  width: 10rem;
+  position: relative;
+  top: -15%;
+  transform: rotate(5deg);
+  object-fit: cover;
+}
+
+.review-date {
+  position: relative;
+  top: -12%;
+  width: 100%;
+  box-sizing: content-box;
+}
+.review-date-container {
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  color: #1f1b14;
+  font-weight: lighter;
+  font-size: 0.7rem;
+}
+
+.review-book-format {
+  padding: 0 1rem;
+  position: relative;
+  top: -9%;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.7rem;
+}
+.review-book-format > h1 {
+  font-size: 0.7rem !important;
+  margin-top: 1em !important;
+  margin-bottom: 1em !important;
+}
+
+.review-book-format > select {
+  font-size: 0.9rem;
+  border: none !important;
+  font-weight: bold;
+  background-color: transparent;
+  outline: none;
+  padding: 0;
+  margin-left: -0.3rem;
+}
+
+.review-book-isbn {
+  padding: 0 1rem;
+  position: relative;
+  top: -1%;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.7rem;
+}
+
+.review-book-subject > textarea,
+.review-book-isbn > textarea {
+  font-size: 0.9rem !important;
+  border: none !important;
+  background-color: transparent;
+  width: 100%;
+  resize: none;
+  outline: none;
+  font-weight: bold;
+}
+
+.review-book-genre {
+  padding: 0 1rem;
+  position: relative;
+  top: -5%;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.7rem;
+}
+.review-book-genre > h1 {
+  font-size: 0.7rem !important;
+  margin-top: 1em !important;
+  margin-bottom: 1em !important;
+}
+.review-book-genre > textarea {
+  font-size: 0.9rem !important;
+  border: none !important;
+  background-color: transparent;
+  width: 100%;
+  resize: none;
+  outline: none;
+  font-weight: bold;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.date-display {
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.date-display:hover {
+  background-color: #e0e0e0;
+}
+
+input[type="date"] {
+  width: fit-content;
+}
+
+.review-quote,
+.review-moment {
+  padding: 1rem 1.5rem;
+}
+
+.review-quote > textarea,
+.review-moment > textarea {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  resize: none;
+  outline: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #1f1b14;
+  margin-top: 0.5rem;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.review-quote > img {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+.review-moment-page {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  background-color: #f5f3f0;
+
+  padding: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 0;
+}
+.review-moment-page > p {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: lighter;
+  color: #ad9d85;
+}
+.review-moment-page > input {
+  width: 70%;
+  border: none;
+  background-color: transparent;
+  color: #ad9d85;
+  font-weight: bold;
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+}
+
+.review-book-subject > h1 {
+  margin: 0.7rem 0rem !important;
+}
+
+.review-character {
+  background-color: #f5f3f0 !important;
+  display: grid;
+  grid-template-rows: 2;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 2rem;
+}
+.review-character > div {
+  background-color: #ffffff;
+  padding: 1rem 1.5rem;
+}
+
+.review-character > div > textarea {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  resize: none;
+  outline: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #1f1b14;
+  margin-top: 0.5rem;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.review-character > div > img {
+  height: 2rem;
+  width: 2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.review-ending {
+  padding: 1rem 1.5rem;
+}
+
+.review-ending > textarea {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  resize: none;
+  outline: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #1f1b14;
+  margin-top: 0.5rem;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.review-quote > img {
+  height: 3rem;
+  width: 3rem;
+}
+
+.review-publish-detail {
+  display: inline;
+  font-size: 1rem;
+  font-family: "Overpass", sans-serif;
+}
+.review-publish-detail > p {
+  background-color: transparent;
+  color: #1f1b14;
+  font-weight: lighter;
+  margin: 0%;
+}
+
+@media (max-width: 1037px) {
+  .main-container {
+    padding: 1.5rem;
+    padding-top: 4rem;
+  }
+  .grid4 {
+    gap: 1.5rem;
+  }
+
+  .grid4 > div h1 {
+    font-size: 0.6rem;
+  }
+
+  .review-title {
+    font-size: 3.5rem;
+  }
+
+  .review-note > textarea {
+    font-size: 0.7rem;
+    margin: 0 0.5rem;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  .rating-section > p {
+    font-size: 0.5rem;
+    margin: 0.3rem 0;
+  }
+
+  .review-author {
+    font-size: 1rem;
+  }
+
+  .review-date {
+    top: -9%;
+  }
+  .star-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .rating-section {
+    padding: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0rem;
+  }
+  .final-rating {
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+  }
+  .review-book-detail > img {
+    width: 8rem;
+  }
+
+  .review-book-subject {
+    padding: 0 0.5rem;
+    top: -4%;
+  }
+  .date-display,
+  .review-book-format > select {
+    font-size: 0.7rem;
+    word-break: keep-all;
+    white-space: nowrap;
+    gap: 0.5rem;
+  }
+
+  .review-book-genre > textarea {
+    font-size: 0.7rem !important;
+  }
+  .review-date-container {
+    font-size: 0.6rem;
+    padding: 0 0.5rem;
+  }
+  .review-book-format {
+    padding: 0 0.5rem;
+    top: -7%;
+  }
+
+  .review-book-genre {
+    padding: 0 0.5rem;
+    top: -4%;
+  }
+
+  .review-book-format > h1,
+  .review-book-genre > h1 {
+    font-size: 0.6rem !important;
+  }
+  .review-book-detail {
+    justify-content: start;
+  }
+
+  .rating-stars {
+    margin-bottom: 0.2rem !important;
+  }
+
+  .review-rating {
+    gap: 0rem !important;
+  }
+
+  .review-quote > textarea,
+  .review-moment > textarea,
+  .review-character > div > textarea,
+  .review-ending > textarea {
+    font-size: 0.7rem;
+  }
+  .review-quote > img {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container-heading {
+    margin-bottom: 5rem;
+  }
+  .review-note {
+    order: 2;
+    grid-column: span 4;
+  }
+  .review-book-detail {
+    order: 0;
+    grid-column: span 1;
+  }
+  .review-rating {
+    order: 1;
+    grid-column: span 3;
+  }
+
+  .review-quote {
+    order: 4;
+    grid-column: span 2;
+  }
+  .review-moment {
+    order: 5;
+    grid-column: span 2;
+  }
+  .review-character {
+    order: 6;
+    grid-column: span 2;
+  }
+  .review-ending {
+    order: 7;
+    grid-column: span 2;
+  }
+
+  .review-title {
+    font-size: 2rem;
+  }
+
+  .review-author {
+    font-size: 1rem;
+  }
+
+  .review-book-detail > img {
+    width: 8rem;
+    top: -12%;
+  }
+  .star-icon {
+    height: auto;
+    width: auto;
+  }
+
+  .grid4 > div h1,
+  .review-date-container,
+  .review-book-format > h1,
+  .review-book-genre > h1 {
+    font-size: 0.8rem !important;
+  }
+
+  .rating-section > p {
+    font-size: 0.6rem;
+  }
+  .rating-stars {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .rating-section {
+    padding: 1rem;
+    padding-bottom: 0rem;
+  }
+  .final-rating {
+    padding: 1rem;
+  }
+
+  .date-display,
+  .review-book-format > select,
+  .review-book-genre > textarea {
+    font-size: 0.8rem !important;
+  }
+
+  .review-date {
+    top: -6%;
+  }
+  .review-book-subject {
+    top: -3% !important;
+  }
+
+  .review-book-format {
+    top: -5% !important;
+  }
+
+  .review-book-genre {
+    top: -2%;
+  }
+
+  .review-note > textarea {
+    font-size: 1rem;
+  }
+
+  .review-character {
+    gap: 1rem;
+  }
+
+  .main-container {
+    padding: 1rem;
+    padding-top: 3rem;
+  }
+  .grid4 {
+    gap: 1rem;
+  }
+  .review-quote > img {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  .review-publish-detail {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 435px) {
+  .main-container {
+    padding-top: 2rem;
+  }
+  .review-book-detail {
+    grid-column: span 4;
+    padding: 2rem;
+    position: relative;
+    height: 89%;
+  }
+  .review-book-detail > img {
+    width: 12rem;
+    top: -15%;
+  }
+  .review-date {
+    top: -10%;
+  }
+
+  .review-book-format {
+    top: -8% !important;
+  }
+
+  .review-book-subject {
+    padding: 0rem;
+    top: -5% !important;
+  }
+
+  .review-book-genre {
+    top: -5%;
+  }
+
+  .review-date-container {
+    padding: 0;
+  }
+
+  #startDateDisplay,
+  #endDateDisplay {
+    font-size: 1rem !important;
+  }
+
+  .review-book-format {
+    padding: 0;
+  }
+  .review-book-format > select {
+    font-size: 1rem !important;
+  }
+
+  .review-book-genre,
+  .review-book-isbn {
+    padding: 0;
+  }
+  .review-book-genre > textarea {
+    font-size: 1rem !important;
+  }
+
+  .review-rating {
+    margin-top: -1rem;
+    grid-column: span 4;
+  }
+
+  .review-rating > div {
+    padding: 2rem;
+    padding-bottom: 0;
+    padding-top: 0.5rem;
+  }
+
+  .review-rating > div:first-child {
+    padding-top: 1.5rem;
+  }
+
+  .final-rating {
+    padding: 2rem;
+    padding-bottom: 2rem !important;
+  }
+
+  .rating-section > p {
+    font-size: 0.8rem;
+  }
+
+  .review-note > h1 {
+    padding: 2rem;
+    padding-bottom: 1rem;
+  }
+
+  .review-note > textarea {
+    margin: 0 0.8rem;
+  }
+
+  textarea,
+  .review-character > div > textarea,
+  .review-ending > textarea {
+    font-size: 0.9rem !important;
+  }
+
+  .review-quote,
+  .review-moment,
+  .review-character > div,
+  .review-ending {
+    padding: 0.8rem !important;
+  }
+
+  .review-quote > img {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+}
