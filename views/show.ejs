@@ -114,16 +114,17 @@
         <h1>Format</h1>
         <p name="format" id="format"><%- review.format %></p>
       </div>
-      <div class="review-book-subject">
+      <div class="review-book-genre">
         <h1>Genre</h1>
-        <textarea name="subject" id="review-subject" rows="4" readonly>
-<%- review.genres %>
+        <textarea name="genre"
+        id="genre"
+        rows="4" readonly><%- review.genres %>
     </textarea
         >
       </div>
-      <div class="review-book-genre">
+      <div class="review-book-isbn">
         <h1>ISBN</h1>
-        <textarea name="genre" id="genre" rows="4" readonly><%- review.ISBN%></textarea
+        <textarea name="isbn" id="isbn" rows="4"  readonly><%- review.ISBN%></textarea
         >
       </div>
     </div>

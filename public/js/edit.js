@@ -57,75 +57,72 @@ adjustRows();
 
 // Ratings data with defaults
 const ratings = {
-    setting_rating: review.setting_rating || 0, 
-    plot_rating: review.plot_rating || 0,
-    character_rating: review.character_rating || 0,
-    style_rating: review.style_rating || 0,
-    engagement_rating: review.engagement_rating || 0,
-    final_rating: review.final_rating || 0,
-  };
-  
-  // Function to generate star elements dynamically
-  function renderStars(sectionId, rating) {
-    const section = document.getElementById(sectionId);
-    const starsContainer = section.querySelector(".rating-stars");
-  
-    const starIconFilled = "/icons/ratingStarFilledIcon.png";
-    const starIconEmpty = "/icons/ratingStarIcon.svg";
-  
-    // Clear previous stars
-    starsContainer.innerHTML = "";
-  
-    // Add stars dynamically based on the rating
-    for (let i = 1; i <= 5; i++) {
-      const img = document.createElement("img");
-      img.src = i <= rating ? starIconFilled : starIconEmpty;
-      img.alt = `Star ${i} of 5 - Rating ${i <= rating ? "Active" : "Inactive"}`;
-      img.classList.add("star-icon");
-      img.dataset.value = i; // Add a value for interaction
-      starsContainer.appendChild(img);
-    }
-  
-    // Update dataset for the section
-    section.dataset.rating = rating;
-  }
-  
-  // Function to calculate and update the final rating
-  function updateFinalRating() {
-    const allRatings = Array.from(document.querySelectorAll(".rating-section"))
-      .filter((section) => !section.classList.contains("final-rating"))
-      .map((section) => parseInt(section.dataset.rating || 0, 10));
-  
-    const finalRating =
-      allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length;
-  
-    const finalRatingSection = document.querySelector(".final-rating");
-    if (finalRatingSection) {
-      renderStars(finalRatingSection.id, Math.round(finalRating));
-    }
-  }
-  
-  document.querySelectorAll(".rating-section").forEach((section) => {
-    const rating = parseInt(section.dataset.rating || 0, 10);
-    const sectionId = section.id;
-    const initialRating = ratings[`${sectionId.replace("-", "_")}`];
-    renderStars(sectionId, initialRating || rating);
-  
-    // Add click event listeners to stars (except the final rating section)
-    if (!section.classList.contains("final-rating")) {
-      const stars = section.querySelector(".rating-stars");
-      stars.addEventListener("click", (e) => {
-        if (e.target.tagName === "IMG") {
-          const newRating = parseInt(e.target.dataset.value, 10);
-          renderStars(sectionId, newRating);
-          updateFinalRating();
-        }
-      });
-    }
-  });
-  
+  setting_rating: review.setting_rating || 0,
+  plot_rating: review.plot_rating || 0,
+  character_rating: review.character_rating || 0,
+  style_rating: review.style_rating || 0,
+  engagement_rating: review.engagement_rating || 0,
+  final_rating: review.final_rating || 0,
+};
 
-  
+// Function to generate star elements dynamically
+function renderStars(sectionId, rating) {
+  const section = document.getElementById(sectionId);
+  const starsContainer = section.querySelector(".rating-stars");
+
+  const starIconFilled = "/icons/ratingStarFilledIcon.png";
+  const starIconEmpty = "/icons/ratingStarIcon.svg";
+
+  // Clear previous stars
+  starsContainer.innerHTML = "";
+
+  // Add stars dynamically based on the rating
+  for (let i = 1; i <= 5; i++) {
+    const img = document.createElement("img");
+    img.src = i <= rating ? starIconFilled : starIconEmpty;
+    img.alt = `Star ${i} of 5 - Rating ${i <= rating ? "Active" : "Inactive"}`;
+    img.classList.add("star-icon");
+    img.dataset.value = i; // Add a value for interaction
+    starsContainer.appendChild(img);
+  }
+
+  // Update dataset for the section
+  section.dataset.rating = rating;
+}
+
+// Function to calculate and update the final rating
+function updateFinalRating() {
+  const allRatings = Array.from(document.querySelectorAll(".rating-section"))
+    .filter((section) => !section.classList.contains("final-rating"))
+    .map((section) => parseInt(section.dataset.rating || 0, 10));
+
+  const finalRating = Math.ceil(
+    allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length);
+  const finalRatingSection = document.querySelector(".final-rating");
+  if (finalRatingSection) {
+    renderStars(finalRatingSection.id, Math.round(finalRating));
+  }
+}
+
+document.querySelectorAll(".rating-section").forEach((section) => {
+  const rating = parseInt(section.dataset.rating || 0, 10);
+  const sectionId = section.id;
+  const initialRating = ratings[`${sectionId.replace("-", "_")}`];
+  renderStars(sectionId, initialRating || rating);
+
+  // Add click event listeners to stars (except the final rating section)
+  if (!section.classList.contains("final-rating")) {
+    const stars = section.querySelector(".rating-stars");
+    stars.addEventListener("click", (e) => {
+      if (e.target.tagName === "IMG") {
+        const newRating = parseInt(e.target.dataset.value, 10);
+        renderStars(sectionId, newRating);
+        updateFinalRating();
+      }
+    });
+  }
+});
+
 const saveButton = document.getElementById("save-button");
 
 saveButton.addEventListener("click", async () => {
@@ -155,9 +152,9 @@ saveButton.addEventListener("click", async () => {
   const format = document.getElementById("format").value;
   const moment_page_number =
     document.getElementById("moment-page-number").value;
-  console.log(end_date, start_date);
+
   try {
-    const response = await axios.post("/api/create-review", {
+    const response = await axios.patch(`/api/update-review/${review.slug}`, {
       title,
       author,
       setting_rating,
@@ -177,7 +174,6 @@ saveButton.addEventListener("click", async () => {
       format,
       moment_page_number,
     });
-
     alert(`Server says: ${response.data.message}`);
   } catch (error) {
     console.error("Error:", error);
@@ -207,4 +203,23 @@ title.addEventListener("input", async () => {
     .catch((error) => {
       return;
     });
+});
+
+
+document.getElementById("delete-button").addEventListener("click", async (e) => {
+  e.preventDefault(); // Prevent the default anchor behavior
+  const slug = e.target.closest('a').getAttribute("data-slug");
+  try {
+    const response = await fetch(`/api/delete-review/${slug}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      alert("Review deleted successfully!");
+      window.location.href = "/";
+    } else {
+      alert("Failed to delete the review.");
+    }
+  } catch (error) {
+    console.error("Error deleting review:", error);
+  }
 });

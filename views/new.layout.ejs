@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/main.css" />
-    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/new.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -44,4 +44,12 @@
           <li><a href="/goal">Goals</a></li>
         </ul>
       </nav>
-   
+<%- include(view) %> 
+</main>
+<footer>Copyright © <%= new Date().getFullYear() %>
+</footer>
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"></script>
+<script type="module" src="/js/header.js"></script>
+<script type="module" src="/js/new.js"></script>

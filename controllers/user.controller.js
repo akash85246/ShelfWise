@@ -79,30 +79,6 @@ class UserController {
     }
   }
 
-  async getBookReviews(req,res) {
-    const { slug } = req.params; // Get the slug from the URL
-
-    try {
-      // Query to get the book review by slug
-      const result = await pool.query(
-        "SELECT * FROM book_reviews WHERE slug = $1",
-        [slug]
-      );
-
-      if (result.rows.length > 0) {
-        const review = result.rows[0]; // Get the first (and only) review
-
-        // Render the show.ejs page and pass the review data
-        res.render("show", { review });
-      } else {
-        // If no review is found, render an error page
-        res.status(404).send("Review not found");
-      }
-    } catch (error) {
-      console.error("Error fetching review by slug:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  }
 }
 
 export default UserController;

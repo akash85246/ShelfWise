@@ -170,7 +170,7 @@ footer {
     border-bottom: 1px solid #1f1b14;
   }
   #menu > li :hover {
-    background-color: #AD9D85;
+    background-color: #ad9d85;
   }
   #menu.show {
     display: flex;
@@ -221,12 +221,16 @@ footer {
   top: 0vh;
   left: 0;
   height: 100vh;
-  width: 20vw;
+  width: fit-content;
   overflow-y: scroll;
   background-color: #f5f3f0;
+  overflow-y: auto;
 }
 
 .sidebar {
+  position: sticky;
+  top: 0vh;
+  left: 0;
   padding: 2rem;
   padding-bottom: 5rem;
   margin-bottom: 5rem;
@@ -239,12 +243,14 @@ footer {
 }
 
 .sidebar-heading {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
   margin-bottom: 1rem;
   color: #333;
   border-bottom: 1px solid #ddd;
   padding-bottom: 0.5rem;
+  word-break: keep-all;
+  white-space: nowrap;
 }
 
 .sidebar-list {
@@ -267,32 +273,40 @@ footer {
 }
 
 #home-container {
-  position: absolute;
-  top: 72vh;
-  right: 0vw;
-  width: 78vw;
-
+  width: 100%;
   font-family: "Overpass", sans-serif;
 }
 
 .home-sub-container {
   border-radius: 0.3rem;
   padding: 2.5rem;
+  padding-top: 1rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   background-color: #ffffff;
   margin-bottom: 5rem;
 }
-
-
-.save-button-container, .post-button-container {
+.home-sub-container > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  text-align: center;  
+  gap: 2rem;
+}
+.home-sub-container > h1{
+  margin-left: 2.5rem;
+}
+.save-button-container,
+.post-button-container {
   display: flex;
   justify-content: center;
+  gap: 2rem;
   align-items: start;
   padding-top: 1rem;
 }
 
-#save-button,#post-button {
+#save-button,
+#post-button {
   border: none;
   background-color: transparent;
   padding: 0.5rem;
@@ -302,23 +316,65 @@ footer {
   align-items: center;
 }
 
-#save-button:hover,#post-button:hover {
+#save-button:hover,
+#post-button:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-#save-button:active,#post-button:active {
+#save-button:active,
+#post-button:active {
   transform: scale(0.95);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-#save-button > img ,#post-button > img {
+#save-button > img,
+#post-button > img {
   width: 1.5rem;
   height: 1.5rem;
   transition: opacity 0.2s ease;
 }
 
-#save-button:hover > img,#post-button:hover > img {
+#save-button:hover > img,
+#post-button:hover > img {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0.8;
+}
+
+.delete-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding-top: 1rem;
+}
+
+#delete-button {
+  border: none;
+  background-color: transparent;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#delete-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#delete-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#delete-button > img {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: opacity 0.2s ease;
+}
+
+#delete-button:hover > img {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   opacity: 0.8;
 }

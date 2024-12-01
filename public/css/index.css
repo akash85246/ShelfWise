@@ -1,0 +1,88 @@
+.home-book-container {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+}
+
+.book-card > a > img {
+  height: 35vh;
+  object-fit: contain;
+}
+
+.book-card > a > img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.book-card > h3 {
+    font-family: "Charm", cursive;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: wrap;
+  word-break: break-all;
+  color: #1f1b14;
+  margin: 0;
+}
+.book-card > p {
+  font-size: 0.5rem;
+  font-weight: lighter;
+  color: #ad9d85;
+  margin: 0;
+}
+
+.sidebar-item.active {
+  color: #ad9d85;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.selected-container{
+    display: none;
+    margin: 2rem 0;
+}
+
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+}
+
+
+#page-numbers > button,
+#prev-btn,
+#next-btn {
+  padding: 8px 15px;
+  border: 2px solid #AD9D85;
+  border-radius: 5px;
+  background-color: white;
+  color: #AD9D85;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+#page-numbers > button:hover,
+#prev-btn:hover,
+#next-btn:hover {
+  background-color: #AD9D85;
+  color: white;
+}
+
+
+
+#page-numbers {
+  display: flex;
+  gap: 5px;
+}
+
+
+#prev-btn,
+#next-btn {
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

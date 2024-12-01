@@ -62,9 +62,20 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/", router);
+app.use((req, res, next) => {
+  res.renderWithNewLayout = (view, options = {}) => {
+    res.render("new.layout.ejs", {
+      ...options,
+      view: view,
+    });
+  };
+  next();
+});
+
+
 app.use("/api", userRouter);
 app.use("/api", reviewRouter);
+app.use("/", router);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
