@@ -130,23 +130,26 @@ document.querySelectorAll(".sidebar-item").forEach((item) => {
 });
 
 async function displaySelectedBooks(bookList) {
-  if(bookList.length >0) {
-  const selectedBooksContainer = document.getElementById("selected-container");
-  selectedBooksContainer.innerHTML = "";
-  console.log("booklist", bookList);
-  bookList.forEach((book) => {
-    const bookCard = document.createElement("div");
-    bookCard.className = "book-card";
-    bookCard.innerHTML = `
+  if (bookList.length > 0) {
+    const selectedBooksContainer =
+      document.getElementById("selected-container");
+    selectedBooksContainer.innerHTML = "";
+    console.log("booklist", bookList);
+    bookList.forEach((book) => {
+      const bookCard = document.createElement("div");
+      bookCard.className = "book-card";
+      bookCard.innerHTML = `
     <a href="/review/${book.slug}">
       <img src="${book.coverUrl}" alt="${book.title}" />
       </a>
       <h3>${book.title}</h3>
       <p>${book.author}</p>
     `;
-    selectedBooksContainer.appendChild(bookCard);
-  });}else{
-    const selectedBooksContainer = document.getElementById("selected-container");
+      selectedBooksContainer.appendChild(bookCard);
+    });
+  } else {
+    const selectedBooksContainer =
+      document.getElementById("selected-container");
     selectedBooksContainer.innerHTML = "<h3>No books found</h3>";
   }
 }
@@ -210,3 +213,59 @@ function updatePagination(currentPage, totalPages) {
     }
   };
 }
+
+const sidebar = document.getElementById("sidebar-container");
+const toggleButton = document.getElementById("sidebar-toggle");
+const home_book_container = document.querySelector(".home-book-container");
+toggleButton.addEventListener("click", () => {
+  sidebar.classList.toggle("hidden");
+  toggleButton.classList.toggle("hidden");
+});
+
+const close_sidebar = document.getElementById("close-sidebar-toggle");
+close_sidebar.addEventListener("click", () => {
+  sidebar.classList.toggle("hidden");
+  toggleButton.classList.toggle("hidden");
+});
+
+const checkScreenSize = () => {
+  if (window.innerWidth <= 1234) {
+    sidebar.classList.add("hidden");
+  } else {
+    sidebar.classList.remove("hidden");
+  }
+};
+
+checkScreenSize();
+
+window.addEventListener("resize", checkScreenSize);
+
+
+const searchInput=document.getElementById('search');
+searchInput.addEventListener('input',async (e)=>{
+  await axios.get('/api/review/search',{
+    params:{
+      query:e.target.value
+    }
+  }).then((response)=>{
+    console.log(response.data);
+    const searchContainer=document.getElementById('search-content');
+    searchContainer.style.display="block";
+    searchContainer.innerHTML="";
+    response.data.forEach((book)=>{
+      const bookCard = document.createElement("div");
+      bookCard.className = "search-card";
+      bookCard.innerHTML = `
+    <a href="/review/${book.slug}">
+      <h3>${book.title} <span>${book.author}</span></h3>
+     
+      </a>
+      
+    `;
+      searchContainer.appendChild(bookCard);
+    }
+    );
+  }).catch((error)=>{
+    console.log(error);
+  });
+});

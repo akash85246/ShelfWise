@@ -378,3 +378,42 @@ footer {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   opacity: 0.8;
 }
+
+.search-content{
+  position: absolute;
+  background:white;
+  z-index: 1000;
+  width:50vw;
+ padding: 0.5rem;
+ display: none;
+}
+
+.search-card{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+.search-card>a{
+  text-decoration: none;
+  color: #AD9D85;
+}
+.search-card>a:hover{
+  color: #1f1b14;
+}
+.search-card>a>h3{
+  font-family: "Charm", cursive;
+  font-size: 0.8rem;
+  font-weight: 400;
+  white-space: wrap;
+  word-break: break-all;
+  margin: 0;
+  display: inline-block;
+}
+.search-card>a>h3>span{
+  font-size: 0.5rem;
+  font-weight: lighter;
+  margin: 0;
+  display: inline-block;
+}

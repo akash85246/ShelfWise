@@ -11,7 +11,10 @@
   </div>
 </div>
 <div class="home-book-container">
-  <div class="sidebar-container"><%- include("partials/sidebar.ejs") %></div>
+  <button id="sidebar-toggle" class="sidebar-toggle">
+    <img src="/icons/filterIcon.png" id="filterIcon" class="filterIcon" alt=" filter icon">
+  </button>
+  <div class="sidebar-container" id="sidebar-container"><%- include("partials/sidebar.ejs") %></div>
   <div id="home-container"><%- include("partials/recommended.ejs") %><%- include("partials/latest.ejs") %>
     <div class="home-sub-container selected-container" >
     <div class="selected-container"  id="selected-container"></div>
@@ -20,7 +23,6 @@
       <div id="page-numbers"></div>
       <button id="next-btn">Next</button>
     </div>
-  
   </div></div>
   
 
