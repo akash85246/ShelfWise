@@ -1,0 +1,54 @@
+<h1 class="anticipated-heading">Anticipated releases</h1>
+
+<div class="anticipated-container">
+  <div class="create-anticipated anticipated-card">
+    <img
+      src="/icons/anticipatedCreateIcon.png"
+      alt=" anticipated create icon"
+      class="create-anticipated-icon"
+    />
+  </div>
+</div>
+
+<!-- popout to create anticipated book -->
+<div class="anticipated-popout-container hidden">
+  <div class="anticipated-popout">
+    <div class="file-upload">
+      <input type="file" name="image" id="cover-photo" class="hidden" />
+      <label for="cover-photo" class="upload-box">
+        <img src="" alt="Upload Preview" id="preview-image" />
+        <p>Select Cover Photo</p>
+      </label>
+    </div>
+    <div class="form-container">
+      <div class="form-group">
+        <label for="book-title">Book Title</label>
+        <input
+          type="text"
+          name="title"
+          id="book-title"
+          placeholder="Enter book title"
+        />
+      </div>
+      <div class="form-group">
+        <label for="book-releases">Release Date</label>
+        <input type="date" name="releases" id="book-releases" />
+      </div>
+      <div class="form-group">
+        <label for="book-author">Author Name</label>
+        <input
+          type="text"
+          name="author"
+          id="book-author"
+          placeholder="Enter author name"
+        />
+      </div>
+      <div class="emoji-picker">
+        <label for="emoji-input">Select Emoji</label>
+        <input type="text" id="emoji-input" readonly />
+        <div id="emoji-container"></div>
+      </div>
+    </div>
+    <button class="anticipated-submit" id="anticipated-submit">Submit</button>
+  </div>
+</div>

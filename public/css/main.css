@@ -152,7 +152,9 @@ footer {
     align-items: center;
     width: 90vw;
   }
-
+  .search-content {
+    width: 50vw;
+  }
   #menu {
     display: none;
     flex-direction: column;
@@ -383,7 +385,7 @@ footer {
   position: absolute;
   background:white;
   z-index: 1000;
-  width:50vw;
+  width:40vw;
  padding: 0.5rem;
  display: none;
 }
@@ -417,3 +419,4 @@ footer {
   margin: 0;
   display: inline-block;
 }
+

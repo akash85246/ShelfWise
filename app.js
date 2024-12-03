@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import router from "./routes/index.js";
 import userRouter from "./routes/users.js";
 import reviewRouter from "./routes/review.js";
+import anticipatedRouter from "./routes/anticipated.js";
 import axios from "axios";
 import cors from "cors";
 
@@ -72,7 +73,17 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  res.renderWithAnticipatedLayout = (view, options = {}) => {
+    res.render("anticipated.layout.ejs", {
+      ...options,
+      view: view,
+    });
+  };
+  next();
+});
 
+app.use("/api", anticipatedRouter);
 app.use("/api", userRouter);
 app.use("/api", reviewRouter);
 app.use("/", router);

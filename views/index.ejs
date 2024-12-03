@@ -1,7 +1,8 @@
 <div class="home-banner">
   <div class="left-home-banner">
     <h1>
-      STEP INTO A WORLD OF WORDS WHERE BOOKS TELL STORIES BEYOND PAGES. DISCOVER INSIGHTS, UNFILTERED REVIEWS, AND THE MAGIC OF BOOKS!
+      STEP INTO A WORLD OF WORDS WHERE BOOKS TELL STORIES BEYOND PAGES. DISCOVER
+      INSIGHTS, UNFILTERED REVIEWS, AND THE MAGIC OF BOOKS!
     </h1>
     <h2>ONE READER’S PERSPECTIVE, ENDLESS STORIES TO EXPLORE.</h2>
     <%- include("partials/search.ejs") %>
@@ -12,18 +13,26 @@
 </div>
 <div class="home-book-container">
   <button id="sidebar-toggle" class="sidebar-toggle">
-    <img src="/icons/filterIcon.png" id="filterIcon" class="filterIcon" alt=" filter icon">
+    <img
+      src="/icons/filterIcon.png"
+      id="filterIcon"
+      class="filterIcon"
+      alt=" filter icon"
+    />
   </button>
-  <div class="sidebar-container" id="sidebar-container"><%- include("partials/sidebar.ejs") %></div>
-  <div id="home-container"><%- include("partials/recommended.ejs") %><%- include("partials/latest.ejs") %>
-    <div class="home-sub-container selected-container" >
-    <div class="selected-container"  id="selected-container"></div>
-    <div class="pagination" id="pagination">
-      <button id="prev-btn" disabled>Previous</button>
-      <div id="page-numbers"></div>
-      <button id="next-btn">Next</button>
+  <div class="sidebar-container" id="sidebar-container">
+    <%- include("partials/sidebar.ejs") %>
+  </div>
+  <div id="home-container">
+    <%- include("partials/recommended.ejs") %><%- include("partials/latest.ejs")
+    %>
+    <div class="home-sub-container selected-container">
+      <div class="selected-container" id="selected-container"></div>
+      <div class="pagination" id="pagination">
+        <button id="prev-btn" disabled>Previous</button>
+        <div id="page-numbers"></div>
+        <button id="next-btn">Next</button>
+      </div>
     </div>
-  </div></div>
-  
-
+  </div>
 </div>

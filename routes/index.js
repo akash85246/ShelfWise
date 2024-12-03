@@ -63,7 +63,7 @@ async function getBookDetailsWithCache(title) {
   const details = await getBookDetails(title);
 
   if (details) {
-    cache.set(title,details);
+    cache.set(title, details);
   }
 
   return details;
@@ -130,5 +130,20 @@ router.get("/new-review", async (req, res) => {
 
 router.get("/review/:slug", ReviewController.getBookReview);
 router.get("/edit/:slug", ReviewController.getEditBookReview);
+
+router.get("/anticipated", async (req, res) => {
+  try {
+    const anticipatedBooks = await db.query(
+      "SELECT * FROM anticipated_books ORDER BY release_date ASC"
+    );
+    res.renderWithAnticipatedLayout("anticipated.ejs", {
+      listTitle: "Shelfwise",
+      anticipatedBooks: anticipatedBooks.rows,
+    });
+  } catch (error) {
+    console.error("Error getting anticipated page:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 export default router;

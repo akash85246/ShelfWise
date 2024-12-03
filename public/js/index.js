@@ -115,8 +115,6 @@ async function handleSelection(category, value, element) {
     );
     selectedContainer.style.display = "none";
   }
-
-  console.log({ sortBy, bookByGenre, recommendation });
 }
 
 document.querySelectorAll(".sidebar-item").forEach((item) => {
@@ -134,7 +132,6 @@ async function displaySelectedBooks(bookList) {
     const selectedBooksContainer =
       document.getElementById("selected-container");
     selectedBooksContainer.innerHTML = "";
-    console.log("booklist", bookList);
     bookList.forEach((book) => {
       const bookCard = document.createElement("div");
       bookCard.className = "book-card";
@@ -164,7 +161,6 @@ async function getBooks(page, limit) {
       limit: limit,
     },
   });
-  console.log("response", response.data);
 
   totalPages = 10;
   updatePagination(currentPage, totalPages);
@@ -240,32 +236,32 @@ checkScreenSize();
 
 window.addEventListener("resize", checkScreenSize);
 
-
-const searchInput=document.getElementById('search');
-searchInput.addEventListener('input',async (e)=>{
-  await axios.get('/api/review/search',{
-    params:{
-      query:e.target.value
-    }
-  }).then((response)=>{
-    console.log(response.data);
-    const searchContainer=document.getElementById('search-content');
-    searchContainer.style.display="block";
-    searchContainer.innerHTML="";
-    response.data.forEach((book)=>{
-      const bookCard = document.createElement("div");
-      bookCard.className = "search-card";
-      bookCard.innerHTML = `
+const searchInput = document.getElementById("search");
+searchInput.addEventListener("input", async (e) => {
+  await axios
+    .get("/api/review/search", {
+      params: {
+        query: e.target.value,
+      },
+    })
+    .then((response) => {
+      const searchContainer = document.getElementById("search-content");
+      searchContainer.style.display = "block";
+      searchContainer.innerHTML = "";
+      response.data.forEach((book) => {
+        const bookCard = document.createElement("div");
+        bookCard.className = "search-card";
+        bookCard.innerHTML = `
     <a href="/review/${book.slug}">
       <h3>${book.title} <span>${book.author}</span></h3>
      
       </a>
       
     `;
-      searchContainer.appendChild(bookCard);
-    }
-    );
-  }).catch((error)=>{
-    console.log(error);
-  });
+        searchContainer.appendChild(bookCard);
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });

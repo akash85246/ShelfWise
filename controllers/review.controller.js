@@ -35,7 +35,7 @@ class ReviewController {
           5
       );
 
-      console.log("final_rating", final_rating);
+     
       const slugField = slugify(title, { lower: true });
       await db.query(
         "INSERT INTO book_reviews (title, author, setting_rating, plot_rating, character_rating, style_rating, engagement_rating, note, quote, moment, favorite_character, least_favorite_character, ending, start_date, end_date, genre, format, slug,moment_page_number,final_rating) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,$19,$20)",
@@ -118,7 +118,6 @@ class ReviewController {
         [slug]
       );
 
-      console.log("slug", slug);
 
       if (review.rows.length === 0) {
         return res.status(404).json({ message: "Review not found to update" });
@@ -320,7 +319,6 @@ class ReviewController {
       };
 
       const detailedResult = await enrichBooks(result.rows);
-      console.log(page,limit,result.rowCount);
       res.status(200).json({
         data: detailedResult,
         page,
@@ -374,11 +372,9 @@ class ReviewController {
 
   static async getBookDetailsWithCache(title) {
     if (!title) return null;
-
     if (cache.has(title)) {
       return cache.get(title);
     }
-
     const details = await this.getBookDetails(title);
     if (details) {
       cache.set(title, details);
@@ -517,7 +513,6 @@ class ReviewController {
 
   static async getBookCoverByTitle(req, res) {
     const { title } = req.query;
-    console.log("title", title);
     try {
       if (!title) {
         return res.status(400).json({ message: "Title is required" });
