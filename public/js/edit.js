@@ -174,7 +174,10 @@ saveButton.addEventListener("click", async () => {
       format,
       moment_page_number,
     });
+    console.log(response.data);
     alert(`Server says: ${response.data.message}`);
+    
+    window.location.href = `/review/${response.data.slug}`;
   } catch (error) {
     console.error("Error:", error);
   }
@@ -189,16 +192,19 @@ title.addEventListener("input", async () => {
       const bookCover = document.getElementById("book-cover");
       const author = document.getElementById("review-author");
       const genre = document.getElementById("genre");
-      const reviewSubject = document.getElementById("review-subject");
       const reviewPublisher = document.getElementById("review-publisher");
       const reviewPublishYear = document.getElementById("review-publish-year");
+      const isbn = document.getElementById("isbn");
+      console.log(response.data.isbn);
+      console.log(isbn);
       bookCover.src = response.data.coverUrl;
       bookCover.alt = `Book Cover for ${title.value}`;
       author.value = response.data.author;
       genre.value = response.data.genres;
       reviewPublisher.innerHTML = response.data.publishers;
       reviewPublishYear.innerHTML = response.data.publishYear;
-      reviewSubject.value = response.data.subjects;
+    
+      isbn.value = response.data.isbn;
     })
     .catch((error) => {
       return;

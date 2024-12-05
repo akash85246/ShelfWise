@@ -85,7 +85,7 @@
   background-color: #f4f4f4;
   transition: transform 0.3s ease-in-out;
   transform: translateX(0);
-  z-index: 10;
+  z-index: 1000000;
   transform: translateX(0%);
 }
 

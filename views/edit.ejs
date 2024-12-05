@@ -2,8 +2,8 @@
     <div class="main-container-heading">
       <div>
         <p class="review-publish-detail">
-          <span id="review-publisher"><%- review.publishers %></span>
-          <span id="review-publish-year"><%- review.publishYear %></span>
+          <span id="review-publisher"><%- review.publisher %></span>
+          <span id="review-publish-year"><%- review.published_year %></span>
         </p>
         <input
           type="text"
@@ -236,7 +236,8 @@
         ><%- review.note %></textarea>
       </div>
       <div class="review-book-detail">
-        <img src="<%- review.coverUrl %>" alt="book cover" id="book-cover" />
+        <img src="<%- review.cover_url %>" alt="book cover" id="book-cover" />
+        <div class="review-book-subdetail">
         <div class="review-date">
           <div class="review-date-container">
             <p>Start date</p>
@@ -267,14 +268,14 @@
             rows="4"
             placeholder="Mystery, Thriller, Contemporary, Adult, Humor, Romance etc"
             maxlength="100"
-          ><%- review.genres %></textarea>
+          ><%- review.genre %></textarea>
         </div>
 
 
         <div class="review-book-isbn">
             <h1>ISBN</h1>
-            <textarea name="isbn" id="isbn" rows="4" readonly><%- review.ISBN%></textarea
-            >
+            <input type="text" name="isbn" id="isbn" value="<%- review.isbn %>" placeholder="no isbn found"  readonly/>
+          </div>
           </div>
           
       </div>

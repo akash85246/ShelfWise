@@ -1,0 +1,47 @@
+<div class="to-be-read-container">
+  <h1>To be read</h1>
+  <form action="/api/read-later/create" method="POST" class="list-create">
+    <div class="input-container">
+      <select name="type" id="type">
+        <option value="series">Series</option>
+        <option value="standalone">Standalone</option>
+      </select>
+      <input
+        type="text"
+        name="title"
+        id="title"
+        maxlength="50"
+        placeholder="Book Title"
+      />
+      <input
+        type="text"
+        name="author"
+        id="author"
+        placeholder="Book Author"
+        maxlength="25"
+      />
+    </div>
+    <button type="submit" class="list-create-button">
+      <img src="/icons/createListIcon.png" alt="create list icon" />
+    </button>
+  </form>
+  
+  <div class="to-be-read-subcontainer">
+    <div class="to-be-read-subcontainer-list">
+      <div>
+        <h1>Standalone books</h1>
+        <ul class="standalone-list"></ul>
+      </div>
+
+      <div>
+        <h1>Series</h1>
+        <ul class="series-list"></ul>
+      </div>
+    </div>
+    <img
+      src="/images/ToBeReadImages.svg"
+      alt="to be read images"
+      class="to-be-read-image"
+    />
+  </div>
+</div>

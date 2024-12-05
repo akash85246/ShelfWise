@@ -82,7 +82,6 @@ function updateStars(section, rating) {
       star.src = starIconInactive;
     }
 
-    // Update alt text for accessibility
     star.alt = `Star ${index + 1} of 5 - Rating ${
       index < rating ? "Active" : "Inactive"
     }`;
@@ -135,7 +134,8 @@ postButton.addEventListener("click", async () => {
   const format = document.getElementById("format").value;
   const moment_page_number =
     document.getElementById("moment-page-number").value;
-  console.log(end_date, start_date);
+  const SearchResult = await axios.get(`/api/book-cover?title=${title.value}`);
+
   try {
     const response = await axios.post("/api/create-review", {
       title,
@@ -157,8 +157,7 @@ postButton.addEventListener("click", async () => {
       format,
       moment_page_number,
     });
-
-    alert(`Server says: ${response.data.message}`);
+    window.location.href = "/review/" + response.data.slug;
   } catch (error) {
     console.error("Error:", error);
   }
@@ -173,16 +172,16 @@ title.addEventListener("input", async () => {
       const bookCover = document.getElementById("book-cover");
       const author = document.getElementById("review-author");
       const genre = document.getElementById("genre");
-      const reviewSubject = document.getElementById("review-subject");
       const reviewPublisher = document.getElementById("review-publisher");
       const reviewPublishYear = document.getElementById("review-publish-year");
+      const isbn = document.getElementById("isbn");
       bookCover.src = response.data.coverUrl;
       bookCover.alt = `Book Cover for ${title.value}`;
       author.value = response.data.author;
       genre.value = response.data.genres;
       reviewPublisher.innerHTML = response.data.publishers;
       reviewPublishYear.innerHTML = response.data.publishYear;
-      reviewSubject.value = response.data.subjects;
+      isbn.value = response.data.isbn;
     })
     .catch((error) => {
       return;

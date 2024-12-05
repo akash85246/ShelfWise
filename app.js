@@ -6,6 +6,8 @@ import router from "./routes/index.js";
 import userRouter from "./routes/users.js";
 import reviewRouter from "./routes/review.js";
 import anticipatedRouter from "./routes/anticipated.js";
+import ReadLaterRouter from "./routes/toBeRead.js";
+import StreakRouter from "./routes/streak.js";
 import axios from "axios";
 import cors from "cors";
 
@@ -83,9 +85,30 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  res.renderWithToBeReadLayout = (view, options = {}) => {
+    res.render("toBeRead.layout.ejs", {
+      ...options,
+      view: view,
+    });
+  };
+  next();
+});
+app.use((req, res, next) => {
+  res.renderWithStreakLayout = (view, options = {}) => {
+    res.render("streak.layout.ejs", {
+      ...options,
+      view: view,
+    });
+  };
+  next();
+});
+
 app.use("/api", anticipatedRouter);
 app.use("/api", userRouter);
 app.use("/api", reviewRouter);
+app.use("/api/read-later", ReadLaterRouter);
+app.use("/api/streak", StreakRouter);
 app.use("/", router);
 
 app.listen(port, () => {

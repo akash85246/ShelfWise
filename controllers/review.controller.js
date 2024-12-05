@@ -1,11 +1,12 @@
 import slugify from "slug";
 import { db } from "../app.js";
 import axios from "axios";
+import slug from "slug";
 const cache = new Map();
 class ReviewController {
   static async createReview(req, res) {
     try {
-      const {
+      let {
         title,
         author,
         setting_rating,
@@ -35,10 +36,18 @@ class ReviewController {
           5
       );
 
-     
+      const additionalDetails = await ReviewController.getBookDetails(title);
+      title = additionalDetails.title;
+      author = additionalDetails.author;
+      const coverUrl = additionalDetails.coverUrl;
+      const publishers = additionalDetails.publishers;
+      const isbn = additionalDetails.isbn;
+      const published_year = additionalDetails.publishYear;
+
       const slugField = slugify(title, { lower: true });
+
       await db.query(
-        "INSERT INTO book_reviews (title, author, setting_rating, plot_rating, character_rating, style_rating, engagement_rating, note, quote, moment, favorite_character, least_favorite_character, ending, start_date, end_date, genre, format, slug,moment_page_number,final_rating) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,$19,$20)",
+        "INSERT INTO book_reviews (title, author, setting_rating, plot_rating, character_rating, style_rating, engagement_rating, note, quote, moment, favorite_character, least_favorite_character, ending, start_date, end_date, genre, format, slug,moment_page_number,final_rating,cover_url,isbn,publisher,published_year) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18,$19,$20,$21,$22,$23,$24)",
         [
           title,
           author,
@@ -60,10 +69,16 @@ class ReviewController {
           slugField,
           moment_page_number,
           final_rating,
+          coverUrl,
+          isbn,
+          publishers,
+          published_year,
         ]
       );
-
-      res.status(201).json({ message: "Review created successfully" });
+      await ReviewController.deleteReadLater(title);
+      res
+        .status(201)
+        .json({ slug: slugField, message: "Review created successfully" });
     } catch (error) {
       console.error("Error creating review:", error);
       res
@@ -92,7 +107,7 @@ class ReviewController {
   static async updateReview(req, res) {
     try {
       const { slug } = req.params;
-      const {
+      let {
         title,
         author,
         setting_rating,
@@ -113,11 +128,28 @@ class ReviewController {
         moment_page_number,
       } = req.body;
 
+      const final_rating = Math.ceil(
+        (Number(setting_rating) +
+          Number(plot_rating) +
+          Number(character_rating) +
+          Number(style_rating) +
+          Number(engagement_rating)) /
+          5
+      );
+
+      const additionalDetails = await ReviewController.getBookDetails(title);
+
+      title = additionalDetails.title;
+      author = additionalDetails.author;
+      const coverUrl = additionalDetails.coverUrl;
+      const publishers = additionalDetails.publishers;
+      const isbn = additionalDetails.isbn;
+      const published_year = additionalDetails.publishYear;
+
       const review = await db.query(
         "SELECT * FROM book_reviews WHERE slug = $1",
         [slug]
       );
-
 
       if (review.rows.length === 0) {
         return res.status(404).json({ message: "Review not found to update" });
@@ -128,14 +160,6 @@ class ReviewController {
       if (review.rows[0].title !== title) {
         newSlug = slugify(title, { lower: true });
       }
-      const final_rating = Math.ceil(
-        (Number(setting_rating) +
-          Number(plot_rating) +
-          Number(character_rating) +
-          Number(style_rating) +
-          Number(engagement_rating)) /
-          5
-      );
 
       await db.query(
         `UPDATE book_reviews SET 
@@ -158,8 +182,12 @@ class ReviewController {
           format = $17, 
           slug = $18,
           final_rating = $19,
-          moment_page_number = $20
-        WHERE slug = $21`,
+          moment_page_number = $20,
+          cover_url = $21,
+          isbn = $22,
+          publisher = $23,
+          published_year = $24
+        WHERE slug = $25`,
         [
           title || review.rows[0].title,
           author || review.rows[0].author,
@@ -181,10 +209,17 @@ class ReviewController {
           newSlug,
           final_rating,
           moment_page_number || review.rows[0].moment_page_number,
+          coverUrl,
+          isbn,
+          publishers,
+          published_year,
           review.rows[0].slug,
         ]
       );
-      res.status(200).json({ message: "Review updated successfully" });
+      await ReviewController.deleteReadLater(title);
+      res
+        .status(200)
+        .json({ slug: newSlug, message: "Review updated successfully" });
     } catch (error) {
       console.error("Error updating review:", error);
       res
@@ -224,16 +259,16 @@ class ReviewController {
         // Handle specific recommendations
         if (recommendation === "Artist of the Month") {
           query = `
-            SELECT author, COUNT(*) AS review_count
+            SELECT title,slug,cover_url,author, COUNT(*) AS review_count
             FROM book_reviews
-            GROUP BY author
+            GROUP BY title, slug, author,cover_url
             ORDER BY review_count DESC
             LIMIT $1 OFFSET $2;
           `;
           params.push(limit, offset);
         } else if (recommendation === "Book of the Year") {
           query = `
-            SELECT title, views, final_rating
+            SELECT title,cover_url, views, final_rating,slug
             FROM book_reviews
             ORDER BY views DESC, final_rating DESC
             LIMIT $1 OFFSET $2;
@@ -242,9 +277,9 @@ class ReviewController {
         } else if (recommendation === "Top Genre") {
           query = `
             WITH top_genre AS (
-              SELECT genre
+              SELECT genre,cover_url,title,slug
               FROM book_reviews
-              GROUP BY genre
+              GROUP BY genre,cover_url,title,slug
               ORDER BY COUNT(*) DESC
               LIMIT 1
             )
@@ -257,7 +292,7 @@ class ReviewController {
           params.push(limit, offset);
         } else if (recommendation === "Trending") {
           query = `
-            SELECT title, views, final_rating, created_at
+            SELECT title,cover_url, views, final_rating, created_at,slug
             FROM book_reviews
             WHERE created_at > NOW() - INTERVAL '1 MONTH'
             ORDER BY views DESC, final_rating DESC
@@ -307,27 +342,17 @@ class ReviewController {
 
       // Execute query
       const result = await db.query(query, params);
-
-      // Enrich results with external API
-      const enrichBooks = async (books) => {
-        return Promise.all(
-          books.map(async (book) => {
-            const details = await ReviewController.getBookDetailsWithCache(book.title);
-            return { ...book, ...details };
-          })
-        );
-      };
-
-      const detailedResult = await enrichBooks(result.rows);
       res.status(200).json({
-        data: detailedResult,
+        data: result.rows,
         page,
         limit,
         total: result.rowCount,
       });
     } catch (error) {
       console.error("Error filtering reviews:", error);
-      res.status(500).json({ message: "Error filtering reviews: " + error.message });
+      res
+        .status(500)
+        .json({ message: "Error filtering reviews: " + error.message });
     }
   }
 
@@ -336,13 +361,17 @@ class ReviewController {
       return null;
     }
     try {
-      const searchResponse = await axios.get("https://openlibrary.org/search.json", {
-        params: {
-          title,
-          fields: "cover_i,author_name,first_publish_year,subject,publisher",
-          limit: 1,
-        },
-      });
+      const searchResponse = await axios.get(
+        "https://openlibrary.org/search.json",
+        {
+          params: {
+            title,
+            fields:
+              "title,cover_i,author_name,first_publish_year,subject,publisher,isbn",
+            limit: 1,
+          },
+        }
+      );
 
       const book = searchResponse.data.docs[0];
       if (!book) {
@@ -352,17 +381,26 @@ class ReviewController {
       const coverUrl = book.cover_i
         ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
         : null;
+
+      const newTitle = book.title;
+      const isbn = book.isbn ? book.isbn[0] : "Not available";
       const author = book.author_name ? book.author_name.join(", ") : "Unknown";
       const publishYear = book.first_publish_year || "Unknown";
-      const genres = book.subject ? book.subject.slice(0, 5).join(", ") : "Not available";
-      const publishers = book.publisher ? book.publisher.slice(0, 3).join(", ") : "Not available";
+      const genres = book.subject
+        ? book.subject.slice(0, 5).join(", ")
+        : "Not available";
+      const publishers = book.publisher
+        ? book.publisher.slice(0, 3).join(", ")
+        : "Not available";
 
       return {
+        title: newTitle,
         coverUrl,
         author,
         publishYear,
         genres,
         publishers,
+        isbn,
       };
     } catch (error) {
       console.error("Error fetching book details:", error);
@@ -370,6 +408,16 @@ class ReviewController {
     }
   }
 
+  static async deleteReadLater(title) {
+    try {
+      db.query("DELETE FROM to_be_read WHERE title = $1", [title]);
+    } catch (error) {
+      console.error("Error deleting read later:", error);
+      res
+        .status(500)
+        .json({ message: "Error deleting read later: " + error.message });
+    }
+  }
   static async getBookDetailsWithCache(title) {
     if (!title) return null;
     if (cache.has(title)) {
@@ -407,42 +455,9 @@ class ReviewController {
 
       const review = result.rows[0];
 
-      const searchResponse = await axios.get(
-        `https://openlibrary.org/search.json`,
-        { params: { title: review.title } }
-      );
-
-      const book = searchResponse.data.docs[0];
-      if (!book) {
-        return res.status(404).json({ message: "Book not found" });
-      }
-
-      const coverUrl = `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`;
-      const author = book.author_name ? book.author_name.join(", ") : "Unknown";
-      const publishYear = book.first_publish_year || "Unknown";
-      const genres = book.subject
-        ? book.subject.join(", ").slice(0, 100)
-        : "Not available";
-      const publishers = book.publisher
-        ? book.publisher.slice(0, 3).join(", ")
-        : "Not available";
-      const ISBN = book.isbn ? book.isbn[0] : "Not available";
-      const title = book.title;
-
-      const enrichedReview = {
-        ...review,
-        title,
-        coverUrl,
-        author,
-        publishYear,
-        genres,
-        publishers,
-        ISBN,
-      };
-
       res.renderWithEditLayout("edit.ejs", {
         listTitle: "review.slug",
-        review: enrichedReview,
+        review: review,
       });
     } catch (error) {
       console.error("Error retrieving review:", error);
@@ -468,40 +483,9 @@ class ReviewController {
 
       const review = result.rows[0];
 
-      const searchResponse = await axios.get(
-        `https://openlibrary.org/search.json`,
-        { params: { title: review.title } }
-      );
-
-      const book = searchResponse.data.docs[0];
-      if (!book) {
-        return res.status(404).json({ message: "Book not found" });
-      }
-
-      const coverUrl = `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`;
-      const author = book.author_name ? book.author_name.join(", ") : "Unknown";
-      const publishYear = book.first_publish_year || "Unknown";
-      const genres = book.subject ? book.subject.join(", ") : "Not available";
-      const publishers = book.publisher
-        ? book.publisher.slice(0, 3).join(", ")
-        : "Not available";
-      const ISBN = book.isbn ? book.isbn[0] : "Not available";
-      const title = book.title;
-
-      const enrichedReview = {
-        ...review,
-        title,
-        coverUrl,
-        author,
-        publishYear,
-        genres,
-        publishers,
-        ISBN,
-      };
-
       res.renderWithShowLayout("show.ejs", {
         listTitle: "review.slug",
-        review: enrichedReview,
+        review: review,
       });
     } catch (error) {
       console.error("Error retrieving review:", error);
@@ -519,16 +503,25 @@ class ReviewController {
       }
 
       const searchResponse = await axios.get(
-        `https://openlibrary.org/search.json`,
-        { params: { title } }
+        "https://openlibrary.org/search.json",
+        {
+          params: {
+            title,
+            fields:
+              "title,cover_i,author_name,first_publish_year,subject,publisher,isbn",
+            limit: 1,
+          },
+        }
       );
 
       const book = searchResponse.data.docs[0];
       if (!book) {
         return res.status(404).json({ message: "Book not found" });
       }
+      console.log("book:", book.title);
 
       const coverUrl = `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`;
+      const newTitle = book.title;
       const author = book.author_name ? book.author_name.join(", ") : "Unknown";
       const publishYear = book.first_publish_year || "Unknown";
       const genres = book.subject
@@ -537,10 +530,16 @@ class ReviewController {
       const publishers = book.publisher
         ? book.publisher.slice(0, 3).join(", ")
         : "Not available";
-      const subjects = book.subject ? book.subject.join(", ") : "Not available";
-      return res
-        .status(200)
-        .json({ coverUrl, author, publishYear, genres, publishers, subjects });
+      const isbn = book.isbn ? book.isbn[0] : "Not available";
+      return res.status(200).json({
+        title: newTitle,
+        coverUrl,
+        author,
+        publishYear,
+        genres,
+        publishers,
+        isbn,
+      });
     } catch (error) {
       console.error("Error fetching book cover:", error.message);
       return res

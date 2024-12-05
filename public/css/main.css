@@ -153,7 +153,9 @@ footer {
     width: 90vw;
   }
   .search-content {
-    width: 50vw;
+    width: 50vw !important;
+    padding: 0.2rem 0.5rem !important;
+        
   }
   #menu {
     display: none;
@@ -384,9 +386,9 @@ footer {
 .search-content{
   position: absolute;
   background:white;
-  z-index: 1000;
+  z-index: 10;
   width:40vw;
- padding: 0.5rem;
+  padding: 0.5rem 1rem;
  display: none;
 }
 

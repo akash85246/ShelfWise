@@ -1,0 +1,70 @@
+.streak_heading{
+    font-family: "Charm", cursive;
+    font-weight: 200;
+    font-style: normal;
+    font-size: 4rem;
+    font-weight: bold;
+    color: #333;
+    margin-top: 5rem;
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    outline: none;
+    text-align: center;
+}
+
+.streak-circle{
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+   
+    text-align: center;
+    box-sizing: content-box;
+}
+.streak_list{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: fit-content;
+    width: fit-content;
+    margin:5rem auto;
+    gap: 2rem;
+    box-sizing: content-box;
+
+}
+
+.streak-circle>div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+
+}
+
+.emoji{
+    position: absolute;
+    top: -4rem;
+    font-size: 2rem;
+    z-index: 2;
+}
+
+.book-number{
+    font-size: 1.5rem;
+    font-family: "Overpass", sans-serif;
+    font-weight: bold;
+    color: #AD9D85;
+  
+}
+
+.month{
+    font-size: 0.8rem;
+    font-family: "Overpass", sans-serif;
+    font-weight: lighter;
+    color: #1F1B14;
+  
+}

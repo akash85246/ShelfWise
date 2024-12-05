@@ -2,8 +2,8 @@
   <div class="main-container-heading">
     <div>
       <p class="review-publish-detail">
-        <span id="publisher"><%- review.publishers %></span>
-        <span id="publish-year"><%- review.publishYear %></span>
+        <span id="publisher"><%- review.publisher %></span>
+        <span id="publish-year"><%- review.published_year %></span>
       </p>
       <h1 class="review-title" id="review-title-display">
         <%- review.title %>
@@ -13,8 +13,10 @@
       </p>
     </div>
     <div class="edit-button-container">
-        <a id="edit-button" href="/edit/<%= review.slug  %>"><img src="/icons/editIcon.png" alt=""></a>
-      </div>
+      <a id="edit-button" href="/edit/<%= review.slug  %>"
+        ><img src="/icons/editIcon.png" alt=""
+      /></a>
+    </div>
   </div>
 
   <div class="grid4">
@@ -87,45 +89,51 @@
       >
     </div>
     <div class="review-book-detail">
-      <img src="<%- review.coverUrl %>" alt="book cover" id="book-cover" />
-      <div class="review-date">
-        <div class="review-date-container">
-          <p>Start date</p>
-          <p>Finish date</p>
-        </div>
-        <div class="review-date-container">
-          <div
-            class="date-display"
-            id="startDateDisplay"
-            data-full-date="<%- review.start_date %>"
-          >
-            <span id="formattedStartDate"></span>
+      <img src="<%- review.cover_url %>" alt="book cover" id="book-cover" />
+      <div class="review-book-subdetail">
+        <div class="review-date">
+          <div class="review-date-container">
+            <p>Start date</p>
+            <p>Finish date</p>
           </div>
-          <div
-            class="date-display"
-            id="endDateDisplay"
-            data-full-date="<%- review.end_date %>"
-          >
-            <span id="formattedEndDate"></span>
+          <div class="review-date-container">
+            <div
+              class="date-display"
+              id="startDateDisplay"
+              data-full-date="<%- review.start_date %>"
+            >
+              <span id="formattedStartDate"></span>
+            </div>
+            <div
+              class="date-display"
+              id="endDateDisplay"
+              data-full-date="<%- review.end_date %>"
+            >
+              <span id="formattedEndDate"></span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="review-book-format">
-        <h1>Format</h1>
-        <p name="format" id="format"><%- review.format %></p>
-      </div>
-      <div class="review-book-genre">
-        <h1>Genre</h1>
-        <textarea name="genre"
-        id="genre"
-        rows="4" readonly><%- review.genres %>
+        <div class="review-book-format">
+          <h1>Format</h1>
+          <p name="format" id="format"><%- review.format %></p>
+        </div>
+        <div class="review-book-genre">
+          <h1>Genre</h1>
+          <textarea name="genre" id="genre" rows="4" readonly><%- review.genre %>
     </textarea
-        >
-      </div>
-      <div class="review-book-isbn">
-        <h1>ISBN</h1>
-        <textarea name="isbn" id="isbn" rows="4"  readonly><%- review.ISBN%></textarea
-        >
+          >
+        </div>
+        <div class="review-book-isbn">
+          <h1>ISBN</h1>
+          <input
+          type="text"
+          name="isbn"
+          id="isbn"
+          value="<%= review.isbn %>"
+          placeholder="no isbn found"
+          readonly
+        />
+        </div>
       </div>
     </div>
     <div class="review-quote">
@@ -138,7 +146,8 @@
 
     <div class="review-moment">
       <h1>Most surprising moment</h1>
-      <div class="review-moment-text" id="review-moment"><%- review.moment %><div class="review-moment-page">
+      <div class="review-moment-text" id="review-moment"><%- review.moment %>
+        <div class="review-moment-page">
           <span>page</span>
           <span id="moment-page-number" class="moment-page-number"
             ><%- review.moment_page_number %></span
@@ -158,13 +167,16 @@
 
       <div class="least-favourite-character">
         <h1>Least favourite character</h1>
-        <p class="least-favourite-character-text"
-        id="least-favourite-character" ><%- review.least_favorite_character %><span class="character-image-overlay">
+        <p
+          class="least-favourite-character-text"
+          id="least-favourite-character"
+        ><%- review.least_favorite_character %><span
+            class="character-image-overlay"
+          >
             <img src="/icons/leastfavourite.png" alt="least favorite icon" />
           </span>
         </p>
       </div>
-      
     </div>
     <div class="review-ending">
       <h1>The ending</h1>

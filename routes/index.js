@@ -84,33 +84,15 @@ router.get("/", async (req, res) => {
       "SELECT * FROM book_reviews WHERE final_rating > 4 ORDER BY final_rating DESC, created_at DESC LIMIT 6"
     );
 
-    const enrichBooks = async (books) => {
-      return Promise.all(
-        books.rows.map(async (book) => {
-          const details = await getBookDetailsWithCache(book.title);
-          return { ...book, ...details };
-        })
-      );
-    };
-
-    const [
-      detailedRecommendedBooks,
-      detailedPopularBooks,
-      detailedRecentBooks,
-      detailedLikedBooks,
-    ] = await Promise.all([
-      enrichBooks(recommendedBooks),
-      enrichBooks(popularBooks),
-      enrichBooks(recentBooks),
-      enrichBooks(likedBooks),
-    ]);
+    
+    
 
     res.renderWithLayout("index.ejs", {
       listTitle: "Shelfwise",
-      recommendedBooks: detailedRecommendedBooks,
-      popularBooks: detailedPopularBooks,
-      recentBooks: detailedRecentBooks,
-      likedBooks: detailedLikedBooks,
+      recommendedBooks: recommendedBooks.rows,
+      popularBooks: popularBooks.rows,
+      recentBooks: recentBooks.rows,
+      likedBooks: likedBooks.rows,
     });
   } catch (error) {
     console.error("Error getting index page:", error);
@@ -142,6 +124,60 @@ router.get("/anticipated", async (req, res) => {
     });
   } catch (error) {
     console.error("Error getting anticipated page:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/read-later", async (req, res) => {
+  try {
+    
+    const seriesBooks = await db.query(
+      "SELECT * FROM to_be_read WHERE type = $1 ORDER BY created_at DESC",
+      ["series"]
+    );
+
+    const standaloneBooks = await db.query(
+      "SELECT * FROM to_be_read WHERE type = $1 ORDER BY created_at DESC",
+      ["standalone"]
+    );
+
+
+
+    res.renderWithToBeReadLayout("toBeRead.ejs", {
+      seriesBooks: seriesBooks.rows,
+      standaloneBooks: standaloneBooks.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching books:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/streak", async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const startDate = new Date(currentYear, 0, 1).toISOString().split("T")[0]; 
+    const endDate = new Date(currentYear, 11, 31).toISOString().split("T")[0]; 
+    const query = `
+      SELECT 
+          TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month,
+          COUNT(*) AS books_read
+      FROM 
+          book_reviews
+      WHERE 
+          created_at BETWEEN $1 AND $2
+      GROUP BY 
+          DATE_TRUNC('month', created_at)
+      ORDER BY 
+          month;
+    `;
+
+    const result = await db.query(query, [startDate, endDate]);
+    res.renderWithStreakLayout("streak.ejs", {
+      streakData: result.rows, 
+    });
+  } catch (error) {
+    console.error("Error fetching streaks:", error);
     res.status(500).send("Internal Server Error");
   }
 });

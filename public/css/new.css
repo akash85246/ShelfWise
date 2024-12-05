@@ -153,10 +153,11 @@ html {
 }
 
 .review-book-detail {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: end;
 }
 .review-book-detail > h1 {
   font-size: 0.7rem;
@@ -164,15 +165,13 @@ html {
 
 .review-book-detail > img {
   width: 10rem;
-  position: relative;
+  position: absolute;
   top: -15%;
   transform: rotate(5deg);
   object-fit: cover;
 }
 
 .review-date {
-  position: relative;
-  top: -12%;
   width: 100%;
   box-sizing: content-box;
 }
@@ -190,8 +189,6 @@ html {
 
 .review-book-format {
   padding: 0 1rem;
-  position: relative;
-  top: -9%;
   width: 100%;
   box-sizing: border-box;
   font-size: 0.7rem;
@@ -214,15 +211,13 @@ html {
 
 .review-book-isbn {
   padding: 0 1rem;
-  position: relative;
-  top: -1%;
   width: 100%;
   box-sizing: border-box;
   font-size: 0.7rem;
 }
 
 .review-book-subject > textarea,
-.review-book-isbn > textarea {
+.review-book-isbn > input {
   font-size: 0.9rem !important;
   border: none !important;
   background-color: transparent;
@@ -234,8 +229,6 @@ html {
 
 .review-book-genre {
   padding: 0 1rem;
-  position: relative;
-  top: -7%;
   width: 100%;
   box-sizing: border-box;
   font-size: 0.7rem;
@@ -399,6 +392,17 @@ input[type="date"] {
   margin: 0%;
 }
 
+.review-book-subdetail{
+  height: 70%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: baseline;
+  gap: 2rem;
+
+}
+
 @media (max-width: 1037px) {
   .main-container {
     padding: 1.5rem;
@@ -432,9 +436,7 @@ input[type="date"] {
     font-size: 1rem;
   }
 
-  .review-date {
-    top: -9%;
-  }
+  
   .star-icon {
     width: 1.5rem;
     height: 1.5rem;
@@ -455,7 +457,7 @@ input[type="date"] {
 
   .review-book-subject {
     padding: 0 0.5rem;
-    top: -4%;
+   
   }
   .date-display,
   .review-book-format > select {
@@ -474,20 +476,15 @@ input[type="date"] {
   }
   .review-book-format {
     padding: 0 0.5rem;
-    top: -7%;
   }
 
   .review-book-genre {
     padding: 0 0.5rem;
-    top: -4%;
   }
 
   .review-book-format > h1,
   .review-book-genre > h1 {
     font-size: 0.6rem !important;
-  }
-  .review-book-detail {
-    justify-content: start;
   }
 
   .rating-stars {
@@ -554,7 +551,6 @@ input[type="date"] {
 
   .review-book-detail > img {
     width: 8rem;
-    top: -12%;
   }
   .star-icon {
     height: auto;
@@ -591,21 +587,6 @@ input[type="date"] {
     font-size: 0.8rem !important;
   }
 
-  .review-date {
-    top: -6%;
-  }
-  .review-book-subject {
-    top: -3% !important;
-  }
-
-  .review-book-format {
-    top: -5% !important;
-  }
-
-  .review-book-genre {
-    top: -2%;
-  }
-
   .review-note > textarea {
     font-size: 1rem;
   }
@@ -637,30 +618,25 @@ input[type="date"] {
   .review-book-detail {
     grid-column: span 4;
     padding: 2rem;
-    position: relative;
-    height: 89%;
+    height: 75vh;
+  }
+  .review-book-subdetail {
+    height: 55%;
+    gap: 0rem;
+    justify-content: space-between;
   }
   .review-book-detail > img {
     width: 12rem;
-    top: -15%;
+   top: -10%;
   }
-  .review-date {
-    top: -10%;
-  }
-
-  .review-book-format {
-    top: -8% !important;
-  }
+  
 
   .review-book-subject {
     padding: 0rem;
-    top: -5% !important;
+   
   }
 
-  .review-book-genre {
-    top: -5%;
-  }
-
+  
   .review-date-container {
     padding: 0;
   }
@@ -686,7 +662,7 @@ input[type="date"] {
   }
 
   .review-rating {
-    margin-top: -1rem;
+    
     grid-column: span 4;
   }
 

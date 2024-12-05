@@ -16,7 +16,7 @@ function displayRecommendedBooks() {
 
     bookCard.innerHTML = `
       <a href="/review/${book.slug}">
-      <img src="${book.coverUrl}" alt="${book.title}" />
+      <img src="${book.cover_url}" alt="${book.title}" />
       </a>
       <h3>${book.title}</h3>
       <p>${book.author}</p>
@@ -33,7 +33,7 @@ function displayPopularBooks() {
     bookCard.className = "book-card";
     bookCard.innerHTML = `
     <a href="/review/${book.slug}">
-      <img src="${book.coverUrl}" alt="${book.title}" />
+      <img src="${book.cover_url}" alt="${book.title}" />
       </a>
       <h3>${book.title}</h3>
       <p>${book.author}</p>
@@ -50,7 +50,7 @@ function displayLatestBooks() {
     bookCard.className = "book-card";
     bookCard.innerHTML = `
         <a href="/review/${book.slug}">
-        <img src="${book.coverUrl}" alt="${book.title}" />
+        <img src="${book.cover_url}" alt="${book.title}" />
         </a>
         <h3>${book.title}</h3>
         <p>${book.author}</p>
@@ -67,7 +67,7 @@ function displayLikedBooks() {
     bookCard.className = "book-card";
     bookCard.innerHTML = `
     <a href="/review/${book.slug}">
-      <img src="${book.coverUrl}" alt="${book.title}" />
+      <img src="${book.cover_url}" alt="${book.title}" />
       </a>
       <h3>${book.title}</h3>
       <p>${book.author}</p>
@@ -137,7 +137,7 @@ async function displaySelectedBooks(bookList) {
       bookCard.className = "book-card";
       bookCard.innerHTML = `
     <a href="/review/${book.slug}">
-      <img src="${book.coverUrl}" alt="${book.title}" />
+      <img src="${book.cover_url}" alt="${book.title}" />
       </a>
       <h3>${book.title}</h3>
       <p>${book.author}</p>
