@@ -2,6 +2,7 @@ import slugify from "slug";
 import { db } from "../app.js";
 import axios from "axios";
 import slug from "slug";
+import e from "express";
 const cache = new Map();
 class ReviewController {
   static async createReview(req, res) {
@@ -268,7 +269,7 @@ class ReviewController {
           params.push(limit, offset);
         } else if (recommendation === "Book of the Year") {
           query = `
-            SELECT title,cover_url, views, final_rating,slug
+            SELECT author,title,cover_url, views, final_rating,slug
             FROM book_reviews
             ORDER BY views DESC, final_rating DESC
             LIMIT $1 OFFSET $2;
@@ -277,9 +278,9 @@ class ReviewController {
         } else if (recommendation === "Top Genre") {
           query = `
             WITH top_genre AS (
-              SELECT genre,cover_url,title,slug
+              SELECT  author,genre,cover_url,title,slug
               FROM book_reviews
-              GROUP BY genre,cover_url,title,slug
+              GROUP BY genre,cover_url,title,slug,author
               ORDER BY COUNT(*) DESC
               LIMIT 1
             )
@@ -292,7 +293,7 @@ class ReviewController {
           params.push(limit, offset);
         } else if (recommendation === "Trending") {
           query = `
-            SELECT title,cover_url, views, final_rating, created_at,slug
+            SELECT author,title,cover_url, views, final_rating, created_at,slug
             FROM book_reviews
             WHERE created_at > NOW() - INTERVAL '1 MONTH'
             ORDER BY views DESC, final_rating DESC
@@ -301,7 +302,6 @@ class ReviewController {
           params.push(limit, offset);
         }
       } else {
-        // Default query for filtering by sortBy and bookByGenre
         query = `
           SELECT *
           FROM book_reviews
@@ -309,7 +309,7 @@ class ReviewController {
         `;
 
         // Filter by book genre
-        if (bookByGenre) {
+        if (bookByGenre !== "All" || bookByGenre !== "all") {
           query += ` AND LOWER(genre) = $${params.length + 1}`;
           params.push(bookByGenre.toLowerCase());
         }
@@ -470,6 +470,7 @@ class ReviewController {
   static async getBookReview(req, res) {
     try {
       const { slug } = req.params;
+      const ip = req.ip;
       const result = await db.query(
         "SELECT * FROM book_reviews WHERE slug = $1",
         [slug]
@@ -482,6 +483,14 @@ class ReviewController {
       }
 
       const review = result.rows[0];
+
+      await db.query(
+        "INSERT INTO recommendations (ip_address, book_review_id) VALUES ($1, $2)",
+        [ip, review.id]
+      );
+
+      console.log("Client IP Address:", ip);
+
 
       res.renderWithShowLayout("show.ejs", {
         listTitle: "review.slug",

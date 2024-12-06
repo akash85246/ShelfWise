@@ -262,6 +262,6 @@ searchInput.addEventListener("input", async (e) => {
       });
     })
     .catch((error) => {
-      console.log(error);
+      toastr.info('No books found');
     });
 });

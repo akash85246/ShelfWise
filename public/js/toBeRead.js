@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector(".list-create");
 
@@ -18,23 +19,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("/api/read-later/create", {
-        method: "POST",
+      const response = await axios.post("/api/read-later/create", {
+        type,
+        title,
+        author,
+      }, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ type, title, author }),
       });
 
       if (response.status === 201) {
+        toastr.success('Read later book created successfully');
         window.location.href = "/read-later";
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.message}`);
+        toastr.warning(errorData.message);
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to create the list. Please try again.");
+      toastr.error('An error occurred, please try again');
     }
   });
 
@@ -89,13 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await axios.delete("/api/read-later/delete/" + id);
       if (res.status === 200) {
+        toastr.warning('Item deleted successfully');
         window.location.href = "/read-later";
       } else {
-        alert("Failed to delete the item. Please try again.");
+        toastr.warning("Failed to delete the item. Please try again.");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to delete the item. Please try again.");
+      toastr.error('An error occurred, please try again');
     }
   }
 

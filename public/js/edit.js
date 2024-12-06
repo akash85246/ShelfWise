@@ -110,7 +110,7 @@ document.querySelectorAll(".rating-section").forEach((section) => {
   const initialRating = ratings[`${sectionId.replace("-", "_")}`];
   renderStars(sectionId, initialRating || rating);
 
-  // Add click event listeners to stars (except the final rating section)
+  
   if (!section.classList.contains("final-rating")) {
     const stars = section.querySelector(".rating-stars");
     stars.addEventListener("click", (e) => {
@@ -174,12 +174,10 @@ saveButton.addEventListener("click", async () => {
       format,
       moment_page_number,
     });
-    console.log(response.data);
-    alert(`Server says: ${response.data.message}`);
-    
+    toastr.success('review updated successfully');
     window.location.href = `/review/${response.data.slug}`;
   } catch (error) {
-    console.error("Error:", error);
+    toastr.error('An error occurred, please try again');
   }
 });
 
@@ -220,12 +218,12 @@ document.getElementById("delete-button").addEventListener("click", async (e) => 
       method: "DELETE",
     });
     if (response.ok) {
-      alert("Review deleted successfully!");
+      toastr.warning('Review deleted successfully');
       window.location.href = "/";
     } else {
-      alert("Failed to delete the review.");
+      toastr.warning('Failed to delete review');
     }
   } catch (error) {
-    console.error("Error deleting review:", error);
+    toastr.error('An error occurred, please try again');
   }
 });

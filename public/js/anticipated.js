@@ -1,3 +1,6 @@
+
+
+
 document
   .getElementById("cover-photo")
   .addEventListener("change", function (event) {
@@ -74,11 +77,10 @@ anticipatedSubmitBtn.addEventListener("click", async () => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(response.data.message);
+    toastr.success('Aniticipated book created successfully');
     window.location.href = "/anticipated";
   } catch (error) {
-    console.error("Error creating anticipated book:", error);
-    alert("Something went wrong. Please try again!");
+    toastr.error('An error occurred, please try again');
   }
 });
 

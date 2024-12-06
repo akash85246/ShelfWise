@@ -157,9 +157,10 @@ postButton.addEventListener("click", async () => {
       format,
       moment_page_number,
     });
+    toastr.success('Review book created successfully');
     window.location.href = "/review/" + response.data.slug;
   } catch (error) {
-    console.error("Error:", error);
+    toastr.error('An error occurred, please try again');
   }
 });
 
@@ -184,6 +185,7 @@ title.addEventListener("input", async () => {
       isbn.value = response.data.isbn;
     })
     .catch((error) => {
+      toastr.info('No books found');
       return;
     });
 });

@@ -55,7 +55,6 @@ const cache = new Map();
 
 async function getBookDetailsWithCache(title) {
   if (cache.has(title)) {
-    console.log(`Cache hit for title: ${title}`);
     return cache.get(title);
   }
 
@@ -83,9 +82,6 @@ router.get("/", async (req, res) => {
     const likedBooks = await db.query(
       "SELECT * FROM book_reviews WHERE final_rating > 4 ORDER BY final_rating DESC, created_at DESC LIMIT 6"
     );
-
-    
-    
 
     res.renderWithLayout("index.ejs", {
       listTitle: "Shelfwise",
@@ -140,8 +136,6 @@ router.get("/read-later", async (req, res) => {
       "SELECT * FROM to_be_read WHERE type = $1 ORDER BY created_at DESC",
       ["standalone"]
     );
-
-
 
     res.renderWithToBeReadLayout("toBeRead.ejs", {
       seriesBooks: seriesBooks.rows,

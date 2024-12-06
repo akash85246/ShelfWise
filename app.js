@@ -8,6 +8,7 @@ import reviewRouter from "./routes/review.js";
 import anticipatedRouter from "./routes/anticipated.js";
 import ReadLaterRouter from "./routes/toBeRead.js";
 import StreakRouter from "./routes/streak.js";
+import RecommendationRouter from "./routes/recommendation.js";
 import axios from "axios";
 import cors from "cors";
 
@@ -29,6 +30,7 @@ const db = new pg.Client({
 db.connect()
   .then(() => console.log("Connected to the database!"))
   .catch((err) => console.error("Database connection error:", err));
+
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -109,6 +111,7 @@ app.use("/api", userRouter);
 app.use("/api", reviewRouter);
 app.use("/api/read-later", ReadLaterRouter);
 app.use("/api/streak", StreakRouter);
+app.use("/api/recommendation", RecommendationRouter);
 app.use("/", router);
 
 app.listen(port, () => {
