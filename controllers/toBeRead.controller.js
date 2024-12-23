@@ -2,6 +2,8 @@ import { db } from "../app.js";
 import axios from "axios";
 class ToBeReadController {
   static async createToBeRead(req, res) {
+    const user = req.user ||null;
+    if(req.isAuthenticated() && user.author == true){
     let { title, author, type } = req.body;
     try {
       const bookDetails = await ToBeReadController.getBookDetails(title);
@@ -23,6 +25,11 @@ class ToBeReadController {
       return res.status(500).json({
         status: "error",
         error: "server error",
+      });
+    }}else{
+      return res.status(401).json({
+        status: "error",
+        error: "Unauthorized",
       });
     }
   }
@@ -79,6 +86,8 @@ class ToBeReadController {
   }
 
   static async deleteToBeRead(req, res) {
+    const user = req.user ||null;
+    if(req.isAuthenticated() && user.author == true){
     const { id } = req.params;
     try {
       await db.query("DELETE FROM to_be_read WHERE id = $1", [id]);
@@ -90,6 +99,11 @@ class ToBeReadController {
       return res.status(500).json({
         status: "error",
         error: "server error",
+      });
+    }}else{
+      return res.status(401).json({
+        status: "error",
+        error: "Unauthorized",
       });
     }
   }

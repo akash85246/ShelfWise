@@ -43,7 +43,7 @@ class AnticipatedController {
     }
   }
 
-  static async getAnticipated(req, res) {
+  static async searchAnticipated(req, res) {
     try {
       const { page = 1, limit = 10 } = req.query;
 
@@ -58,20 +58,35 @@ class AnticipatedController {
         "SELECT COUNT(*) FROM anticipated_books"
       );
       const totalBooks = countResult.rows[0].count;
+      console.log(totalBooks);
       const totalPages = Math.ceil(totalBooks / limit);
+      console.log(totalPages);
 
-      res.renderWithLayout("anticipated.ejs", {
-        listTitle: "Anticipated",
-        anticipatedBooks: result.rows,
-        currentPage: parseInt(page),
-        totalPages: totalPages,
-        totalBooks: totalBooks,
+      return res.status(200).json({
+        books: result.rows,
+        totalPages,
+        currentPage: page,
+        totalBooks,
       });
     } catch (error) {
       console.error("Error getting anticipated books:", error);
       res.status(500).send("Internal Server Error");
     }
   }
+
+  static deleteAnticipated(req, res) {
+    const id = req.params.id;
+    db.query("DELETE FROM anticipated_books WHERE id = $1", [id])
+      .then(() => {
+        res.status(200).json({ message: "Anticipated book deleted" });
+      })
+      .catch((error) => {
+        console.error("Error deleting anticipated book:", error);
+        res.status(500).json({ error: "Something went wrong. Please try again!" });
+      });
+  }
+
+  
 }
 
 export default AnticipatedController;

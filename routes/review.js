@@ -59,7 +59,7 @@ router.get("/review/search", ReviewController.searchReviews);
 // Example: GET /review/search?query=Gatsby
 // Example query parameter values could include a book title, author, or keyword
 
-router.get("/book-cover",ReviewController.getBookCoverByTitle);
+router.get("/book-cover",ReviewController.getBooksByTitle);
 
 
 export default router;

@@ -57,19 +57,18 @@ async function getBookDetailsWithCache(title) {
   if (cache.has(title)) {
     return cache.get(title);
   }
-
-  console.log(`Fetching details for title: ${title}`);
+  // console.log(`Fetching details for title: ${title}`);
   const details = await getBookDetails(title);
-
   if (details) {
     cache.set(title, details);
   }
-
   return details;
 }
 
 router.get("/", async (req, res) => {
   try {
+    const user = req.user;
+    // console.log("User:", user);
     const recommendedBooks = await db.query(
       "SELECT * FROM book_reviews WHERE views >= 0 AND final_rating > 3 ORDER BY views DESC, final_rating DESC LIMIT 6;"
     );
@@ -89,6 +88,7 @@ router.get("/", async (req, res) => {
       popularBooks: popularBooks.rows,
       recentBooks: recentBooks.rows,
       likedBooks: likedBooks.rows,
+      user: user || null,
     });
   } catch (error) {
     console.error("Error getting index page:", error);
@@ -97,12 +97,18 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/new-review", async (req, res) => {
-  try {
-    res.renderWithNewLayout("new.ejs", {
-      listTitle: "Shelfwise",
-    });
-  } catch (error) {
-    console.error("Error getting new review page:", error);
+  const user = req.user;
+  if (req.isAuthenticated() && user.author == true) {
+    try {
+      res.renderWithNewLayout("new.ejs", {
+        listTitle: "Shelfwise",
+        user: user,
+      });
+    } catch (error) {
+      console.error("Error getting new review page:", error);
+    }
+  } else {
+    res.redirect("/");
   }
 });
 
@@ -110,13 +116,51 @@ router.get("/review/:slug", ReviewController.getBookReview);
 router.get("/edit/:slug", ReviewController.getEditBookReview);
 
 router.get("/anticipated", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/"); // Redirect early if not authenticated
+  }
+
+  const user = req.user;
+  const { page = 1, limit = 10 } = req.query;
+  const pageNum = parseInt(page);
+  const limitNum = parseInt(limit);
+
+  if (isNaN(pageNum) || pageNum <= 0 || isNaN(limitNum) || limitNum <= 0) {
+    return res.status(400).send("Invalid pagination parameters");
+  }
+
+  const offset = (pageNum - 1) * limitNum;
+
   try {
-    const anticipatedBooks = await db.query(
-      "SELECT * FROM anticipated_books ORDER BY release_date ASC"
-    );
+    // Fetch the anticipated books with pagination applied
+    const anticipatedBooksQuery = `
+      SELECT * 
+      FROM anticipated_books 
+      ORDER BY release_date ASC
+      LIMIT $1 OFFSET $2
+    `;
+    const anticipatedBooks = await db.query(anticipatedBooksQuery, [
+      limitNum,
+      offset,
+    ]);
+
+    // Fetch the total count of books
+    const totalBooksQuery = `
+      SELECT COUNT(*) AS count 
+      FROM anticipated_books
+    `;
+    const totalBooksResult = await db.query(totalBooksQuery);
+    const totalBooks = parseInt(totalBooksResult.rows[0].count, 10);
+    const totalPages = Math.ceil(totalBooks / limitNum);
+
+    // Render the view with paginated data
     res.renderWithAnticipatedLayout("anticipated.ejs", {
       listTitle: "Shelfwise",
       anticipatedBooks: anticipatedBooks.rows,
+      user,
+      currentPage: pageNum,
+      totalPages,
+      totalBooks,
     });
   } catch (error) {
     console.error("Error getting anticipated page:", error);
@@ -125,34 +169,39 @@ router.get("/anticipated", async (req, res) => {
 });
 
 router.get("/read-later", async (req, res) => {
-  try {
-    
-    const seriesBooks = await db.query(
-      "SELECT * FROM to_be_read WHERE type = $1 ORDER BY created_at DESC",
-      ["series"]
-    );
-
-    const standaloneBooks = await db.query(
-      "SELECT * FROM to_be_read WHERE type = $1 ORDER BY created_at DESC",
-      ["standalone"]
-    );
-
-    res.renderWithToBeReadLayout("toBeRead.ejs", {
-      seriesBooks: seriesBooks.rows,
-      standaloneBooks: standaloneBooks.rows,
-    });
-  } catch (error) {
-    console.error("Error fetching books:", error);
-    res.status(500).send("Internal Server Error");
+  if (req.isAuthenticated()) {
+    try {
+      const user = req.user;
+      const seriesBooks = await db.query(
+        "SELECT * FROM to_be_read WHERE type = $1 ORDER BY created_at DESC",
+        ["series"]
+      );
+      const standaloneBooks = await db.query(
+        "SELECT * FROM to_be_read WHERE type = $1 ORDER BY created_at DESC",
+        ["standalone"]
+      );
+      res.renderWithToBeReadLayout("toBeRead.ejs", {
+        seriesBooks: seriesBooks.rows,
+        standaloneBooks: standaloneBooks.rows,
+        user: user,
+      });
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
   }
 });
 
 router.get("/streak", async (req, res) => {
-  try {
-    const currentYear = new Date().getFullYear();
-    const startDate = new Date(currentYear, 0, 1).toISOString().split("T")[0]; 
-    const endDate = new Date(currentYear, 11, 31).toISOString().split("T")[0]; 
-    const query = `
+  if (req.isAuthenticated()) {
+    try {
+      const user = req.user;
+      const currentYear = new Date().getFullYear();
+      const startDate = new Date(currentYear, 0, 1).toISOString().split("T")[0];
+      const endDate = new Date(currentYear, 11, 31).toISOString().split("T")[0];
+      const query = `
       SELECT 
           TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month,
           COUNT(*) AS books_read
@@ -166,13 +215,71 @@ router.get("/streak", async (req, res) => {
           month;
     `;
 
-    const result = await db.query(query, [startDate, endDate]);
-    res.renderWithStreakLayout("streak.ejs", {
-      streakData: result.rows, 
-    });
-  } catch (error) {
-    console.error("Error fetching streaks:", error);
-    res.status(500).send("Internal Server Error");
+      const result = await db.query(query, [startDate, endDate]);
+      res.renderWithStreakLayout("streak.ejs", {
+        streakData: result.rows,
+        user: user,
+      });
+    } catch (error) {
+      console.error("Error fetching streaks:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+});
+
+router.get("/profile", async (req, res) => {
+  if (req.isAuthenticated()) {
+    try {
+      const user = req.user;
+  
+      if (!user) {
+        return res.status(401).send("Unauthorized access"); // Handle unauthorized access
+      }
+        const viewHistory = await db.query(
+          `
+          SELECT 
+              rv.id AS reader_view_id,
+              rv.reader_id,
+              rv.review_id,
+              rv.view_count,
+              rv.last_viewed_at,
+              rv.created_at AS reader_view_created_at,
+              rv.updated_at AS reader_view_updated_at,
+              br.id AS book_review_id,
+              br.title,
+              br.slug,
+              br.author,
+              br.genre,
+              br.final_rating,
+              br.views AS total_views,
+              br.cover_url
+          FROM 
+              reader_views rv
+          JOIN 
+              book_reviews br
+          ON 
+              rv.review_id = br.id
+          WHERE 
+              rv.reader_id = $1
+          ORDER BY 
+              rv.last_viewed_at DESC;
+          `,
+          [user.id] // Pass user.id as a parameter
+        );
+      // Render the profile page with the layout and data
+      res.renderWithProfileLayout("profile.ejs", {
+        title: "Users Page",
+        user: user,
+        viewHistory: viewHistory.rows, 
+      });
+    } catch (err) {
+      console.error("Error fetching view history:", err);
+      res.status(500).send("An error occurred while fetching the user data.");
+    }
+  } else {
+    res.redirect("/");
   }
 });
 

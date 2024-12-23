@@ -8,5 +8,7 @@ router.post("/anticipated/create",
     upload.single("image"),
     AnticipatedController.createAnticipated);
 
-router.get("/anticipated/search", AnticipatedController.getAnticipated);
+router.get("/anticipated/search", AnticipatedController.searchAnticipated);
+
+router.delete("/anticipated/delete/:id", AnticipatedController.deleteAnticipated);
 export default router;

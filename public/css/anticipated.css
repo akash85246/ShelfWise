@@ -54,6 +54,7 @@
 .create-anticipated-icon {
   width: 4rem;
   height: 4rem;
+  
 }
 .create-anticipated  {
   background-color: #e0dad1;
@@ -61,6 +62,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+.create-anticipated:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .anticipated-emoji {
@@ -336,4 +342,27 @@ height: 100%;
   .anticipated-card-details {
     padding: 0.2rem;
   }
+}
+.pagination{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5rem;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+  margin-bottom: 0.5rem;
+  gap: 5px;
+}
+
+.page-btn,
+.prev-btn,
+.next-btn {
+  padding: 8px 15px;
+  border: 2px solid #ad9d85;
+  border-radius: 5px;
+  background-color: white;
+  color: #ad9d85;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
 }

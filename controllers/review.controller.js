@@ -44,7 +44,6 @@ class ReviewController {
       const publishers = additionalDetails.publishers;
       const isbn = additionalDetails.isbn;
       const published_year = additionalDetails.publishYear;
-
       const slugField = slugify(title, { lower: true });
 
       await db.query(
@@ -146,6 +145,7 @@ class ReviewController {
       const publishers = additionalDetails.publishers;
       const isbn = additionalDetails.isbn;
       const published_year = additionalDetails.publishYear;
+      genre = genre.trim();
 
       const review = await db.query(
         "SELECT * FROM book_reviews WHERE slug = $1",
@@ -205,7 +205,7 @@ class ReviewController {
           ending || review.rows[0].ending,
           start_date || review.rows[0].start_date,
           end_date || review.rows[0].end_date,
-          genre || review.rows[0].genre,
+          genre || review.rows[0].genre.trim(),
           format || review.rows[0].format,
           newSlug,
           final_rating,
@@ -386,12 +386,42 @@ class ReviewController {
       const isbn = book.isbn ? book.isbn[0] : "Not available";
       const author = book.author_name ? book.author_name.join(", ") : "Unknown";
       const publishYear = book.first_publish_year || "Unknown";
-      const genres = book.subject
-        ? book.subject.slice(0, 5).join(", ")
-        : "Not available";
-      const publishers = book.publisher
-        ? book.publisher.slice(0, 3).join(", ")
-        : "Not available";
+
+      let genres = book.subject ? book.subject : [];
+      let a = 0;
+      let finalGenres = [];
+      for (let genre of genres) {
+        const genreLength = genre.length + (finalGenres.length > 0 ? 2 : 0);
+
+        if (a + genreLength <= 100) {
+          finalGenres.push(genre);
+          a += genre.length;
+        } else {
+          break;
+        }
+      }
+      const genresString =
+        finalGenres.length > 0 ? finalGenres.join(", ") : "Not available";
+      genres = genresString;
+
+      let publishers = book.publisher ? book.publisher : [];
+      let totalLength = 0;
+      let finalPublishers = [];
+      for (let publisher of publishers) {
+        const publisherLength =
+          publisher.length + (finalPublishers.length > 0 ? 2 : 0);
+        if (totalLength + publisherLength <= 100) {
+          finalPublishers.push(publisher);
+          totalLength += publisher.length;
+        } else {
+          break;
+        }
+      }
+      const publishersString =
+        finalPublishers.length > 0
+          ? finalPublishers.join(", ")
+          : "Not available";
+      publishers = publishersString.trim();
 
       return {
         title: newTitle,
@@ -407,7 +437,7 @@ class ReviewController {
       return null;
     }
   }
-
+//used to delete a book from the to be read list in this controller only mo route is made for this
   static async deleteReadLater(title) {
     try {
       db.query("DELETE FROM to_be_read WHERE title = $1", [title]);
@@ -418,6 +448,7 @@ class ReviewController {
         .json({ message: "Error deleting read later: " + error.message });
     }
   }
+
   static async getBookDetailsWithCache(title) {
     if (!title) return null;
     if (cache.has(title)) {
@@ -442,33 +473,40 @@ class ReviewController {
   }
 
   static async getEditBookReview(req, res) {
-    try {
-      const { slug } = req.params;
-      const result = await db.query(
-        "SELECT * FROM book_reviews WHERE slug = $1",
-        [slug]
-      );
+    const user = req.user || null;
+    if (req.isAuthenticated() && user.author == true) {
+      try {
+        const { slug } = req.params;
+        const result = await db.query(
+          "SELECT * FROM book_reviews WHERE slug = $1",
+          [slug]
+        );
 
-      if (result.rows.length === 0) {
-        return res.status(404).json({ message: "Review not found to edit" });
+        if (result.rows.length === 0) {
+          return res.status(404).json({ message: "Review not found to edit" });
+        }
+
+        const review = result.rows[0];
+
+        res.renderWithEditLayout("edit.ejs", {
+          listTitle: "review.slug",
+          review: review,
+          user: user,
+        });
+      } catch (error) {
+        console.error("Error retrieving review:", error);
+        res
+          .status(500)
+          .json({ message: "Error retrieving review: " + error.message });
       }
-
-      const review = result.rows[0];
-
-      res.renderWithEditLayout("edit.ejs", {
-        listTitle: "review.slug",
-        review: review,
-      });
-    } catch (error) {
-      console.error("Error retrieving review:", error);
-      res
-        .status(500)
-        .json({ message: "Error retrieving review: " + error.message });
+    } else {
+      res.redirect("/");
     }
   }
 
   static async getBookReview(req, res) {
     try {
+      const user = req.user || null;
       const { slug } = req.params;
       const ip = req.ip;
       const result = await db.query(
@@ -489,12 +527,37 @@ class ReviewController {
         [ip, review.id]
       );
 
-      console.log("Client IP Address:", ip);
+      if (req.isAuthenticated() && !user.author) {
+        const user = req.user;
+        const previous = await db.query(
+          "SELECT * FROM reader_views WHERE reader_id = $1 AND review_id = $2",
+          [user.id,  review.id]
+        );
 
+        if (previous.rows.length === 0) {
+          const result = await db.query(
+            `INSERT INTO reader_views (reader_id, review_id) 
+             VALUES ($1, $2) 
+             RETURNING *`,
+            [user.id,  review.id]
+          );
+        } else {
+          const updated = await db.query(
+            `UPDATE reader_views 
+             SET view_count = view_count + 1, 
+                 last_viewed_at = CURRENT_TIMESTAMP, 
+                 updated_at = CURRENT_TIMESTAMP 
+             WHERE reader_id = $1 AND review_id = $2 
+             RETURNING *`,
+            [user.id,  review.id]
+          );
+        }
+      }
 
       res.renderWithShowLayout("show.ejs", {
         listTitle: "review.slug",
         review: review,
+        user: user,
       });
     } catch (error) {
       console.error("Error retrieving review:", error);
@@ -504,13 +567,14 @@ class ReviewController {
     }
   }
 
-  static async getBookCoverByTitle(req, res) {
+  static async getBooksByTitle(req, res) {
     const { title } = req.query;
     try {
       if (!title) {
         return res.status(400).json({ message: "Title is required" });
       }
 
+      // Fetch multiple books with a limit for suggestions
       const searchResponse = await axios.get(
         "https://openlibrary.org/search.json",
         {
@@ -518,42 +582,50 @@ class ReviewController {
             title,
             fields:
               "title,cover_i,author_name,first_publish_year,subject,publisher,isbn",
-            limit: 1,
+            limit: 10, // Adjust the limit based on your requirements
           },
         }
       );
 
-      const book = searchResponse.data.docs[0];
-      if (!book) {
-        return res.status(404).json({ message: "Book not found" });
+      const books = searchResponse.data.docs;
+      if (!books || books.length === 0) {
+        return res.status(404).json({ message: "No books found" });
       }
-      console.log("book:", book.title);
 
-      const coverUrl = `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`;
-      const newTitle = book.title;
-      const author = book.author_name ? book.author_name.join(", ") : "Unknown";
-      const publishYear = book.first_publish_year || "Unknown";
-      const genres = book.subject
-        ? book.subject.join(", ").slice(0, 100)
-        : "Not available";
-      const publishers = book.publisher
-        ? book.publisher.slice(0, 3).join(", ")
-        : "Not available";
-      const isbn = book.isbn ? book.isbn[0] : "Not available";
-      return res.status(200).json({
-        title: newTitle,
-        coverUrl,
-        author,
-        publishYear,
-        genres,
-        publishers,
-        isbn,
+      // Transform the books into a simplified structure
+      const suggestions = books.map((book) => {
+        const coverUrl = book.cover_i
+          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+          : null;
+        const author = book.author_name
+          ? book.author_name.join(", ")
+          : "Unknown";
+        const publishYear = book.first_publish_year || "Unknown";
+        const genres = book.subject
+          ? book.subject.slice(0, 5).join(", ") // Limit genres for brevity
+          : "Not available";
+        const publishers = book.publisher
+          ? book.publisher.slice(0, 3).join(", ") // Limit publishers for brevity
+          : "Not available";
+        const isbn = book.isbn ? book.isbn[0] : "Not available";
+
+        return {
+          title: book.title,
+          coverUrl,
+          author,
+          publishYear,
+          genres,
+          publishers,
+          isbn,
+        };
       });
+
+      return res.status(200).json(suggestions);
     } catch (error) {
-      console.error("Error fetching book cover:", error.message);
+      console.error("Error fetching books:", error.message);
       return res
         .status(500)
-        .json({ message: "Error fetching book cover: " + error.message });
+        .json({ message: "Error fetching books: " + error.message });
     }
   }
 }

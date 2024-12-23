@@ -1,6 +1,7 @@
 <h1 class="anticipated-heading">Anticipated releases</h1>
 
-<div class="anticipated-container">
+<div class="anticipated-container" id="anticipated-container">
+  <% if(user && user.author==true){ %>
   <div class="create-anticipated anticipated-card">
     <img
       src="/icons/anticipatedCreateIcon.png"
@@ -8,8 +9,11 @@
       class="create-anticipated-icon"
     />
   </div>
+  <% } %>
 </div>
 
+<div class="pagination" id="pagination"></div>
+<% if(user && user.author==true){ %>
 <!-- popout to create anticipated book -->
 <div class="anticipated-popout-container hidden">
   <div class="anticipated-popout">
@@ -52,3 +56,4 @@
     <button class="anticipated-submit" id="anticipated-submit">Submit</button>
   </div>
 </div>
+<% } %>

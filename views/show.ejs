@@ -12,11 +12,13 @@
         <%- review.author %>
       </p>
     </div>
+    <% if(user && user.author == true){ %>
     <div class="edit-button-container">
       <a id="edit-button" href="/edit/<%= review.slug  %>"
         ><img src="/icons/editIcon.png" alt=""
       /></a>
     </div>
+    <% } %>
   </div>
 
   <div class="grid4">
@@ -84,8 +86,7 @@
         rows="24"
         id="review-notes"
         readonly
-      >
-<%- review.note %></textarea
+      ><%- review.note %></textarea
       >
     </div>
     <div class="review-book-detail">

@@ -119,22 +119,45 @@ postButton.addEventListener("click", async () => {
   const engagement_rating =
     document.getElementById("engagement-rating").dataset.rating;
   const note = document.getElementById("review-notes").value;
-  const quote = document.getElementById("review-quote").value;
-  const moment = document.getElementById("review-moment").value;
+  const quote = document.getElementById("review-quote").value || null;
+  const moment = document.getElementById("review-moment").value || null;
   const favorite_character = document.getElementById(
     "favourite-character"
-  ).value;
+  ).value || null;
   const least_favorite_character = document.getElementById(
     "least-favourite-character"
-  ).value;
-  const ending = document.getElementById("ending").value;
+  ).value || null;
+  const ending = document.getElementById("ending").value || null;
   const start_date = document.getElementById("startDate").value;
   const end_date = document.getElementById("endDate").value;
   const genre = document.getElementById("genre").value;
-  const format = document.getElementById("format").value;
+  const format = document.getElementById("format").value || null;
   const moment_page_number =
-    document.getElementById("moment-page-number").value;
-  const SearchResult = await axios.get(`/api/book-cover?title=${title.value}`);
+    document.getElementById("moment-page-number").value || null;
+  if(!title){
+    toastr.error("Title is required");
+    return;
+  }
+  if(!genre){
+    toastr.error("genre is required");
+    return;
+  }
+  if(!note){
+    toastr.error("Note is required");
+    return;
+  }
+  if(!start_date){
+    toastr.error("Start date is required");
+    return;
+  }
+  if(!end_date){
+    toastr.error("End date is required");
+    return;
+  }
+  if(!setting_rating && !plot_rating && !character_rating && !style_rating && !engagement_rating){
+    toastr.error("Ratings are required");
+    return;
+  }
 
   try {
     const response = await axios.post("/api/create-review", {
@@ -157,35 +180,80 @@ postButton.addEventListener("click", async () => {
       format,
       moment_page_number,
     });
-    toastr.success('Review book created successfully');
+    toastr.success("Review book created successfully");
     window.location.href = "/review/" + response.data.slug;
   } catch (error) {
-    toastr.error('An error occurred, please try again');
+    toastr.error("An error occurred, please try again");
   }
 });
 
 const title = document.getElementById("review-title");
 
-title.addEventListener("input", async () => {
-  await axios
-    .get(`/api/book-cover?title=${title.value}`)
-    .then((response) => {
-      const bookCover = document.getElementById("book-cover");
-      const author = document.getElementById("review-author");
-      const genre = document.getElementById("genre");
-      const reviewPublisher = document.getElementById("review-publisher");
-      const reviewPublishYear = document.getElementById("review-publish-year");
-      const isbn = document.getElementById("isbn");
-      bookCover.src = response.data.coverUrl;
-      bookCover.alt = `Book Cover for ${title.value}`;
-      author.value = response.data.author;
-      genre.value = response.data.genres;
-      reviewPublisher.innerHTML = response.data.publishers;
-      reviewPublishYear.innerHTML = response.data.publishYear;
-      isbn.value = response.data.isbn;
-    })
-    .catch((error) => {
-      toastr.info('No books found');
+const titleInput = document.getElementById("review-title");
+const suggestionList = document.getElementById("book-suggestions");
+
+titleInput.addEventListener("input", async () => {
+  const titleValue = titleInput.value.trim();
+  // Clear suggestions if the input is empty
+  if (!titleValue) {
+    suggestionList.innerHTML = "";
+    suggestionList.classList.add("hidden");
+    return;
+  }
+
+  try {
+    const response = await axios.get(`/api/book-cover?title=${titleValue}`);
+    const books = response.data;
+
+    // If no books found, hide the suggestions
+    if (books.length === 0) {
+      suggestionList.innerHTML = "";
+      suggestionList.classList.add("hidden");
+      toastr.info("No books found");
       return;
+    }
+
+    suggestionList.innerHTML = "";
+    books.forEach((book) => {
+      const listItem = document.createElement("li");
+      listItem.classList.add("suggestion-item");
+      listItem.innerHTML = `<strong>${book.title}</strong> by ${
+        book.author || "Unknown"
+      }`;
+      listItem.addEventListener("click", () => selectBook(book));
+      suggestionList.appendChild(listItem);
     });
+    suggestionList.classList.remove("hidden");
+  } catch (error) {
+    console.error("Error fetching book suggestions:", error);
+    toastr.error("Unable to fetch book suggestions");
+    suggestionList.innerHTML = "";
+    suggestionList.classList.add("hidden");
+  }
 });
+
+titleInput.addEventListener("focusout", () => {
+  setTimeout(() => {
+    suggestionList.classList.add("hidden");
+  }, 100);
+}
+);
+
+function selectBook(book) {
+  suggestionList.classList.add("hidden");
+  const bookCover = document.getElementById("book-cover");
+  const author = document.getElementById("review-author");
+  const genre = document.getElementById("genre");
+  const reviewPublisher = document.getElementById("review-publisher");
+  const reviewPublishYear = document.getElementById("review-publish-year");
+  const isbn = document.getElementById("isbn");
+
+  bookCover.src = book.coverUrl || "/images/image 42.png";
+  bookCover.alt = `Book Cover for ${book.title}`;
+  author.value = book.author || "Unknown";
+  genre.value = book.genres || "Not available";
+  reviewPublisher.innerHTML = book.publishers || "Not available";
+  reviewPublishYear.innerHTML = book.publishYear || "Unknown";
+  isbn.value = book.isbn || "Not available";
+  titleInput.value = book.title;
+}

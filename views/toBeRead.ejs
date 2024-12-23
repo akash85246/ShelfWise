@@ -1,5 +1,6 @@
 <div class="to-be-read-container">
   <h1>To be read</h1>
+  <% if (user && user.author === true) { %>
   <form action="/api/read-later/create" method="POST" class="list-create">
     <div class="input-container">
       <select name="type" id="type">
@@ -25,7 +26,7 @@
       <img src="/icons/createListIcon.png" alt="create list icon" />
     </button>
   </form>
-  
+  <% } %>
   <div class="to-be-read-subcontainer">
     <div class="to-be-read-subcontainer-list">
       <div>

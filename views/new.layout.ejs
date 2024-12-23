@@ -49,10 +49,23 @@
           </button>
         </div>
         <ul id="menu">
-          <li><a href="/new-review">New</a></li>
-          <li><a href="/anticipated">Anticipated</a></li>
-          <li><a href="/read-later">Read Later</a></li>
-          <li><a href="/streak">Streak</a></li>
+          <% if (user && user.author === true) { %>
+            <li><a href="/new-review">New</a></li>
+          <% } %>
+          <% if (user !== null) { %>
+            <li><a href="/anticipated">Anticipated</a></li>
+            <li><a href="/read-later">Read Later</a></li>
+            <li><a href="/streak">Streak</a></li>
+            <li><a href="/profile"><img src="<%= user.profile_picture %>" alt="profile icon" class="profileIcon"></a></li>
+          <% } %>
+          <% if (user == null) { %>
+            <li>
+              <a class="btn-google" href="/auth/google" role="button">
+                <i class="fab fa-google"></i>
+                Sign In with Google
+              </a>
+            </li>
+          <% } %>
         </ul>
       </nav>
 <%- include(view) %> 

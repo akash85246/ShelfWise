@@ -1,0 +1,56 @@
+<div class="profile-container">
+    <div class="profile-header">
+      <img src="<%= user.profile_picture %>" alt="Profile Picture" class="profile-picture" />
+      <div class="user-details">
+        <h1 class="user-name"><%= user.full_name %></h1>
+        <p class="user-email"><%= user.email %></p>
+      </div>
+    </div>
+  
+    <div class="view-history">
+      <h2 class="section-title">View History</h2>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Book Title</th>
+            <th>Author</th>
+            <th>Last Viewed</th>
+            <th>View Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% viewHistory.forEach(history => { %>
+            <tr>
+              <td><%= history.book_title %></td>
+              <td><%= history.author %></td>
+              <td><%= history.last_viewed_at %></td>
+              <td><%= history.view_count %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="actions">
+      <button id="logoutButton" class="action-button logout">Logout</button>
+      <button id="deleteButton" class="action-button delete">Delete Account</button>
+    </div>
+  </div>
+  
+  <!-- Logout Confirmation Modal -->
+  <div id="logoutModal" class="modal hidden">
+    <div class="modal-content">
+      <p>Are you sure you want to logout?</p>
+      <button id="confirmLogout" class="confirm-button">Yes</button>
+      <button id="cancelLogout" class="cancel-button">Cancel</button>
+    </div>
+  </div>
+  
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal hidden">
+    <div class="modal-content">
+      <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+      <button id="confirmDelete" class="confirm-button">Yes</button>
+      <button id="cancelDelete" class="cancel-button">Cancel</button>
+    </div>
+  </div>

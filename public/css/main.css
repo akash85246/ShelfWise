@@ -57,6 +57,9 @@ nav {
   flex-direction: row;
   gap: 1rem;
   list-style: none;
+  margin: 5px 0rem;
+  justify-content: center;
+  align-items: center;
 }
 
 #menu-toggle {
@@ -292,7 +295,7 @@ footer {
 }
 .home-sub-container > div {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   align-items: center;
   text-align: center;  
   gap: 2rem;
@@ -422,3 +425,53 @@ footer {
   display: inline-block;
 }
 
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d8c7b7;
+  color: #5c4033; 
+  font-size: small; 
+  font-weight: light;
+  text-decoration: none;
+  border: 1px solid #b6a399; 
+  border-radius: 5px;
+  padding: 8px 12px; 
+  transition: background-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: content-box;
+}
+
+.btn-google:hover {
+  background-color: #F5F3F0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+}
+
+.btn-google:active {
+  background-color: #b6a399; 
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-google i {
+  margin-right: 8px;
+  font-size: small;
+  background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335); 
+  background-clip: text;
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+}
+
+.profileIcon{
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+}
+
+.profileIcon:hover{
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+  filter: invert(1);
+}

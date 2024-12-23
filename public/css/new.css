@@ -403,6 +403,42 @@ input[type="date"] {
 
 }
 
+.hidden {
+  display: none;
+}
+
+.book-suggestions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  background: #fff;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 200;
+  position: absolute;
+  min-width: 70vw;
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+  color: #AD9D85;
+  font-weight: lighter;
+  font-size: 0.6rem;
+}
+.suggestion-item >strong{
+  font-family: "Charm", cursive;
+  font-size: 0.8rem;
+  font-weight: 400;
+  white-space: wrap;
+  word-break: break-all;
+  color: #1f1b14;
+}
+.suggestion-item:hover {
+  background: #f0f0f0;
+}
+
 @media (max-width: 1037px) {
   .main-container {
     padding: 1.5rem;
@@ -636,7 +672,6 @@ input[type="date"] {
    
   }
 
-  
   .review-date-container {
     padding: 0;
   }

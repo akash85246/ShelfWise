@@ -212,29 +212,30 @@ function updatePagination(currentPage, totalPages) {
 
 const sidebar = document.getElementById("sidebar-container");
 const toggleButton = document.getElementById("sidebar-toggle");
+const toggleCloseButton = document.getElementById("sidebar-close-toggle");
 const home_book_container = document.querySelector(".home-book-container");
-toggleButton.addEventListener("click", () => {
-  sidebar.classList.toggle("hidden");
-  toggleButton.classList.toggle("hidden");
-});
+const home_container= document.getElementById("home-container");
 
-const close_sidebar = document.getElementById("close-sidebar-toggle");
-close_sidebar.addEventListener("click", () => {
-  sidebar.classList.toggle("hidden");
-  toggleButton.classList.toggle("hidden");
-});
+let isSidebarOpen = false;
 
-const checkScreenSize = () => {
-  if (window.innerWidth <= 1234) {
-    sidebar.classList.add("hidden");
+function toggleNav() {
+  if (isSidebarOpen) {
+    // Close the sidebar
+    sidebar.style.width = "0";
+    toggleButton.style.display = "block";
   } else {
-    sidebar.classList.remove("hidden");
+    // Open the sidebar
+    sidebar.style.width = "40vw";
+    toggleButton.style.display = "none";
+   
   }
-};
+  isSidebarOpen = !isSidebarOpen;
+}
 
-checkScreenSize();
+toggleButton.addEventListener("click", toggleNav);
+toggleCloseButton.addEventListener("click", toggleNav);
 
-window.addEventListener("resize", checkScreenSize);
+
 
 const searchInput = document.getElementById("search");
 searchInput.addEventListener("input", async (e) => {

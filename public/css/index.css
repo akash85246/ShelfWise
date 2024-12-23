@@ -112,26 +112,23 @@
   display: none;
 }
 
+@media (max-width: 1484px) {
+  .book-card > a > img {
+    height: 25vh;
+  }
+}
 @media (max-width: 1234px) {
   #close-sidebar-toggle {
     display: block;
   }
-  .home-book-container {
-    display: block;
-    width: 100%;
-  }
-  .sidebar-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+
   .left-home-banner {
     gap: 0rem;
     padding: 0.2rem;
     padding-top: 1.5rem;
   }
   .left-home-banner > h1 {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
     font-weight: 400;
   }
 
@@ -140,18 +137,11 @@
     font-weight: 200;
     margin: 0.2rem 0;
   }
-  .sidebar-container {
-    position: fixed;
-    width: fit-content;
-    top: 0rem;
-    height: 100%;
-  }
 
   .sidebar-toggle {
     display: block;
     position: fixed;
     right: -0.8rem;
-
     padding: 0 0.5rem;
   }
   .hidden {
@@ -162,9 +152,11 @@
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1rem;
   }
+
   .home-sub-container > h1 {
     display: flex;
   }
+
   .home-sub-container {
     padding: 1rem;
   }
@@ -178,7 +170,7 @@
   }
   .home-sub-container > h1 {
     margin: 0.5rem;
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
   .book-card > h3 {
     font-size: 0.5rem;
@@ -190,7 +182,6 @@
     padding: 0;
   }
   .home-sub-container.selected-container {
-    display: block !important;
     margin: 0;
   }
   .pagination {
@@ -204,5 +195,135 @@
   #next-btn {
     padding: 0.5rem;
     font-size: 0.6rem;
+  }
+  .sidebar {
+    padding-bottom: 2rem !important;
+    margin-bottom: 0rem !important;
+  }
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  position: absolute;
+  display: none;
+}
+.closebtn {
+  display: none;
+}
+
+.clearFilter {
+  border: none;
+  color: #ad9d85;
+  font-size: 0.8rem;
+  padding: 0;
+  margin-right: 1rem;
+}
+.sidebar-heading{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 400px) {
+  .sidebar-container {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s;
+  }
+
+  .sidebar-item {
+    display: block;
+    transition: 0.3s;
+  }
+
+  .home-book-container {
+    display: flex;
+  }
+
+  #home-container {
+    transition: margin-left 0.5s; /* If you want a transition effect */
+    padding: 20px;
+  }
+
+  .closebtn {
+    font-size: 0.8rem;
+    cursor: pointer;
+    background-color: transparent;
+    color: #ad9d85;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: none;
+    gap: 0.5rem;
+    backdrop-filter: blur(5px);
+    padding: 0;
+    padding-bottom: 0.5rem;
+  }
+  .closebtn > img {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* The button used to open the sidebar */
+  .openbtn {
+    font-size: 0.8rem;
+    cursor: pointer;
+    background-color: #f4f4f4;
+    color: #ad9d85;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    border: 0.5px solid #ad9d85;
+  }
+  .openbtn > img {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .openbtn:hover {
+    background-color: #444;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 0.5rem;
+  }
+  .sidebar-heading {
+    font-size: 0.7rem;
+    margin: 1px 0;
+    padding: 0.5rem 0;
+  }
+  .sidebar-item {
+    font-size: 0.6rem;
+    padding: 1px 0;
+  }
+  .sidebar-section {
+    margin-bottom: 0.8rem;
+  }
+  .clearFilter {
+    border: none;
+    color: #ad9d85;
+    font-size: x-small;
+    padding: 0;
+    margin-right: 1rem;
+  }
+  .home-sub-container {
+    margin-bottom: 1rem;
   }
 }
