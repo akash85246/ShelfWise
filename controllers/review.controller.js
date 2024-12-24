@@ -253,55 +253,47 @@ class ReviewController {
       } = req.query;
 
       const offset = (page - 1) * limit;
-      let query = "";
+      let query = `
+          SELECT *
+          FROM book_reviews
+          WHERE 1=1
+        `;
       const params = [];
 
       if (recommendation) {
-        // Handle specific recommendations
-        if (recommendation === "Artist of the Month") {
+        if (recommendation === "artist") {
           query = `
-            SELECT title,slug,cover_url,author, COUNT(*) AS review_count
+            SELECT title, slug, cover_url, author, genre,final_rating,created_at, COUNT(*) AS review_count
             FROM book_reviews
-            GROUP BY title, slug, author,cover_url
+            GROUP BY title, slug, author, cover_url, genre,final_rating,created_at
             ORDER BY review_count DESC
-            LIMIT $1 OFFSET $2;
           `;
-          params.push(limit, offset);
-        } else if (recommendation === "Book of the Year") {
+        } else if (recommendation === "year") {
           query = `
-            SELECT author,title,cover_url, views, final_rating,slug
+            SELECT author, title, cover_url, genre, views, final_rating, slug,created_at
             FROM book_reviews
-            ORDER BY views DESC, final_rating DESC
-            LIMIT $1 OFFSET $2;
           `;
-          params.push(limit, offset);
-        } else if (recommendation === "Top Genre") {
+        } else if (recommendation === "genre") {
           query = `
             WITH top_genre AS (
-              SELECT  author,genre,cover_url,title,slug
+              SELECT genre
               FROM book_reviews
-              GROUP BY genre,cover_url,title,slug,author
+              GROUP BY genre
               ORDER BY COUNT(*) DESC
               LIMIT 1
             )
-            SELECT *
+            SELECT author, title, slug, genre, cover_url,final_rating,created_at
             FROM book_reviews
-            WHERE genre = (SELECT genre FROM top_genre)
-            ORDER BY created_at DESC
-            LIMIT $1 OFFSET $2;
+            WHERE LOWER(genre) = (SELECT LOWER(genre) FROM top_genre)
           `;
-          params.push(limit, offset);
-        } else if (recommendation === "Trending") {
+        } else if (recommendation === "trending") {
           query = `
-            SELECT author,title,cover_url, views, final_rating, created_at,slug
+            SELECT author, title, cover_url, views, final_rating, created_at, slug
             FROM book_reviews
             WHERE created_at > NOW() - INTERVAL '1 MONTH'
-            ORDER BY views DESC, final_rating DESC
-            LIMIT $1 OFFSET $2;
           `;
-          params.push(limit, offset);
         }
-      } else {
+      } else if (bookByGenre) {
         query = `
           SELECT *
           FROM book_reviews
@@ -309,43 +301,60 @@ class ReviewController {
         `;
 
         // Filter by book genre
-        if (bookByGenre !== "All" || bookByGenre !== "all") {
-          query += ` AND LOWER(genre) = $${params.length + 1}`;
-          params.push(bookByGenre.toLowerCase());
+        if (bookByGenre != "All Genre" && bookByGenre != "all genre ") {
+          query += ` AND LOWER(genre) LIKE $${params.length + 1}`;
+          params.push(`%${bookByGenre.toLowerCase()}%`);
         }
-
-        // Sorting
-        if (sortBy) {
-          const validSortOptions = ["Title", "Best", "Newest"];
-          let sorting = "";
-          if (sortBy === "Title") {
-            sorting = "title ASC";
-          } else if (sortBy === "Best") {
-            sorting = "final_rating DESC";
-          } else if (sortBy === "Newest") {
-            sorting = "created_at DESC";
-          }
-
-          if (validSortOptions.includes(sortBy)) {
-            query += ` ORDER BY ${sorting}`;
-          } else {
-            return res.status(400).json({ message: "Invalid sortBy value" });
-          }
-        } else {
-          query += ` ORDER BY created_at DESC`;
-        }
-
-        // Add pagination
-        query += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-        params.push(limit, offset);
       }
 
-      // Execute query
+      if (sortBy) {
+        const validSortOptions = ["Title", "Best", "Newest"];
+        let sorting = "";
+
+        if (sortBy === "Title") {
+          sorting = "title ASC";
+        } else if (sortBy === "Best") {
+          sorting = "final_rating DESC";
+        } else if (sortBy === "Newest") {
+          sorting = "created_at DESC";
+        }
+
+        if (validSortOptions.includes(sortBy)) {
+          if (
+            recommendation == "artist"
+          ) {
+            query += ` , ${sorting}`;
+          } else {
+            query += ` ORDER BY ${sorting}`;
+          }
+        } else {
+          return res.status(400).json({ message: "Invalid sortBy value" });
+        }
+      } else if (
+        !recommendation ||
+        recommendation === "year" ||
+        recommendation === "genre"
+      ) {
+        query += ` ORDER BY created_at DESC`;
+      }
+      
+      const reviews= await db.query(query);
+      const totalReviews=reviews.rows.length;
+      const totalPages=Math.ceil(totalReviews/limit);
+      console.log(totalReviews);
+
+      // Add pagination
+      query += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+      params.push(limit, offset);
+
+     
       const result = await db.query(query, params);
+      // console.log(result.rows);
       res.status(200).json({
         data: result.rows,
         page,
         limit,
+        totalPages,
         total: result.rowCount,
       });
     } catch (error) {
@@ -437,7 +446,7 @@ class ReviewController {
       return null;
     }
   }
-//used to delete a book from the to be read list in this controller only mo route is made for this
+  //used to delete a book from the to be read list in this controller only mo route is made for this
   static async deleteReadLater(title) {
     try {
       db.query("DELETE FROM to_be_read WHERE title = $1", [title]);
@@ -531,7 +540,7 @@ class ReviewController {
         const user = req.user;
         const previous = await db.query(
           "SELECT * FROM reader_views WHERE reader_id = $1 AND review_id = $2",
-          [user.id,  review.id]
+          [user.id, review.id]
         );
 
         if (previous.rows.length === 0) {
@@ -539,7 +548,7 @@ class ReviewController {
             `INSERT INTO reader_views (reader_id, review_id) 
              VALUES ($1, $2) 
              RETURNING *`,
-            [user.id,  review.id]
+            [user.id, review.id]
           );
         } else {
           const updated = await db.query(
@@ -549,7 +558,7 @@ class ReviewController {
                  updated_at = CURRENT_TIMESTAMP 
              WHERE reader_id = $1 AND review_id = $2 
              RETURNING *`,
-            [user.id,  review.id]
+            [user.id, review.id]
           );
         }
       }

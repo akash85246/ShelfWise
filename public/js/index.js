@@ -3,7 +3,7 @@ let bookByGenre = "";
 let recommendation = "";
 let currentPage = 1;
 let totalPages = 100;
-const limit = 6;
+const limit = 8;
 const visiblePages = 5;
 
 function displayRecommendedBooks() {
@@ -12,15 +12,23 @@ function displayRecommendedBooks() {
 
   recommendedBooks.forEach((book) => {
     const bookCard = document.createElement("div");
-    bookCard.className = "book-card";
+    bookCard.className = "book-card group perspective";
 
     bookCard.innerHTML = `
-      <a href="/review/${book.slug}">
-      <img src="${book.cover_url}" alt="${book.title}" />
-      </a>
-      <h3>${book.title}</h3>
-      <p>${book.author}</p>
+      <div class="inner-card transform-style">
+        <div class="front-card">
+          <a href="/review/${book.slug}">
+            <img src="${book.cover_url}" alt="${book.title}" />
+          </a>
+        </div>
+        <div class="back-card">
+          <h3>${book.title}</h3>
+          <p>${book.author}</p>
+          <a href="/review/${book.slug}">read more</a>
+        </div>
+      </div>
     `;
+
     recommendedBooksContainer.appendChild(bookCard);
   });
 }
@@ -30,13 +38,20 @@ function displayPopularBooks() {
 
   popularBooks.forEach((book) => {
     const bookCard = document.createElement("div");
-    bookCard.className = "book-card";
+    bookCard.className = "book-card group perspective";
     bookCard.innerHTML = `
+     <div class="inner-card transform-style">
+     <div class="front-card">
     <a href="/review/${book.slug}">
       <img src="${book.cover_url}" alt="${book.title}" />
       </a>
+    </div>
+    <div class="back-card">
       <h3>${book.title}</h3>
       <p>${book.author}</p>
+      <a href="/review/${book.slug}">read more</a>
+    </div>
+    </div>
     `;
     popularBooksContainer.appendChild(bookCard);
   });
@@ -47,13 +62,20 @@ function displayLatestBooks() {
 
   recentBooks.forEach((book) => {
     const bookCard = document.createElement("div");
-    bookCard.className = "book-card";
+    bookCard.className = "book-card group perspective";
     bookCard.innerHTML = `
+        <div class="inner-card transform-style">
+        <div class="front-card">
         <a href="/review/${book.slug}">
         <img src="${book.cover_url}" alt="${book.title}" />
         </a>
+        </div>
+        <div class="back-card">
         <h3>${book.title}</h3>
         <p>${book.author}</p>
+        <a href="/review/${book.slug}">read more</a>
+        </div>
+        </div>
         `;
     latestBooksContainer.appendChild(bookCard);
   });
@@ -64,13 +86,20 @@ function displayLikedBooks() {
 
   likedBooks.forEach((book) => {
     const bookCard = document.createElement("div");
-    bookCard.className = "book-card";
+    bookCard.className = "book-card group perspective";
     bookCard.innerHTML = `
+      <div class="inner-card transform-style">
+      <div class="front-card">
     <a href="/review/${book.slug}">
       <img src="${book.cover_url}" alt="${book.title}" />
       </a>
+    </div>
+    <div class="back-card">
       <h3>${book.title}</h3>
       <p>${book.author}</p>
+      <a href="/review/${book.slug}">read more</a>
+    </div>
+    </div>
     `;
     likedBooksContainer.appendChild(bookCard);
   });
@@ -89,8 +118,18 @@ async function handleSelection(category, value, element) {
     sortBy = value;
   } else if (category === "bookByGenre") {
     bookByGenre = value;
+    recommendation="";
   } else if (category === "recommendation") {
-    recommendation = value;
+    if (value == "Artist of the Month") {
+      recommendation = "artist";
+    } else if (value == "Book of the Year") {
+      recommendation = "year";
+    } else if (value == "Top Genre") {
+      recommendation = "genre";
+    } else if (value == "Trending") {
+      recommendation = "trending";
+    }
+    bookByGenre = "";
   }
 
   document
@@ -101,14 +140,31 @@ async function handleSelection(category, value, element) {
       item.classList.remove("active");
     });
 
+    if(category=="recommendation"){
+      document.querySelectorAll(
+        `.sidebar-section[data-category="bookByGenre"] .sidebar-item`
+      )
+      .forEach((item) => {
+        item.classList.remove("active");
+      });
+    }
+    if(category=="bookByGenre"){
+      document.querySelectorAll(
+        `.sidebar-section[data-category="recommendation"] .sidebar-item`
+      )
+      .forEach((item) => {
+        item.classList.remove("active");
+      });
+    }
+
   element.classList.add("active");
 
-  if (sortBy || bookByGenre || recommendation) {
+  if (sortBy || bookByGenre || recommendation && !(recommendation&&bookByGenre)) {
     defaultContainers.forEach(
       (container) => (container.style.display = "none")
     );
     selectedContainer.style.display = "grid";
-    getBooks(1, 6);
+    getBooks(1, limit);
   } else {
     defaultContainers.forEach(
       (container) => (container.style.display = "grid")
@@ -123,9 +179,24 @@ document.querySelectorAll(".sidebar-item").forEach((item) => {
       .closest(".sidebar-section")
       .getAttribute("data-category");
     const value = item.textContent.trim();
+    console.log(category, value, item);
     handleSelection(category, value, item);
   });
 });
+
+document.getElementById("clearFilter").addEventListener("click", () => {
+  sortBy = "";
+  bookByGenre = "";
+  recommendation = "";
+  const defaultContainers = document.querySelectorAll(".default-container");
+  const selectedContainer = document.querySelector(".selected-container");
+  document.querySelectorAll(".sidebar-item").forEach((item) => {
+    item.classList.remove("active");
+  });
+  defaultContainers.forEach((container) => (container.style.display = "grid"));
+  selectedContainer.style.display = "none";
+});
+
 
 async function displaySelectedBooks(bookList) {
   if (bookList.length > 0) {
@@ -134,13 +205,20 @@ async function displaySelectedBooks(bookList) {
     selectedBooksContainer.innerHTML = "";
     bookList.forEach((book) => {
       const bookCard = document.createElement("div");
-      bookCard.className = "book-card";
+      bookCard.className = "book-card group perspective";
       bookCard.innerHTML = `
+      <div class="inner-card transform-style">
+      <div class="front-card">
     <a href="/review/${book.slug}">
       <img src="${book.cover_url}" alt="${book.title}" />
       </a>
+    </div>
+    <div class="back-card">
       <h3>${book.title}</h3>
       <p>${book.author}</p>
+      <a href="/review/${book.slug}">read more</a>
+    </div>
+    </div>
     `;
       selectedBooksContainer.appendChild(bookCard);
     });
@@ -152,6 +230,8 @@ async function displaySelectedBooks(bookList) {
 }
 
 async function getBooks(page, limit) {
+  console.log(sortBy, bookByGenre, recommendation);
+  console.log(page, limit);
   const response = await axios.get("/api/review/filter", {
     params: {
       sortBy: sortBy,
@@ -161,8 +241,9 @@ async function getBooks(page, limit) {
       limit: limit,
     },
   });
-
-  totalPages = 10;
+  console.log(response.data);
+  totalPages = response.data.totalPages;
+  currentPage = response.data.page;
   updatePagination(currentPage, totalPages);
   displaySelectedBooks(response.data.data);
 }
@@ -177,11 +258,11 @@ function updatePagination(currentPage, totalPages) {
   const startPage =
     Math.floor((currentPage - 1) / visiblePages) * visiblePages + 1;
   const endPage = Math.min(startPage + visiblePages - 1, totalPages);
-
+console.log("currentPage",currentPage);
   for (let i = startPage; i <= endPage; i++) {
     const pageNumber = document.createElement("button");
     pageNumber.textContent = i;
-    pageNumber.className = i === currentPage ? "active" : "";
+    pageNumber.className = `Page${i}`;
     pageNumber.onclick = () => {
       currentPage = i;
       getBooks(currentPage, limit);
@@ -192,10 +273,15 @@ function updatePagination(currentPage, totalPages) {
 
   prevBtn.disabled = currentPage <= 1;
   nextBtn.disabled = currentPage >= totalPages;
-
+  prevBtn.enabled = currentPage > 1;
+  nextBtn.enabled = currentPage < totalPages;
+  prevBtn.style.display = currentPage > 1 ? "block" : "none";
+  nextBtn.style.display = currentPage < totalPages ? "block" : "none";
   prevBtn.onclick = () => {
+    console.log("prev clicked",currentPage,visiblePages,);
     if (currentPage > 1) {
       currentPage = Math.max(1, currentPage - visiblePages);
+      console.log("prev clicked",currentPage,visiblePages,);
       getBooks(currentPage, limit);
       updatePagination(currentPage, totalPages);
     }
@@ -208,34 +294,33 @@ function updatePagination(currentPage, totalPages) {
       updatePagination(currentPage, totalPages);
     }
   };
+
+  document.querySelector(`.Page${currentPage}`).classList.add("activePage");
 }
 
 const sidebar = document.getElementById("sidebar-container");
 const toggleButton = document.getElementById("sidebar-toggle");
 const toggleCloseButton = document.getElementById("sidebar-close-toggle");
 const home_book_container = document.querySelector(".home-book-container");
-const home_container= document.getElementById("home-container");
+const home_container = document.getElementById("home-container");
 
 let isSidebarOpen = false;
 
 function toggleNav() {
   if (isSidebarOpen) {
-    // Close the sidebar
     sidebar.style.width = "0";
     toggleButton.style.display = "block";
+    // home_container.style.marginLeft = "0";
   } else {
-    // Open the sidebar
     sidebar.style.width = "40vw";
     toggleButton.style.display = "none";
-   
+    // home_container.style.marginLeft = "40vw";
   }
   isSidebarOpen = !isSidebarOpen;
 }
 
 toggleButton.addEventListener("click", toggleNav);
 toggleCloseButton.addEventListener("click", toggleNav);
-
-
 
 const searchInput = document.getElementById("search");
 searchInput.addEventListener("input", async (e) => {
@@ -263,6 +348,6 @@ searchInput.addEventListener("input", async (e) => {
       });
     })
     .catch((error) => {
-      toastr.info('No books found');
+      toastr.info("No books found");
     });
 });

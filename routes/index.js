@@ -70,17 +70,40 @@ router.get("/", async (req, res) => {
     const user = req.user;
     // console.log("User:", user);
     const recommendedBooks = await db.query(
-      "SELECT * FROM book_reviews WHERE views >= 0 AND final_rating > 3 ORDER BY views DESC, final_rating DESC LIMIT 6;"
+      "SELECT * FROM book_reviews WHERE views >= 0 AND final_rating >= 3 ORDER BY views DESC, final_rating DESC LIMIT 8;"
     );
     const popularBooks = await db.query(
-      "SELECT * FROM book_reviews ORDER BY views DESC, created_at DESC LIMIT 6"
+      "SELECT * FROM book_reviews ORDER BY views DESC, created_at DESC LIMIT 8"
     );
     const recentBooks = await db.query(
-      "SELECT * FROM book_reviews ORDER BY created_at DESC LIMIT 6"
+      "SELECT * FROM book_reviews ORDER BY created_at DESC LIMIT 8"
     );
-    const likedBooks = await db.query(
-      "SELECT * FROM book_reviews WHERE final_rating > 4 ORDER BY final_rating DESC, created_at DESC LIMIT 6"
-    );
+    let likedBooks;
+    if (user) {
+      likedBooks = await db.query(
+        `SELECT 
+            book_reviews.*, 
+            reader_views.view_count, 
+            reader_views.last_viewed_at 
+         FROM 
+            reader_views 
+         JOIN 
+            book_reviews 
+         ON 
+            reader_views.review_id = book_reviews.id 
+         WHERE 
+            reader_views.reader_id = $1 
+         ORDER BY 
+            reader_views.view_count DESC, 
+            reader_views.created_at DESC 
+         LIMIT 8`,
+        [user.id]
+      );
+    } else {
+        likedBooks = await db.query(
+        "SELECT book_reviews.*, reader_views.view_count, reader_views.last_viewed_at FROM reader_views JOIN book_reviews ON reader_views.review_id = book_reviews.id ORDER BY reader_views.view_count DESC, reader_views.created_at DESC LIMIT 8;"
+      );
+    }
 
     res.renderWithLayout("index.ejs", {
       listTitle: "Shelfwise",
@@ -233,12 +256,12 @@ router.get("/profile", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
       const user = req.user;
-  
+
       if (!user) {
         return res.status(401).send("Unauthorized access"); // Handle unauthorized access
       }
-        const viewHistory = await db.query(
-          `
+      const viewHistory = await db.query(
+        `
           SELECT 
               rv.id AS reader_view_id,
               rv.reader_id,
@@ -266,13 +289,13 @@ router.get("/profile", async (req, res) => {
           ORDER BY 
               rv.last_viewed_at DESC;
           `,
-          [user.id] // Pass user.id as a parameter
-        );
+        [user.id] // Pass user.id as a parameter
+      );
       // Render the profile page with the layout and data
       res.renderWithProfileLayout("profile.ejs", {
         title: "Users Page",
         user: user,
-        viewHistory: viewHistory.rows, 
+        viewHistory: viewHistory.rows,
       });
     } catch (err) {
       console.error("Error fetching view history:", err);

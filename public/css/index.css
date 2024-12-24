@@ -3,30 +3,91 @@
   grid-template-columns: 1fr 5fr;
 }
 
-.book-card > a > img {
-  height: 35vh;
-  object-fit: contain;
+.book-card{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.book-card > a > img:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+/* Container for perspective effect */
+.perspective {
+  perspective: 1000px; /* Gives the 3D effect */
 }
 
-.book-card > h3 {
-  font-family: "Charm", cursive;
-  font-size: 0.8rem;
-  font-weight: 500;
-  white-space: wrap;
-  word-break: break-all;
-  color: #1f1b14;
-  margin: 0;
+/* Inner card */
+.inner-card {
+  width: 200px; /* Adjust as needed */
+  height: 300px; /* Adjust as needed */
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
 }
-.book-card > p {
-  font-size: 0.5rem;
-  font-weight: lighter;
+
+/* Highlight effect */
+.group:hover .inner-card {
+  transform: rotateY(180deg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Highlight */
+}
+
+/* Front card */
+.front-card, .back-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  
+}
+
+.back-card{
+  width: 100%; /* Adjust as needed */
+  height: 100%; /* Adjust as needed */
+  box-sizing: border-box;
+  display: flex;
+  margin: auto;
+}
+
+/* Back card styles */
+.back-card {
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.back-card >h3 {
+  font-size: 1.5rem;
   color: #ad9d85;
+  font-family: "Charm", cursive;
+  margin: 2px 0;
+}
+.back-card >p {
+  font-size: 1rem;
+  color: #1F1B14;
+  font-family: "Overpass", sans-serif;
   margin: 0;
+  font-weight: lighter;
+}
+
+.back-card >a {
+  font-size: 1rem;
+  color: #E0DAD1;
+  font-family: "Overpass", sans-serif;
+  text-decoration: none;
+  margin: 0;
+  font-weight: lighter;
+}
+.back-card >a:hover {
+  color: #ad9d85;
+}
+
+/* Front card styles */
+.front-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .sidebar-item.active {
@@ -41,9 +102,10 @@
 }
 
 .pagination {
-  display: flex;
-  justify-content: space-evenly;
+  display: flex !important;
+  justify-content: center;
   align-items: center;
+  gap: 5px!important;
   padding: 0 5rem;
   margin-top: 20px;
   font-family: Arial, sans-serif;
@@ -62,17 +124,18 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-#page-numbers > button:hover,
+.activePage,#page-numbers > button:hover,
 #prev-btn:hover,
 #next-btn:hover {
-  background-color: #ad9d85;
-  color: white;
+  background-color: #ad9d85 !important;
+  color: white !important;
 }
 
 #page-numbers {
   display: flex;
   gap: 5px;
 }
+
 
 #prev-btn,
 #next-btn {
@@ -128,8 +191,12 @@
     padding-top: 1.5rem;
   }
   .left-home-banner > h1 {
-    font-size: 0.8rem;
+    font-size: 1.2rem;
     font-weight: 400;
+  }
+
+  .home-image {
+    width: 25rem;
   }
 
   .left-home-banner > h2 {
@@ -159,6 +226,7 @@
 
   .home-sub-container {
     padding: 1rem;
+
   }
   .book-card > a > img {
     height: 20vh;
@@ -175,12 +243,7 @@
   .book-card > h3 {
     font-size: 0.5rem;
   }
-  .selected-container {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-    margin: 1rem 0;
-    padding: 0;
-  }
+ 
   .home-sub-container.selected-container {
     margin: 0;
   }
@@ -229,15 +292,18 @@
   align-items: center;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 960px) {
+  .home-image {
+    width: 20rem;
+  }
   .sidebar-container {
-    height: 100%; /* 100% Full-height */
-    width: 0; /* 0 width - change this with JavaScript */
-    z-index: 1; /* Stay on top */
+    height: 100%; 
+    width: 0; 
+    z-index: 1; 
     top: 0;
     left: 0;
     background-color: transparent;
-    overflow-x: hidden; /* Disable horizontal scroll */
+    overflow-x: hidden; 
     transition: 0.5s;
   }
 
@@ -251,8 +317,9 @@
   }
 
   #home-container {
-    transition: margin-left 0.5s; /* If you want a transition effect */
+    transition: margin-left 0.5s; 
     padding: 20px;
+    overflow-x: hidden; 
   }
 
   .closebtn {
@@ -274,7 +341,6 @@
     height: 1rem;
   }
 
-  /* The button used to open the sidebar */
   .openbtn {
     font-size: 0.8rem;
     cursor: pointer;
@@ -290,6 +356,7 @@
     align-items: center;
     gap: 0.5rem;
     border: 0.5px solid #ad9d85;
+    z-index: 20;
   }
   .openbtn > img {
     width: 1rem;
@@ -303,6 +370,7 @@
   .sidebar {
     width: 100%;
     padding: 0.5rem;
+    padding-top: 3rem;
   }
   .sidebar-heading {
     font-size: 0.7rem;
@@ -311,7 +379,7 @@
   }
   .sidebar-item {
     font-size: 0.6rem;
-    padding: 1px 0;
+    margin: 2px 0;
   }
   .sidebar-section {
     margin-bottom: 0.8rem;
@@ -325,5 +393,59 @@
   }
   .home-sub-container {
     margin-bottom: 1rem;
+    overflow-x: hidden;
+  }
+
+  
+}
+
+@media (max-width: 766px) {
+  .home-image {
+    width: 15rem;
+  }
+  .inner-card{
+    height: 30vh;
+    width: 20vh;
+    box-sizing: content-box;
+  }
+  .back-card{
+    padding: 0.5rem;
+  }
+  .back-card >h3 {
+    font-size: 1rem;
+  }
+  .back-card >p {
+    font-size: 0.8rem;
+  }
+  .back-card >a {
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 511px) {
+  .home-image {
+    width: 8rem;
+  }
+  .inner-card{
+    height: 20vh;
+    width: 12vh;
+    box-sizing: content-box;
+  }
+  .back-card{
+    padding: 0.2rem;
+  }
+  .back-card >h3 {
+    font-size: 0.8rem;
+    overflow: hidden;
+  }
+  .back-card >p {
+    font-size: 0.6rem;
+    overflow: hidden;
+  }
+  .back-card >a {
+    font-size: 0.6rem;
+    overflow: hidden;
+  }
+  .left-home-banner > h1 {
+    font-size: 0.6rem;
   }
 }

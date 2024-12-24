@@ -1,7 +1,3 @@
--- Table: public.book_reviews
-
--- DROP TABLE IF EXISTS public.book_reviews;
-
 CREATE TABLE IF NOT EXISTS public.book_reviews
 (
     id integer NOT NULL DEFAULT nextval('book_reviews_id_seq'::regclass),
@@ -55,19 +51,11 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.book_reviews
     OWNER to permalist_k8so_user;
 
--- Trigger: set_updated_at
-
--- DROP TRIGGER IF EXISTS set_updated_at ON public.book_reviews;
-
 CREATE OR REPLACE TRIGGER set_updated_at
     BEFORE UPDATE 
     ON public.book_reviews
     FOR EACH ROW
     EXECUTE FUNCTION public.update_updated_at_column();
-
--- Trigger: trigger_update_final_rating
-
--- DROP TRIGGER IF EXISTS trigger_update_final_rating ON public.book_reviews;
 
 CREATE OR REPLACE TRIGGER trigger_update_final_rating
     AFTER INSERT OR UPDATE 
@@ -99,12 +87,12 @@ CREATE TABLE readers (
 
 CREATE TABLE reader_views (
     id SERIAL PRIMARY KEY,
-    reader_id INT NOT NULL, -- References the readers table
-    review_id INT NOT NULL, -- References the book_reviews table
-    view_count INT DEFAULT 1, -- Tracks how many times the review was viewed
-    last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Tracks the last viewed timestamp
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the record was first created
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Initialize the updated_at column
+    reader_id INT NOT NULL, 
+    review_id INT NOT NULL, 
+    view_count INT DEFAULT 1,
+    last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (reader_id) REFERENCES readers(id) ON DELETE CASCADE,
     FOREIGN KEY (review_id) REFERENCES book_reviews(id) ON DELETE CASCADE
 );
@@ -124,33 +112,33 @@ FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TABLE to_be_read (
-    id SERIAL PRIMARY KEY,           -- Unique identifier for each record
-    title VARCHAR(255) NOT NULL,     -- Book title
-    author VARCHAR(255) NOT NULL,    -- Author of the book
-    type VARCHAR(100) NOT NULL,      -- Type of the book (e.g., genre or category)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp for when the record was created
+    id SERIAL PRIMARY KEY,           
+    title VARCHAR(255) NOT NULL,     
+    author VARCHAR(255) NOT NULL,   
+    type VARCHAR(100) NOT NULL,      
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 
 
 CREATE TABLE recommendations (
-    id SERIAL PRIMARY KEY,            -- Unique identifier for each recommendation
-    ip_address INET NOT NULL,         -- IP address of the user
-    book_review_id INTEGER NOT NULL,  -- Reference to the book review ID
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for when the record was created
+    id SERIAL PRIMARY KEY,    
+    ip_address INET NOT NULL,        
+    book_review_id INTEGER NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_book_review FOREIGN KEY (book_review_id) 
     REFERENCES book_reviews (id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE anticipated_books (
-    id SERIAL PRIMARY KEY,                -- Unique identifier for each anticipated book
-    title VARCHAR(255) NOT NULL,          -- Title of the book
-    author VARCHAR(255) NOT NULL,         -- Author of the book
-    release_date DATE NOT NULL,           -- Release date of the book
-    cdn_link TEXT NOT NULL,               -- URL of the uploaded image
-    emoji VARCHAR(10),                    -- Emoji associated with the book (optional)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp when the record was created
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp when the record was last updated
+    id SERIAL PRIMARY KEY,               
+    title VARCHAR(255) NOT NULL,         
+    author VARCHAR(255) NOT NULL,         
+    release_date DATE NOT NULL,           
+    cdn_link TEXT NOT NULL,               
+    emoji VARCHAR(10),                    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
