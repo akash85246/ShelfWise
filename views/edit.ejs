@@ -13,6 +13,7 @@
           id="review-title"
           value="<%- review.title %>"
         />
+        <ul class="book-suggestions hidden" id="book-suggestions"></ul>
         <input
           type="text"
           class="review-author"
@@ -20,6 +21,7 @@
           placeholder="Author"
           max="255"
           value="<%- review.author %>"
+          readonly
         />
       </div>
       <div class="save-button-container">

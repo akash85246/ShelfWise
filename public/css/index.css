@@ -52,26 +52,24 @@
   transform: rotateY(180deg);
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   flex-direction: column;
   padding: 1rem;
+ 
 }
 
-.back-card >h3 {
-  font-size: 1.5rem;
-  color: #ad9d85;
-  font-family: "Charm", cursive;
-  margin: 2px 0;
-}
 .back-card >p {
   font-size: 1rem;
   color: #1F1B14;
   font-family: "Overpass", sans-serif;
   margin: 0;
   font-weight: lighter;
+  word-wrap: break-word;
+  box-sizing: border-box;
+  word-break: break-all;
 }
 
-.back-card >a {
+.read-more {
   font-size: 1rem;
   color: #E0DAD1;
   font-family: "Overpass", sans-serif;
@@ -79,7 +77,7 @@
   margin: 0;
   font-weight: lighter;
 }
-.back-card >a:hover {
+.read-more:hover {
   color: #ad9d85;
 }
 
@@ -89,6 +87,17 @@
   height: 100%;
   object-fit: cover;
 }
+
+.star{
+  height: 1.5rem;
+  width: 1.5rem;
+}
+.book-rating>span{
+  font-size: 0.6rem;
+  color: #ad9d85;
+  font-weight: lighter;
+}
+
 
 .sidebar-item.active {
   color: #ad9d85;
@@ -417,7 +426,7 @@
   .back-card >p {
     font-size: 0.8rem;
   }
-  .back-card >a {
+  .read-more {
     font-size: 0.8rem;
   }
 }
@@ -441,11 +450,15 @@
     font-size: 0.6rem;
     overflow: hidden;
   }
-  .back-card >a {
+  .read-more {
     font-size: 0.6rem;
     overflow: hidden;
   }
   .left-home-banner > h1 {
     font-size: 0.6rem;
+  }
+  .star{
+    height: 0.8rem;
+    width: 0.8rem;
   }
 }

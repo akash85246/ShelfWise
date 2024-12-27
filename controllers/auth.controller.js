@@ -1,9 +1,11 @@
+import axios from "axios";
 import passport from "passport";
 
 class AuthController {
   // Trigger Google authentication
   static async signInWithGoogle(req, res, next) {
     passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+   
   }
 
   // Handle callback after Google authentication

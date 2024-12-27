@@ -302,6 +302,7 @@ class ReviewController {
 
         // Filter by book genre
         if (bookByGenre != "All Genre" && bookByGenre != "all genre ") {
+          console.log(bookByGenre);
           query += ` AND LOWER(genre) LIKE $${params.length + 1}`;
           params.push(`%${bookByGenre.toLowerCase()}%`);
         }
@@ -338,7 +339,8 @@ class ReviewController {
         query += ` ORDER BY created_at DESC`;
       }
       
-      const reviews= await db.query(query);
+      console.log(query);
+      const reviews= await db.query(query, params);
       const totalReviews=reviews.rows.length;
       const totalPages=Math.ceil(totalReviews/limit);
       console.log(totalReviews);
@@ -347,7 +349,7 @@ class ReviewController {
       query += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
       params.push(limit, offset);
 
-     
+     console.log(query, params);
       const result = await db.query(query, params);
       // console.log(result.rows);
       res.status(200).json({
@@ -561,6 +563,10 @@ class ReviewController {
             [user.id, review.id]
           );
         }
+        await db.query(
+          "UPDATE book_reviews SET views = views + 1 WHERE id = $1",
+          [review.id]
+        );
       }
 
       res.renderWithShowLayout("show.ejs", {

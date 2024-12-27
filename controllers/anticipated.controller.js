@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from "cloudinary";
-import multer from "multer";
 import { unlink } from "fs/promises";
 import dotenv from "dotenv";
 dotenv.config();
@@ -82,11 +81,11 @@ class AnticipatedController {
       })
       .catch((error) => {
         console.error("Error deleting anticipated book:", error);
-        res.status(500).json({ error: "Something went wrong. Please try again!" });
+        res
+          .status(500)
+          .json({ error: "Something went wrong. Please try again!" });
       });
   }
-
-  
 }
 
 export default AnticipatedController;

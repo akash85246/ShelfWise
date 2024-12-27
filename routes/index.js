@@ -68,7 +68,6 @@ async function getBookDetailsWithCache(title) {
 router.get("/", async (req, res) => {
   try {
     const user = req.user;
-    // console.log("User:", user);
     const recommendedBooks = await db.query(
       "SELECT * FROM book_reviews WHERE views >= 0 AND final_rating >= 3 ORDER BY views DESC, final_rating DESC LIMIT 8;"
     );
@@ -100,7 +99,7 @@ router.get("/", async (req, res) => {
         [user.id]
       );
     } else {
-        likedBooks = await db.query(
+      likedBooks = await db.query(
         "SELECT book_reviews.*, reader_views.view_count, reader_views.last_viewed_at FROM reader_views JOIN book_reviews ON reader_views.review_id = book_reviews.id ORDER BY reader_views.view_count DESC, reader_views.created_at DESC LIMIT 8;"
       );
     }
@@ -140,7 +139,7 @@ router.get("/edit/:slug", ReviewController.getEditBookReview);
 
 router.get("/anticipated", async (req, res) => {
   if (!req.isAuthenticated()) {
-    return res.redirect("/"); // Redirect early if not authenticated
+    return res.redirect("/");
   }
 
   const user = req.user;
@@ -256,11 +255,14 @@ router.get("/profile", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
       const user = req.user;
-
+      let viewHistory;
       if (!user) {
         return res.status(401).send("Unauthorized access"); // Handle unauthorized access
       }
-      const viewHistory = await db.query(
+      if(user.author == true){
+        viewHistory=await db.query("SELECT * FROM book_reviews ORDER BY created_at DESC;");
+      }else{
+      viewHistory = await db.query(
         `
           SELECT 
               rv.id AS reader_view_id,
@@ -289,9 +291,8 @@ router.get("/profile", async (req, res) => {
           ORDER BY 
               rv.last_viewed_at DESC;
           `,
-        [user.id] // Pass user.id as a parameter
-      );
-      // Render the profile page with the layout and data
+        [user.id]
+      );}
       res.renderWithProfileLayout("profile.ejs", {
         title: "Users Page",
         user: user,

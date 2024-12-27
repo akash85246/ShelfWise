@@ -46,6 +46,7 @@ if (user && user.author === true) {
 }
 const standaloneList = document.querySelector(".standalone-list");
 const seriesList = document.querySelector(".series-list");
+
 function displayStandaloneBooks(standaloneBooks) {
   const standaloneList = document.querySelector(".standalone-list");
   standaloneList.innerHTML = standaloneBooks
@@ -107,3 +108,63 @@ async function deleteItem(id) {
 
 displaySeriesBooks(seriesBooks);
 displayStandaloneBooks(standaloneBooks);
+
+
+
+const titleInput = document.getElementById("title");
+const suggestionList = document.getElementById("book-suggestions");
+
+titleInput.addEventListener("input", async () => {
+  const titleValue = titleInput.value.trim();
+  // Clear suggestions if the input is empty
+  if (!titleValue) {
+    suggestionList.innerHTML = "";
+    suggestionList.classList.add("hidden");
+    return;
+  }
+
+  try {
+    const response = await axios.get(`/api/book-cover?title=${titleValue}`);
+    const books = response.data;
+
+    // If no books found, hide the suggestions
+    if (books.length === 0) {
+      suggestionList.innerHTML = "";
+      suggestionList.classList.add("hidden");
+      toastr.info("No books found");
+      return;
+    }
+
+    suggestionList.innerHTML = "";
+    books.forEach((book) => {
+      const listItem = document.createElement("li");
+      listItem.classList.add("suggestion-item");
+      listItem.innerHTML = `<strong>${book.title}</strong> by ${
+        book.author || "Unknown"
+      }`;
+      listItem.addEventListener("click", () => selectBook(book));
+      suggestionList.appendChild(listItem);
+    });
+    suggestionList.classList.remove("hidden");
+  } catch (error) {
+    console.error("Error fetching book suggestions:", error);
+    toastr.error("Unable to fetch book suggestions");
+    suggestionList.innerHTML = "";
+    suggestionList.classList.add("hidden");
+  }
+});
+
+titleInput.addEventListener("focusout", () => {
+  setTimeout(() => {
+    suggestionList.classList.add("hidden");
+  }, 100);
+}
+);
+
+function selectBook(book) {
+  suggestionList.classList.add("hidden");
+  const authorInput = document.getElementById("author");
+  authorInput.value = book.author || "Unknown";
+  titleInput.value = book.title;
+}
+

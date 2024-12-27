@@ -1,6 +1,7 @@
 import express from "express";
-import axios from "axios";
+import Mail from "../config/mailer.js";
 import ReviewController from "../controllers/review.controller.js";
+import passport from "passport";
 
 const router = express.Router();
 
@@ -61,5 +62,9 @@ router.get("/review/search", ReviewController.searchReviews);
 
 router.get("/book-cover",ReviewController.getBooksByTitle);
 
+router.post(
+    "/send-email",
+    Mail.SendEmail
+  );
 
 export default router;

@@ -3,6 +3,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 2rem;
+  min-height: 60vh;
 }
 .anticipated-heading {
   font-family: "Charm", cursive;
@@ -311,7 +312,7 @@ height: 100%;
     grid-template-columns: repeat(4, 1fr);
   }
 }
-@media (max-width: 955px) {
+@media (max-width: 855px) {
   .anticipated-container {
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
@@ -325,11 +326,17 @@ height: 100%;
 }
 
 @media (max-width: 646px) {
+  .anticipated-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
   .anticipated-card {
-   height: 200px;
-  width: 100px;  }
+   height: 15rem;
+  width: 10rem;  }
+
   .anticipated-emoji {
-    top: -13.5rem;
+    top: -16.5rem;
   }
   .anticipated-title {
     font-size: 0.8rem;
@@ -342,6 +349,33 @@ height: 100%;
   .anticipated-card-details {
     padding: 0.2rem;
   }
+}
+@media screen and (max-width: 500px) {
+  .anticipated-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 0.5rem;
+  }
+  .anticipated-card {
+    height: 15rem;
+    width: 10rem;
+  }
+
+  .anticipated-emoji {
+    top: -16.5rem;
+  }
+  .anticipated-heading {
+    font-size: 2rem;
+  }
+  .anticipated-author,.anticipated-date  {
+    font-size: 0.4rem;
+    word-break: break-all;
+    white-space: wrap;
+  }
+  .anticipated-card-details {
+    padding: 0.2rem;
+  }
+  
 }
 .pagination{
   display: flex;
@@ -365,4 +399,9 @@ height: 100%;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s, color 0.3s;
+}
+
+.activePage{
+  background-color: #ad9d85 !important;
+  color: white !important;
 }

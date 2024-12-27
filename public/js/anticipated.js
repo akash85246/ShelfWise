@@ -105,14 +105,12 @@ const anticipatedContainer = document.querySelector(".anticipated-container");
 function displayAnticipatedBooks(anticipatedBooks) {
   const anticipatedContainer = document.querySelector("#anticipated-container");
 
-  // Remove all child elements except the "create-anticipated" card
   Array.from(anticipatedContainer.children).forEach((child) => {
     if (!child.classList.contains("create-anticipated")) {
       anticipatedContainer.removeChild(child);
     }
   });
 
-  // Create a document fragment for the new books
   const fragment = document.createDocumentFragment();
 
   anticipatedBooks.forEach((book) => {
@@ -146,7 +144,7 @@ function renderPagination(currentPage, totalPages) {
   const paginationContainer = document.querySelector(".pagination");
   paginationContainer.innerHTML = ""; 
 
-  const maxVisiblePages = 5; // Number of page buttons to display at a time
+  const maxVisiblePages = 5;
   const startPage = Math.floor((currentPage - 1) / maxVisiblePages) * maxVisiblePages + 1;
   const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
 
@@ -166,7 +164,8 @@ function renderPagination(currentPage, totalPages) {
   for (let i = startPage; i <= endPage; i++) {
     const pageBtn = document.createElement("button");
     pageBtn.textContent = i;
-    pageBtn.className = `page-btn ${i === currentPage ? "active" : ""}`;
+    pageBtn.className = `page-btn${i} page-btn`;
+    
     pageBtn.addEventListener("click", () => {
       fetchAnticipatedBooks(i);
     });
@@ -178,6 +177,7 @@ function renderPagination(currentPage, totalPages) {
   nextBtn.textContent = "Next";
   nextBtn.className = "next-btn";
   nextBtn.disabled = currentPage === totalPages;
+  nextBtn.style.display = currentPage === totalPages ? "none" : "block";
   nextBtn.addEventListener("click", () => {
     currentPage = parseInt(currentPage);
     if (currentPage < totalPages) {
@@ -185,6 +185,14 @@ function renderPagination(currentPage, totalPages) {
     }
   });
   paginationContainer.appendChild(nextBtn);
+  console.log(currentPage, totalPages);
+  document.querySelector(`.page-btn${currentPage}`).classList.add("activePage");
+  if(currentPage == totalPages) {
+    nextBtn.style.display = "none";
+  }
+  if(currentPage == 1) {
+    prevBtn.style.display = "none";
+  }
 }
 
 // Function to fetch books dynamically for the selected page

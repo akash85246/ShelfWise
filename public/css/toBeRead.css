@@ -6,7 +6,7 @@
     font-weight: 200;
     font-style: normal;
     font-size: 4rem;
-    margin-bottom: 0rem;
+    margin:0.5rem 0rem;
     font-weight: bold;
     color: #333;
     border: none;
@@ -23,8 +23,12 @@
 }
 
 .to-be-read-image {
-  max-height: 100vh;
+  max-width: 40vw;
   object-fit: contain;
+  margin: auto;
+  margin-top: 0rem;
+  position: sticky;
+  top: 0;
 }
 
 .to-be-read-subcontainer-list {
@@ -42,6 +46,7 @@
   display: flex;
   gap: 1rem;
   width: 100%;
+  position: relative;
 }
 .input-container > select:first-child {
   font-size: 0.8rem;
@@ -109,12 +114,14 @@
 }
 
 .list-group-item input[type="checkbox"] {
+  margin: 1rem;
   margin-right: 1rem;
-  width: 18px;
-  height: 18px;
+  width: 0.8rem;
+  height: 0.8rem;
   cursor: pointer;
   background-color: #AD9D85;
   border-color: #AD9D85;
+  box-sizing: border-box;
 }
 
 .list-group-item h3 {
@@ -141,6 +148,125 @@
  height: 100%;
 
 }
-.to-be-read-subcontainer-list>div{
-  height: 40vh;
+
+.hidden {
+  display: none;
+}
+
+.book-suggestions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  background: #fff;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 200;
+  position: absolute;
+  min-width: 100%;
+  top: 3rem;
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+  color: #AD9D85;
+  font-weight: lighter;
+  font-size: 0.6rem;
+}
+
+.suggestion-item >strong{
+  font-family: "Charm", cursive;
+  font-size: 0.8rem;
+  font-weight: 400;
+  white-space: wrap;
+  word-break: break-all;
+  color: #1f1b14;
+}
+.suggestion-item:hover {
+  background: #f0f0f0;
+}
+
+@media screen and (max-width: 1000px) {
+  .to-be-read-container {
+    padding: 1rem;
+  }
+  .standalone-list, .series-list {
+    max-height: 20vh;
+}
+.to-be-read-subcontainer-list {
+  max-height: 80vh;
+}
+}
+
+
+@media screen and (max-width: 700px) {
+
+  .list-group-item h3 {
+    font-size: 0.7rem;
+  }
+  .list-group-item h3 span {
+    font-size: 0.5rem;
+  }
+  .to-be-read-image {
+    max-width: 25vw;
+    margin: auto;
+    margin-top: 0rem;
+  }
+  .list-group-item {
+    margin: 0rem;
+  }
+  .list-group-item input[type="checkbox"] {
+    margin: 0.4rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .to-be-read-image {
+    max-width: 100%;
+    width: 100%;
+    min-height: 40vh;
+    margin: auto;
+    margin-top: 0rem;
+    object-fit: cover;
+  }
+  .input-container > select:first-child, #title, #author  {
+    font-size: 0.6rem;
+    padding: 0rem 0.2rem;
+  }
+  .input-container {
+    gap: 0.2rem;
+  }
+  .to-be-read-container {
+    padding: 0.5rem;
+  }
+  .list-create {
+    gap: 0.2rem;
+  }
+  .list-group-item {
+    margin:0.2rem 0 ;
+  }
+  .to-be-read-subcontainer-list > div > h1 {
+    font-size: 1rem;
+  }
+  .to-be-read-container > h1 {
+    margin: 0.5rem;
+    margin-top: 1rem;
+    font-size: 2rem;
+  }
+  .list-group-item h3 {
+    font-size: 0.6rem;
+    font-weight: 400;
+  }
+  .list-group-item h3 span {
+    font-size: 0.4rem;
+    font-weight: 200;
+  }
+  .to-be-read-subcontainer-list {
+    max-height: 100vh;
+  }
+  .standalone-list, .series-list {
+    max-height: 60vh;
+    margin: 0.5rem 0;
+  }
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import bodyParser from "body-parser";
+import cors from "cors";
 import pg from "pg";
 import dotenv from "dotenv";
 import router from "./routes/index.js";
@@ -13,16 +13,15 @@ import RecommendationRouter from "./routes/recommendation.js";
 import passport from "passport";
 import session from "express-session";
 import GoogleStrategy from "passport-google-oauth2";
-import cors from "cors";
+import  "./cron/bookReleaseNotifier.js";
 import env from "dotenv";
-import e from "express";
 
 const app = express();
 const port = 3000;
 dotenv.config();
 
 env.config();
-
+app.use(cors()); 
 app.use(
   session({
     secret: process.env.SESSION_SECRET,

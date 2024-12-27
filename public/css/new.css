@@ -417,6 +417,7 @@ input[type="date"] {
   overflow-y: auto;
   z-index: 200;
   position: absolute;
+  bottom: 0;
   min-width: 70vw;
 }
 
