@@ -8,15 +8,17 @@ import axios from "axios";
 const sendReleaseEmails = async (book) => {
   const users = await db.query(`SELECT * FROM public.readers ORDER BY id ASC`);
 
-  for (let user of users) {
+  users.rows.forEach(async (user) => {
     const message = `
-            Hi ${user.full_name},
-            
-            The book "${book.title}" by ${book.author} has been released! 🎉
-            
-            Cheers,
-            SHELFWISE
-        `;
+    <p>Hi ${user.full_name},</p>
+    
+    <p>The book "<strong>${book.title}</strong>" by <em>${book.author}</em> has been released! 🎉</p>
+    
+    <img src="${book.cdn_link}" alt="Book Cover" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;" />
+    
+    <p>Cheers,</p>
+    <p><strong>SHELFWISE</strong></p>
+`;
 
     try {
       axios
@@ -31,20 +33,26 @@ const sendReleaseEmails = async (book) => {
 
       db.query(`DELETE FROM public.anticipated_books WHERE id = $1`, [book.id]);
 
+      db.query(
+        `INSERT INTO to_be_read (title, author,type) VALUES ($1, $2, $3)`,
+        [book.title, book.author, "standalone"]
+      );
+
       console.log(`Email sent to ${user.email}`);
     } catch (error) {
       console.error("Failed to send email to", user.email, error);
     }
-  }
+  });
 };
 
 // Cron job to run daily at midnight and check for books to notify
 cron.schedule("* * * * *", async () => {
   console.log("Checking for book releases...");
   const releasedBooks = await db.query(
-    `SELECT * FROM public.anticipated_books ORDER BY id ASC `
+    `SELECT * FROM public.anticipated_books WHERE release_date <= CURRENT_DATE ORDER BY id ASC;`
   );
-  for (let book of releasedBooks) {
+  //console.log(releasedBooks.rows);
+  releasedBooks.rows.forEach(async (book) => {
     await sendReleaseEmails(book);
-  }
+  });
 });

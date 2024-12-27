@@ -4,7 +4,6 @@ import Mailgen from "mailgen";
 class Mail {
   static async SendEmail(req, res) {
     try {
-      console.log(process.env.EMAIL, process.env.EMAIL_PASSWORD);
       // Email configuration for Gmail
       const nodeConfig = {
         service: "gmail",
@@ -17,8 +16,7 @@ class Mail {
       };
 
       const transporter = nodemailer.createTransport(nodeConfig);
-      console.log(transporter);
-
+      
       const mailGenerator = new Mailgen({
         theme: "default",
         product: {

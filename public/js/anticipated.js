@@ -185,7 +185,6 @@ function renderPagination(currentPage, totalPages) {
     }
   });
   paginationContainer.appendChild(nextBtn);
-  console.log(currentPage, totalPages);
   document.querySelector(`.page-btn${currentPage}`).classList.add("activePage");
   if(currentPage == totalPages) {
     nextBtn.style.display = "none";
@@ -203,12 +202,10 @@ async function fetchAnticipatedBooks(page) {
       throw new Error("Failed to fetch books.");
     }
     const data = await response.json();
-    console.log(data);
     displayAnticipatedBooks(data.books);
     renderPagination(data.currentPage, data.totalPages);
   } catch (error) {
-    console.error("Error fetching books:", error);
-    alert("An error occurred while fetching books. Please try again.");
+    
   }
 }
 

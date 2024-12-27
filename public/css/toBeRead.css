@@ -3,18 +3,17 @@
 }
 .to-be-read-container > h1 {
   font-family: "Charm", cursive;
-    font-weight: 200;
-    font-style: normal;
-    font-size: 4rem;
-    margin:0.5rem 0rem;
-    font-weight: bold;
-    color: #333;
-    border: none;
-    background-color: transparent;
-    width: 100%;
-    outline: none;
-    text-align: center;
-
+  font-weight: 200;
+  font-style: normal;
+  font-size: 4rem;
+  margin: 0.5rem 0rem;
+  font-weight: bold;
+  color: #333;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  outline: none;
+  text-align: center;
 }
 
 .to-be-read-subcontainer {
@@ -119,8 +118,8 @@
   width: 0.8rem;
   height: 0.8rem;
   cursor: pointer;
-  background-color: #AD9D85;
-  border-color: #AD9D85;
+  background-color: #ad9d85;
+  border-color: #ad9d85;
   box-sizing: border-box;
 }
 
@@ -141,12 +140,13 @@
   margin-left: 0.5rem;
 }
 
-.standalone-list,.series-list{
+.standalone-list,
+.series-list {
   padding: 0rem;
   overflow-y: scroll;
   overflow-x: hidden;
- height: 100%;
-
+  height: 100%;
+  max-height: 40vh;
 }
 
 .hidden {
@@ -170,12 +170,12 @@
 .suggestion-item {
   padding: 10px;
   cursor: pointer;
-  color: #AD9D85;
+  color: #ad9d85;
   font-weight: lighter;
   font-size: 0.6rem;
 }
 
-.suggestion-item >strong{
+.suggestion-item > strong {
   font-family: "Charm", cursive;
   font-size: 0.8rem;
   font-weight: 400;
@@ -191,17 +191,16 @@
   .to-be-read-container {
     padding: 1rem;
   }
-  .standalone-list, .series-list {
+  .standalone-list,
+  .series-list {
     max-height: 20vh;
+  }
+  .to-be-read-subcontainer-list {
+    max-height: 80vh;
+  }
 }
-.to-be-read-subcontainer-list {
-  max-height: 80vh;
-}
-}
-
 
 @media screen and (max-width: 700px) {
-
   .list-group-item h3 {
     font-size: 0.7rem;
   }
@@ -230,7 +229,9 @@
     margin-top: 0rem;
     object-fit: cover;
   }
-  .input-container > select:first-child, #title, #author  {
+  .input-container > select:first-child,
+  #title,
+  #author {
     font-size: 0.6rem;
     padding: 0rem 0.2rem;
   }
@@ -244,7 +245,7 @@
     gap: 0.2rem;
   }
   .list-group-item {
-    margin:0.2rem 0 ;
+    margin: 0.2rem 0;
   }
   .to-be-read-subcontainer-list > div > h1 {
     font-size: 1rem;
@@ -265,8 +266,9 @@
   .to-be-read-subcontainer-list {
     max-height: 100vh;
   }
-  .standalone-list, .series-list {
-    max-height: 60vh;
+  .standalone-list,
+  .series-list {
+    max-height: 30vh;
     margin: 0.5rem 0;
   }
 }

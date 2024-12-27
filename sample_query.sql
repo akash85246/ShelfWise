@@ -132,7 +132,7 @@ CREATE TABLE recommendations (
 
 CREATE TABLE anticipated_books (
     id SERIAL PRIMARY KEY,               
-    title VARCHAR(255) NOT NULL,         
+    title VARCHAR(255) NOT NULL UNIQUE,         
     author VARCHAR(255) NOT NULL,         
     release_date DATE NOT NULL,           
     cdn_link TEXT NOT NULL,               
