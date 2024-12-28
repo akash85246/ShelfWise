@@ -1,6 +1,7 @@
 if (user && user.author === true) {
   const form = document.querySelector(".list-create");
-
+const listIcon= document.querySelector(".list-create-icon");
+const loader = document.querySelector(".loader");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const type = document.getElementById("type").value;
@@ -16,6 +17,8 @@ if (user && user.author === true) {
       alert("Book Author is required.");
       return;
     }
+    listIcon.style.display = "none";
+    loader.style.display = "inline-block";
 
     try {
       const response = await axios.post(
@@ -36,10 +39,14 @@ if (user && user.author === true) {
         toastr.success("Read later book created successfully");
         window.location.href = "/read-later";
       } else {
+        listIcon.style.display = "inline-block";
+        loader.style.display = "none";
         const errorData = await response.json();
         toastr.warning(errorData.message);
       }
     } catch (error) {
+      listIcon.style.display = "inline-block";
+        loader.style.display = "none";
       toastr.error("An error occurred, please try again");
     }
   });

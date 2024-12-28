@@ -123,7 +123,9 @@ document.querySelectorAll(".rating-section").forEach((section) => {
   }
 });
 
+const deleteButton = document.getElementById("delete-button");
 const saveButton = document.getElementById("save-button");
+const loader = document.getElementById("loader");
 
 saveButton.addEventListener("click", async () => {
   const title = document.getElementById("review-title").value;
@@ -153,6 +155,9 @@ saveButton.addEventListener("click", async () => {
   const moment_page_number =
     document.getElementById("moment-page-number").value;
 
+    saveButton.style.display = "none";
+    loader.style.display = "block";
+    deleteButton.style.display = "none";
   try {
     const response = await axios.patch(`/api/update-review/${review.slug}`, {
       title,
@@ -177,6 +182,9 @@ saveButton.addEventListener("click", async () => {
     toastr.success('review updated successfully');
     window.location.href = `/review/${response.data.slug}`;
   } catch (error) {
+    saveButton.style.display = "block";
+    loader.style.display = "none";
+    deleteButton.style.display = "block";
     toastr.error('An error occurred, please try again');
   }
 });
@@ -252,9 +260,14 @@ function selectBook(book) {
 }
 
 
+
+
 document.getElementById("delete-button").addEventListener("click", async (e) => {
   e.preventDefault(); // Prevent the default anchor behavior
   const slug = e.target.closest('a').getAttribute("data-slug");
+  deleteButton.style.display = "none";
+  loader.style.display = "block";
+  saveButton.style.display = "none";
   try {
     const response = await fetch(`/api/delete-review/${slug}`, {
       method: "DELETE",
@@ -263,9 +276,15 @@ document.getElementById("delete-button").addEventListener("click", async (e) => 
       toastr.warning('Review deleted successfully');
       window.location.href = "/";
     } else {
+      deleteButton.style.display = "block";
+      loader.style.display = "none";
+      saveButton.style.display = "block";
       toastr.warning('Failed to delete review');
     }
   } catch (error) {
+    deleteButton.style.display = "block";
+      loader.style.display = "none";
+      saveButton.style.display = "block";
     toastr.error('An error occurred, please try again');
   }
 });

@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Select buttons and popouts
 const logoutButton = document.getElementById("logout");
 const deleteButton = document.getElementById("delete");
+const loader = document.querySelector(".loader");
 
 const logoutPopout = document.getElementById("logout-popout");
 const deletePopout = document.getElementById("delete-popout");
@@ -153,15 +154,21 @@ logoutCancel.addEventListener("click", () => {
 // Confirm Logout
 logoutConfirm.addEventListener("click",async () => {
   try {
+    logoutConfirm.style.display = "none";
+    loader.style.display = "block";
     const response = await axios.get("/logout");
     if (response.status === 200) {
       console.log("User logged out");
       togglePopout(logoutPopout, false);
       window.location.href = "/";
     } else {
+      logoutConfirm.style.display = "block";
+      loader.style.display = "none";
       console.error("Logout failed: Unexpected response", response);
     }
   } catch (error) {
+    logoutConfirm.style.display = "block";
+    loader.style.display = "none";
     console.error("Error logging out:", error);
   }
 });
@@ -179,16 +186,21 @@ deleteCancel.addEventListener("click", () => {
 // Confirm Delete
 deleteConfirm.addEventListener("click", async () => {
   try {
-    
+    deleteConfirm.style.display = "none";
+    loader.style.display = "block";
     const response = await axios.delete("/api/delete");
     if (response.status === 200) {
       console.log("User deleted");
       togglePopout(deletePopout, false);
       window.location.href = "/";
     } else {
+      deleteConfirm.style.display = "block";
+      loader.style.display = "none";
       console.error("Delete failed: Unexpected response", response);
     }
   } catch (error) {
+    deleteConfirm.style.display = "block";
+      loader.style.display = "none";
     console.error("Error deleting user:", error);
     
   }

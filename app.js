@@ -13,7 +13,7 @@ import RecommendationRouter from "./routes/recommendation.js";
 import passport from "passport";
 import session from "express-session";
 import GoogleStrategy from "passport-google-oauth2";
-import  "./cron/bookReleaseNotifier.js";
+import "./cron/bookReleaseNotifier.js";
 import env from "dotenv";
 
 const app = express();
@@ -21,7 +21,7 @@ const port = 3000;
 dotenv.config();
 
 env.config();
-app.use(cors()); 
+app.use(cors());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -55,6 +55,11 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+
+app.use((req, res, next) => {
+  res.locals.baseUrl = `${req.protocol}://${req.get("host")}`;
+  next();
+});
 
 app.use((req, res, next) => {
   res.renderWithLayout = (view, options = {}) => {
@@ -151,7 +156,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/home",
+      callbackURL:`${process.env.BASE_URL}/auth/google/home`,
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, cb) => {
@@ -203,7 +208,7 @@ passport.use(
                 profile.displayName,
                 profile.photos[0]?.value,
                 true,
-                profile.emails[0].value
+                profile.emails[0].value,
               ]
             );
             // console.log("New user created:", updateUser.rows[0]);

@@ -21,8 +21,10 @@ const sendReleaseEmails = async (book) => {
 `;
 
     try {
+
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
       axios
-        .post(`${process.env.BASE_URL}/api/send-email`, {
+        .post(`${baseUrl}/api/send-email`, {
           username: user.full_name,
           useremail: user.email,
           text: message,

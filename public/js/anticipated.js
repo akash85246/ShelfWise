@@ -68,6 +68,7 @@ if (isAuthor) {
   });
 
   const anticipatedSubmitBtn = document.getElementById("anticipated-submit");
+  const loader = document.querySelector(".loader");
 
   anticipatedSubmitBtn.addEventListener("click", async () => {
     const title = document.getElementById("book-title").value;
@@ -87,6 +88,8 @@ if (isAuthor) {
     formData.append("releaseDate", releaseDate);
     formData.append("emoji", emoji);
 
+    loader.style.display = "block";
+    anticipatedSubmitBtn.style.display = "none";
     try {
       const response = await axios.post("/api/anticipated/create", formData, {
         headers: {
@@ -96,6 +99,8 @@ if (isAuthor) {
       toastr.success("Aniticipated book created successfully");
       window.location.href = "/anticipated";
     } catch (error) {
+      loader.style.display = "none";
+      anticipatedSubmitBtn.style.display = "block";
       toastr.error("An error occurred, please try again");
     }
   });

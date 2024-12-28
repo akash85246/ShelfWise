@@ -106,6 +106,7 @@ function updateFinalRating() {
 }
 
 const postButton = document.getElementById("post-button");
+const loader = document.getElementById('loader');
 
 postButton.addEventListener("click", async () => {
   const title = document.getElementById("review-title").value;
@@ -159,6 +160,9 @@ postButton.addEventListener("click", async () => {
     return;
   }
 
+postButton.style.display = 'none';
+    loader.style.display = 'inline-block';
+
   try {
     const response = await axios.post("/api/create-review", {
       title,
@@ -183,6 +187,8 @@ postButton.addEventListener("click", async () => {
     toastr.success("Review book created successfully");
     window.location.href = "/review/" + response.data.slug;
   } catch (error) {
+    postButton.style.display = 'inline-block';
+    loader.style.display = 'none';
     toastr.error("An error occurred, please try again");
   }
 });

@@ -5,6 +5,9 @@
 html {
   min-height: 100vh;
 }
+.post-button-container{
+  position: relative;
+}
 
 .main-container-heading {
   display: grid;
@@ -402,6 +405,9 @@ input[type="date"] {
   gap: 2rem;
 
 }
+.main-container-heading>div:first-child{
+  position: relative;
+}
 
 .hidden {
   display: none;
@@ -417,8 +423,8 @@ input[type="date"] {
   overflow-y: auto;
   z-index: 200;
   position: absolute;
-  bottom: 0;
-  min-width: 70vw;
+  top:8rem ;
+  min-width: 100%;
 }
 
 .suggestion-item {
