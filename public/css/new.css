@@ -168,8 +168,9 @@ html {
 
 .review-book-detail > img {
   width: 10rem;
+  height: 15rem;
   position: absolute;
-  top: -15%;
+  top: -3rem;
   transform: rotate(5deg);
   object-fit: cover;
 }
@@ -496,6 +497,7 @@ input[type="date"] {
   }
   .review-book-detail > img {
     width: 8rem;
+    height: 12rem;
   }
 
   .review-book-subject {
@@ -556,11 +558,11 @@ input[type="date"] {
   }
   .review-note {
     order: 2;
-    grid-column: span 4;
+    grid-column: span 5;
   }
   .review-book-detail {
     order: 0;
-    grid-column: span 1;
+    grid-column: span 2;
   }
   .review-rating {
     order: 1;
@@ -573,7 +575,7 @@ input[type="date"] {
   }
   .review-moment {
     order: 5;
-    grid-column: span 2;
+    grid-column: span 3;
   }
   .review-character {
     order: 6;
@@ -581,7 +583,7 @@ input[type="date"] {
   }
   .review-ending {
     order: 7;
-    grid-column: span 2;
+    grid-column: span 3;
   }
 
   .review-title {
@@ -643,6 +645,7 @@ input[type="date"] {
     padding-top: 3rem;
   }
   .grid4 {
+    grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
   }
   .review-quote > img {
@@ -655,6 +658,19 @@ input[type="date"] {
 }
 
 @media (max-width: 435px) {
+  .grid4{
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .review-note {
+    grid-column: span 4;
+  }
+  .review-moment {
+    grid-column: span 2;
+  }
+  .review-ending {
+    grid-column: span 2;
+}
   .main-container {
     padding-top: 2rem;
   }
@@ -670,7 +686,7 @@ input[type="date"] {
   }
   .review-book-detail > img {
     width: 12rem;
-   top: -10%;
+   height: 18rem;
   }
   
 

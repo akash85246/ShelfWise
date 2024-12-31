@@ -154,9 +154,3 @@ CREATE TRIGGER set_updated_at
 BEFORE UPDATE ON anticipated_books
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TABLE subscriptions (
-    id SERIAL PRIMARY KEY,              -- Unique identifier for each subscription
-    subscription JSONB NOT NULL,        -- Stores the subscription object in JSONB format
-    created_at TIMESTAMP DEFAULT NOW()  -- Timestamp when the subscription was created
-);

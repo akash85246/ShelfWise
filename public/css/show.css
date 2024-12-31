@@ -17,6 +17,7 @@
   position: relative;
   line-height: 1.5;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .review-quote-text {
@@ -157,6 +158,18 @@
 @media (max-width: 768px) {
   .review-book-format > p {
     font-size: 0.8rem !important;
+  }
+  quote-image-overlay {
+    width: 40px;
+    height: 40px;
+  }
+  .review-quote-text {
+    height: 80%;
+    margin: 0;
+  }
+  .review-moment-text {
+    height: 85%;
+    margin: 0;
   }
 }
 

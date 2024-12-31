@@ -210,7 +210,12 @@ async function fetchAnticipatedBooks(page) {
     displayAnticipatedBooks(data.books);
     renderPagination(data.currentPage, data.totalPages);
   } catch (error) {
-    
+    const prevBtn = document.querySelector(".prev-btn");
+    const nextBtn = document.querySelector(".next-btn");
+    prevBtn.style.display = "none";
+    nextBtn.style.display = "none";
+    toastr.info("No anticipated books found.");
+
   }
 }
 

@@ -33,6 +33,12 @@
       <nav>
         <div class="nav-header">
           <a id="navIcon" href="/">SHELFWISE</a>
+          <% if (user == null) { %>
+            <a class="btn-google" href="/auth/google" role="button">
+              <i class="fab fa-google"></i>
+              Sign In with Google
+            </a>
+        <% } else {%>
           <button id="menu-toggle" aria-label="Toggle Menu">
             <span id="open-icon">
               <img
@@ -49,6 +55,7 @@
               />
             </span>
           </button>
+        <% } %>
         </div>
         <ul id="menu">
           <% if (user && user.author === true) { %>
@@ -59,14 +66,6 @@
             <li><a href="/read-later">Read Later</a></li>
             <li><a href="/streak">Streak</a></li>
             <li><a href="/profile"><img src="<%= user.profile_picture %>" alt="profile icon" class="profileIcon"></a></li>
-          <% } %>
-          <% if (user == null) { %>
-            <li>
-              <a class="btn-google" href="/auth/google" role="button">
-                <i class="fab fa-google"></i>
-                Sign In with Google
-              </a>
-            </li>
           <% } %>
         </ul>
       </nav>

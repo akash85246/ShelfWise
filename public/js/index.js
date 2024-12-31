@@ -5,6 +5,16 @@ let currentPage = 1;
 let totalPages = 0;
 const limit = 8;
 const visiblePages = 5;
+const sidebar = document.getElementById("sidebar-container");
+const toggleButton = document.getElementById("sidebar-toggle");
+const toggleCloseButton = document.getElementById("sidebar-close-toggle");
+const home_book_container = document.querySelector(".home-book-container");
+const home_container = document.getElementById("home-container");
+const sidebarIcon = document.querySelector("#sidebar-toggle>img");
+const selectedContainerDiv = document.querySelector("#selected-container");
+const gridContainer = document.querySelector(".home-sub-container > div");
+
+let isSidebarOpen = false;
 
 function displayRecommendedBooks() {
   const recommendedBooksContainer =
@@ -15,35 +25,38 @@ function displayRecommendedBooks() {
     bookCard.className = "book-card group perspective";
 
     // Generate star rating HTML
-    const totalStars = 5; 
-    const filledStars = Math.round(book.final_rating); 
-    const emptyStars = totalStars - filledStars; 
+    const totalStars = 5;
+    const filledStars = Math.round(book.final_rating);
+    const emptyStars = totalStars - filledStars;
     const starRating = `
-      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(filledStars)}
-      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(emptyStars)}
+      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(
+        filledStars
+      )}
+      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(
+        emptyStars
+      )}
     `;
 
-    // Truncate book.note to 100 characters
-    const truncatedNote = book.note.length > 100
-      ? `${book.note.substring(0, 100)}...`
-      : book.note;
+    const truncatedNote =
+    book.note.length > 250 ? `${book.note.substring(0, 150)}...` : book.note;
 
-    bookCard.innerHTML = `
-       <div class="inner-card transform-style">
-        <div class="front-card">
-          <a href="/review/${book.slug}">
-            <img src="${book.cover_url}" alt="${book.title}" />
-          </a>
-        </div>
-        <div class="back-card">
-          <div class="book-rating">
-            ${starRating} <span>(${book.views})</span>
-          </div>
-          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">Read more</a></p>
-          
-        </div>
+  bookCard.innerHTML = `
+    <div class="inner-card transform-style">
+      <div class="front-card">
+          <img src="${book.cover_url}" alt="${book.title}" />
+      
       </div>
-    `;
+      <div class="back-card">
+        <div class="book-rating">
+          ${starRating} <span>(${book.views})</span>
+        </div>
+        <p class="book-author">-${book.author}</p>
+        <p class="book-isbn">${book.isbn}</p>
+        <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">..read more</a></p>
+        
+      </div>
+    </div>
+  `;
 
     recommendedBooksContainer.appendChild(bookCard);
   });
@@ -57,31 +70,33 @@ function displayPopularBooks() {
     bookCard.className = "book-card group perspective";
 
     // Generate star rating HTML
-    const totalStars = 5; 
-    const filledStars = Math.round(book.final_rating); 
-    const emptyStars = totalStars - filledStars; 
+    const totalStars = 5;
+    const filledStars = Math.round(book.final_rating);
+    const emptyStars = totalStars - filledStars;
     const starRating = `
-      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(filledStars)}
-      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(emptyStars)}
+      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(
+        filledStars
+      )}
+      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(
+        emptyStars
+      )}
     `;
-
-    // Truncate book.note to 100 characters
-    const truncatedNote = book.note.length > 100
-      ? `${book.note.substring(0, 100)}...`
-      : book.note;
+    const truncatedNote =
+      book.note.length > 250 ? `${book.note.substring(0, 150)}...` : book.note;
 
     bookCard.innerHTML = `
       <div class="inner-card transform-style">
         <div class="front-card">
-          <a href="/review/${book.slug}">
             <img src="${book.cover_url}" alt="${book.title}" />
-          </a>
+        
         </div>
         <div class="back-card">
           <div class="book-rating">
             ${starRating} <span>(${book.views})</span>
           </div>
-          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">Read more</a></p>
+          <p class="book-author">-${book.author}</p>
+          <p class="book-isbn">${book.isbn}</p>
+          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">..read more</a></p>
           
         </div>
       </div>
@@ -97,31 +112,34 @@ function displayLatestBooks() {
     const bookCard = document.createElement("div");
     bookCard.className = "book-card group perspective";
     // Generate star rating HTML
-    const totalStars = 5; 
-    const filledStars = Math.round(book.final_rating); 
-    const emptyStars = totalStars - filledStars; 
+    const totalStars = 5;
+    const filledStars = Math.round(book.final_rating);
+    const emptyStars = totalStars - filledStars;
     const starRating = `
-      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(filledStars)}
-      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(emptyStars)}
+      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(
+        filledStars
+      )}
+      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(
+        emptyStars
+      )}
     `;
 
-    // Truncate book.note to 100 characters
-    const truncatedNote = book.note.length > 100
-      ? `${book.note.substring(0, 100)}...`
-      : book.note;
+    const truncatedNote =
+      book.note.length > 250 ? `${book.note.substring(0, 150)}...` : book.note;
 
     bookCard.innerHTML = `
       <div class="inner-card transform-style">
         <div class="front-card">
-          <a href="/review/${book.slug}">
             <img src="${book.cover_url}" alt="${book.title}" />
-          </a>
+        
         </div>
         <div class="back-card">
           <div class="book-rating">
             ${starRating} <span>(${book.views})</span>
           </div>
-          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">Read more</a></p>
+          <p class="book-author">-${book.author}</p>
+          <p class="book-isbn">${book.isbn}</p>
+          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">..read more</a></p>
           
         </div>
       </div>
@@ -137,31 +155,35 @@ function displayLikedBooks() {
     const bookCard = document.createElement("div");
     bookCard.className = "book-card group perspective";
     // Generate star rating HTML
-    const totalStars = 5; 
-    const filledStars = Math.round(book.final_rating); 
-    const emptyStars = totalStars - filledStars; 
+    const totalStars = 5;
+    const filledStars = Math.round(book.final_rating);
+    const emptyStars = totalStars - filledStars;
     const starRating = `
-      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(filledStars)}
-      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(emptyStars)}
+      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(
+        filledStars
+      )}
+      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(
+        emptyStars
+      )}
     `;
 
     // Truncate book.note to 100 characters
-    const truncatedNote = book.note.length > 100
-      ? `${book.note.substring(0, 100)}...`
-      : book.note;
+    const truncatedNote =
+      book.note.length > 250 ? `${book.note.substring(0, 150)}...` : book.note;
 
     bookCard.innerHTML = `
       <div class="inner-card transform-style">
         <div class="front-card">
-          <a href="/review/${book.slug}">
             <img src="${book.cover_url}" alt="${book.title}" />
-          </a>
+        
         </div>
         <div class="back-card">
           <div class="book-rating">
             ${starRating} <span>(${book.views})</span>
           </div>
-          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">Read more</a></p>
+          <p class="book-author">-${book.author}</p>
+          <p class="book-isbn">${book.isbn}</p>
+          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">..read more</a></p>
           
         </div>
       </div>
@@ -235,6 +257,7 @@ async function handleSelection(category, value, element) {
       (container) => (container.style.display = "none")
     );
     selectedContainer.style.display = "grid";
+    selectedContainerDiv.style.display = "grid";
     getBooks(1, limit);
   } else {
     defaultContainers.forEach(
@@ -264,7 +287,7 @@ document.getElementById("clearFilter").addEventListener("click", () => {
   document.querySelectorAll(".sidebar-item").forEach((item) => {
     item.classList.remove("active");
   });
-  defaultContainers.forEach((container) => (container.style.display = "grid"));
+  defaultContainers.forEach((container) => (container.style.display = "block"));
   selectedContainer.style.display = "none";
 });
 
@@ -277,35 +300,38 @@ async function displaySelectedBooks(bookList) {
       const bookCard = document.createElement("div");
       bookCard.className = "book-card group perspective";
       // Generate star rating HTML
-    const totalStars = 5; 
-    const filledStars = Math.round(book.final_rating); 
-    const emptyStars = totalStars - filledStars; 
-    const starRating = `
-      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(filledStars)}
-      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(emptyStars)}
+      const totalStars = 5;
+      const filledStars = Math.round(book.final_rating);
+      const emptyStars = totalStars - filledStars;
+      const starRating = `
+      ${'<img src="/icons/ratingStarFilledIcon.png" alt="Filled Star" class="star" />'.repeat(
+        filledStars
+      )}
+      ${'<img src="/icons/ratingStarIcon.svg" alt="Empty Star" class="star" />'.repeat(
+        emptyStars
+      )}
     `;
 
-    // Truncate book.note to 100 characters
-    const truncatedNote = book.note.length > 100
-      ? `${book.note.substring(0, 100)}...`
-      : book.note;
+    const truncatedNote =
+    book.note.length > 250 ? `${book.note.substring(0, 150)}...` : book.note;
 
-    bookCard.innerHTML = `
-      <div class="inner-card transform-style">
-        <div class="front-card">
-          <a href="/review/${book.slug}">
-            <img src="${book.cover_url}" alt="${book.title}" />
-          </a>
-        </div>
-        <div class="back-card">
-          <div class="book-rating">
-            ${starRating} <span>(${book.views})</span>
-          </div>
-          <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">Read more</a></p>
-          
-        </div>
+  bookCard.innerHTML = `
+    <div class="inner-card transform-style">
+      <div class="front-card">
+          <img src="${book.cover_url}" alt="${book.title}" />
+      
       </div>
-    `;
+      <div class="back-card">
+        <div class="book-rating">
+          ${starRating} <span>(${book.views})</span>
+        </div>
+        <p class="book-author">-${book.author}</p>
+        <p class="book-isbn">${book.isbn}</p>
+        <p class="book-description">${truncatedNote}<a class="read-more" href="/review/${book.slug}">..read more</a></p>
+        
+      </div>
+    </div>
+  `;
       selectedBooksContainer.appendChild(bookCard);
     });
   } else {
@@ -329,16 +355,15 @@ async function getBooks(page, limit) {
       },
     });
     console.log(response.data);
-  totalPages = response.data.totalPages;
-  currentPage = response.data.page;
-  updatePagination(currentPage, totalPages);
-  displaySelectedBooks(response.data.data);
+    totalPages = response.data.totalPages;
+    currentPage = response.data.page;
+    updatePagination(currentPage, totalPages);
+    displaySelectedBooks(response.data.data);
   } catch (error) {
     const selectedBooksContainer =
       document.getElementById("selected-container");
     selectedBooksContainer.innerHTML = "<h3>No books found</h3>";
   }
-  
 }
 
 function updatePagination(currentPage, totalPages) {
@@ -391,29 +416,32 @@ function updatePagination(currentPage, totalPages) {
   document.querySelector(`.Page${currentPage}`).classList.add("activePage");
 }
 
-const sidebar = document.getElementById("sidebar-container");
-const toggleButton = document.getElementById("sidebar-toggle");
-const toggleCloseButton = document.getElementById("sidebar-close-toggle");
-const home_book_container = document.querySelector(".home-book-container");
-const home_container = document.getElementById("home-container");
-
-let isSidebarOpen = false;
-
 function toggleNav() {
+  console.log(selectedContainerDiv);
   if (isSidebarOpen) {
     sidebar.style.width = "0";
-    toggleButton.style.display = "block";
+    if (window.matchMedia("(min-width: 600px)").matches) {
+    gridContainer.style.gridTemplateColumns = "1fr 1fr 1fr";
+    selectedContainerDiv.style.gridTemplateColumns = "1fr 1fr 1fr";
+    }else{
+    gridContainer.style.gridTemplateColumns = "1fr 1fr ";
+    selectedContainerDiv.style.gridTemplateColumns = "1fr 1fr ";}
+    sidebarIcon.src = "/icons/filterIcon.png";
+    // toggleButton.style.display = "block";
     // home_container.style.marginLeft = "0";
   } else {
-    sidebar.style.width = "40vw";
-    toggleButton.style.display = "none";
-    // home_container.style.marginLeft = "40vw";
+    sidebar.style.width = "40vw";if (window.matchMedia("(min-width: 600px)").matches) {
+    gridContainer.style.gridTemplateColumns = "1fr 1fr";
+    selectedContainerDiv.style.gridTemplateColumns = "1fr 1fr";
+    }else{
+    gridContainer.style.gridTemplateColumns = "1fr";
+    selectedContainerDiv.style.gridTemplateColumns = "1fr";}
+    sidebarIcon.src = "/icons/closefilterIcon.png";
   }
   isSidebarOpen = !isSidebarOpen;
 }
 
 toggleButton.addEventListener("click", toggleNav);
-toggleCloseButton.addEventListener("click", toggleNav);
 
 const searchInput = document.getElementById("search");
 searchInput.addEventListener("input", async (e) => {
@@ -424,25 +452,33 @@ searchInput.addEventListener("input", async (e) => {
       },
     })
     .then((response) => {
-      const searchContainer = document.getElementById("search-content");
-      searchContainer.style.display = "block";
-      searchContainer.innerHTML = "";
-      response.data.forEach((book) => {
-        const bookCard = document.createElement("div");
-        bookCard.className = "search-card";
-        bookCard.innerHTML = `
-    <a href="/review/${book.slug}">
-      <h3>${book.title} <span>${book.author}</span></h3>
-     
-      </a>
-      
-    `;
-        searchContainer.appendChild(bookCard);
-      });
+      if (response.data.length === 0) {
+        const searchContainer = document.getElementById("search-content");
+        searchContainer.style.display = "none";
+      } else {
+        const searchContainer = document.getElementById("search-content");
+        searchContainer.style.display = "block";
+        searchContainer.innerHTML = "";
+        response.data.forEach((book) => {
+          const bookCard = document.createElement("a");
+          bookCard.className = "search-card";
+          bookCard.href = `/review/${book.slug}`;
+          bookCard.innerHTML = `
+          <h3>${book.title} <span>${book.author}</span></h3>`;
+          searchContainer.appendChild(bookCard);
+        });
+      }
     })
     .catch((error) => {
       toastr.info("No books found");
     });
+});
+
+searchInput.addEventListener("focusout", () => {
+  setTimeout(() => {
+    const searchContainer = document.getElementById("search-content");
+    searchContainer.style.display = "none";
+  }, 500);
 });
 
 const prevBtn = document.getElementById("prev-btn");

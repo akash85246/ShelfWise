@@ -3,7 +3,7 @@
   grid-template-columns: 1fr 5fr;
 }
 
-.book-card{
+.book-card {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,15 +31,15 @@
 }
 
 /* Front card */
-.front-card, .back-card {
+.front-card,
+.back-card {
   position: absolute;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  
 }
 
-.back-card{
+.back-card {
   width: 100%; /* Adjust as needed */
   height: 100%; /* Adjust as needed */
   box-sizing: border-box;
@@ -55,12 +55,20 @@
   /* justify-content: center; */
   flex-direction: column;
   padding: 1rem;
- 
 }
 
-.back-card >p {
+.book-author{
+  font-size: 1.2rem !important;
+  color: #AD9D85 !important;
+  font-weight: bold !important;
+}
+.book-isbn{
+  font-size: 1rem !important;
+  font-weight: bold !important;
+}
+.back-card > p {
   font-size: 1rem;
-  color: #1F1B14;
+  color: #1f1b14;
   font-family: "Overpass", sans-serif;
   margin: 0;
   font-weight: lighter;
@@ -69,16 +77,22 @@
   word-break: break-all;
 }
 
+.nav-header > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
 .read-more {
   font-size: 1rem;
-  color: #E0DAD1;
+  color: #ad9d85;
   font-family: "Overpass", sans-serif;
   text-decoration: none;
   margin: 0;
   font-weight: lighter;
 }
 .read-more:hover {
-  color: #ad9d85;
+  color: #1f1b14;
 }
 
 /* Front card styles */
@@ -88,16 +102,15 @@
   object-fit: cover;
 }
 
-.star{
+.star {
   height: 1.5rem;
   width: 1.5rem;
 }
-.book-rating>span{
+.book-rating > span {
   font-size: 0.6rem;
   color: #ad9d85;
   font-weight: lighter;
 }
-
 
 .sidebar-item.active {
   color: #ad9d85;
@@ -114,7 +127,7 @@
   display: flex !important;
   justify-content: center;
   align-items: center;
-  gap: 5px!important;
+  gap: 5px !important;
   padding: 0 5rem;
   margin-top: 20px;
   font-family: Arial, sans-serif;
@@ -133,7 +146,8 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-.activePage,#page-numbers > button:hover,
+.activePage,
+#page-numbers > button:hover,
 #prev-btn:hover,
 #next-btn:hover {
   background-color: #ad9d85 !important;
@@ -144,7 +158,6 @@
   display: flex;
   gap: 5px;
 }
-
 
 #prev-btn,
 #next-btn {
@@ -183,6 +196,18 @@
 #close-sidebar-toggle {
   display: none;
 }
+.left-home-banner > div > h1 {
+  font-size: 2rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.left-home-banner > div > h2 {
+  font-size: 1rem;
+  font-weight: 200;
+  margin: 0.2rem 0;
+  text-align: center;
+}
 
 @media (max-width: 1484px) {
   .book-card > a > img {
@@ -194,24 +219,14 @@
     display: block;
   }
 
-  .left-home-banner {
-    gap: 0rem;
-    padding: 0.2rem;
-    padding-top: 1.5rem;
-  }
-  .left-home-banner > h1 {
-    font-size: 1.2rem;
+  .left-home-banner > div > h1 {
+    font-size: 1.8rem;
     font-weight: 400;
   }
 
-  .home-image {
-    width: 25rem;
-  }
-
-  .left-home-banner > h2 {
-    font-size: 0.4rem;
+  .left-home-banner > div > h2 {
+    font-size: 1rem;
     font-weight: 200;
-    margin: 0.2rem 0;
   }
 
   .sidebar-toggle {
@@ -235,16 +250,11 @@
 
   .home-sub-container {
     padding: 1rem;
-
   }
   .book-card > a > img {
     height: 20vh;
   }
 
-  #search {
-    font-size: 0.6rem;
-    padding: 0.2rem 0;
-  }
   .home-sub-container > h1 {
     margin: 0.5rem;
     font-size: 1.5rem;
@@ -252,7 +262,7 @@
   .book-card > h3 {
     font-size: 0.5rem;
   }
- 
+
   .home-sub-container.selected-container {
     margin: 0;
   }
@@ -277,12 +287,9 @@
 .openbtn {
   font-size: 20px;
   cursor: pointer;
-  background-color: #111;
-  color: white;
-  padding: 10px 15px;
   border: none;
-  position: absolute;
   display: none;
+  background-color: transparent;
 }
 .closebtn {
   display: none;
@@ -295,7 +302,7 @@
   padding: 0;
   margin-right: 1rem;
 }
-.sidebar-heading{
+.sidebar-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -305,15 +312,26 @@
   .home-image {
     width: 20rem;
   }
+  .left-home-banner > div > h1 {
+    padding: 0 1rem;
+  }
+  .left-home-banner > div > h2 {
+    left: 1rem;
+    word-break: break-all;
+    white-space: normal;
+  }
   .sidebar-container {
-    height: 100%; 
-    width: 0; 
-    z-index: 1; 
+    height: 100%;
+    width: 0;
+    z-index: 1;
     top: 0;
     left: 0;
     background-color: transparent;
-    overflow-x: hidden; 
+    overflow-x: hidden;
     transition: 0.5s;
+  }
+  .search-bar {
+    width: 100%;
   }
 
   .sidebar-item {
@@ -326,9 +344,9 @@
   }
 
   #home-container {
-    transition: margin-left 0.5s; 
+    transition: margin-left 0.5s;
     padding: 20px;
-    overflow-x: hidden; 
+    overflow-x: hidden;
   }
 
   .closebtn {
@@ -353,18 +371,12 @@
   .openbtn {
     font-size: 0.8rem;
     cursor: pointer;
-    background-color: #f4f4f4;
-    color: #ad9d85;
-    border-radius: 5px;
-    position: fixed;
-    bottom: 1rem;
-    left: 1rem;
-    padding: 0.5rem;
+
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    border: 0.5px solid #ad9d85;
+
     z-index: 20;
   }
   .openbtn > img {
@@ -372,8 +384,8 @@
     height: 1rem;
   }
 
-  .openbtn:hover {
-    background-color: #444;
+  .openbtn > img:hover {
+    background-color: #F5F3F0;
   }
 
   .sidebar {
@@ -404,61 +416,147 @@
     margin-bottom: 1rem;
     overflow-x: hidden;
   }
-
-  
 }
 
-@media (max-width: 766px) {
-  .home-image {
-    width: 15rem;
+@media (max-width: 800px) {
+  .left-home-banner {
+    padding-top: 2rem;
   }
-  .inner-card{
+  .left-home-banner > div > h1 {
+    font-size: 1.5rem;
+  }
+  .left-home-banner > div > h2 {
+    font-size: 0.8rem;
+  }
+  .inner-card {
     height: 30vh;
     width: 20vh;
     box-sizing: content-box;
   }
-  .back-card{
+  .back-card {
     padding: 0.5rem;
   }
-  .back-card >h3 {
+  .back-card > h3 {
     font-size: 1rem;
   }
-  .back-card >p {
-    font-size: 0.8rem;
+  .back-card > p {
+    font-size: 1rem;
   }
   .read-more {
     font-size: 0.8rem;
   }
-}
-@media (max-width: 511px) {
-  .home-image {
-    width: 8rem;
-  }
-  .inner-card{
-    height: 20vh;
-    width: 12vh;
+  .inner-card {
+    height: 45vh;
+    width: 26vh;
     box-sizing: content-box;
   }
-  .back-card{
-    padding: 0.2rem;
+  .home-image {
+    width: 16rem;
+    margin-bottom: 1rem;
   }
-  .back-card >h3 {
+}
+
+@media (max-width: 630px) {
+  .home-banner {
+    min-height: 30vh;
+  }
+  .right-home-banner {
+    min-height: 30vh;
+  }
+  .left-home-banner {
+    max-height: 30vh;
+    min-height: 30vh;
+    padding: 2.5rem 0.5rem;
+    padding-bottom: 0.2rem;
+  }
+  .search-bar {
+    position: relative;
+    box-sizing: border-box;
+    left: 0.5rem;
+    bottom: 0.5rem;
+  }
+  .left-home-banner > div > h1 {
+    font-size: 0.7rem;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 0.2rem;
+    backdrop-filter: blur(2px);
+  }
+  .search-content {
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 0rem !important;
+  }
+  .left-home-banner > div > h2 {
+    font-size: 0.6rem;
+    margin: 0;
+    padding: 0;
+    font-weight: medium;
+    backdrop-filter: blur(2px);
+    margin-top: 0.5rem;
+  }
+  #search {
+    font-size: 0.8rem;
+  }
+  .banner-image {
+    max-height: 30vh;
+    min-height: 30vh;
+  }
+  .home-image {
+    /* width:100%; */
+    /* right:-2rem; */
+    width: 10rem;
+    margin-bottom: 1rem;
+  }
+  .inner-card {
+    height: 35vh;
+    width: 20vh;
+    box-sizing: content-box;
+  }
+  .back-card {
+    padding: 0.4rem;
+  }
+  .back-card > h3 {
     font-size: 0.8rem;
     overflow: hidden;
   }
-  .back-card >p {
-    font-size: 0.6rem;
+  .book-author{
+    font-size: 0.8rem !important;
+  }
+  .book-isbn{
+    font-size: 0.6rem !important;
+  }
+  .back-card > p {
+    font-size: 0.8rem;
     overflow: hidden;
   }
   .read-more {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
     overflow: hidden;
   }
-  .left-home-banner > h1 {
-    font-size: 0.6rem;
-  }
-  .star{
+  .star {
     height: 0.8rem;
     width: 0.8rem;
+  }
+
+  #menu {
+    top: 1.6rem !important;
+  }
+  #menu > li {
+    backdrop-filter: blur(5px) !important;
+  }
+  .home-sub-container > div {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .sidebar {
+    padding: 0.5rem;
+    padding-top: 2rem;
+  }
+  #home-container {
+    padding: 0.5rem;
+  }
+  .selected-container {
+    margin: 0;
   }
 }

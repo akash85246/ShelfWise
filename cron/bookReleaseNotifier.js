@@ -48,7 +48,7 @@ const sendReleaseEmails = async (book) => {
 };
 
 // Cron job to run daily at midnight and check for books to notify
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
   console.log("Checking for book releases...");
   const releasedBooks = await db.query(
     `SELECT * FROM public.anticipated_books WHERE release_date <= CURRENT_DATE ORDER BY id ASC;`
