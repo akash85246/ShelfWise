@@ -277,6 +277,11 @@ footer {
     width: 50vw;
     font-size: 1.2rem;
   }
+  .btn-google {
+    padding: 8px 4px !important;
+    word-wrap: normal;
+    white-space: nowrap;
+  }
 }
 .sidebar-container {
   position: sticky;
