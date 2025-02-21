@@ -86,7 +86,7 @@ A personal book review platform where user can share his reviews of books. The s
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+Built with cutting-edge technologies to deliver performance and reliability.
 
 * [![Express][Express.js]][Express-url]
 * [![Node][Node.js]][Node-url]
@@ -105,8 +105,7 @@ This section should list any major frameworks/libraries used to bootstrap your p
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+Get started quickly with these easy setup instructions.
 
 ### Prerequisites
 
