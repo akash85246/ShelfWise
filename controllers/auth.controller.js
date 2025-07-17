@@ -1,15 +1,13 @@
-import axios from "axios";
-import passport from "passport";
+const passport = require("passport");
 
-class AuthController {
   // Trigger Google authentication
-  static async signInWithGoogle(req, res, next) {
+  async function signInWithGoogle(req, res, next) {
     passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
    
   }
 
   // Handle callback after Google authentication
-  static async googleCallback(req, res, next) {
+  async function googleCallback(req, res, next) {
     passport.authenticate("google", {
       successRedirect: "/",
       failureRedirect: "/login",
@@ -17,7 +15,7 @@ class AuthController {
   }
 
   // Log out user and redirect to home
-  static async logout(req, res, next) {
+  async function logout(req, res, next) {
     req.logout(function (err) {
       if (err) {
         return next(err);
@@ -25,6 +23,9 @@ class AuthController {
       res.redirect("/");
     });
   }
-}
 
-export default AuthController;
+module.exports = {
+  signInWithGoogle,
+  googleCallback,
+  logout,
+};

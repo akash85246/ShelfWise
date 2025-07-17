@@ -1,206 +1,106 @@
-function formatDate(inputDate) {
-  const date = new Date(inputDate);
-  const options = { day: "2-digit", month: "short", year: "numeric" };
-  return date.toLocaleDateString("en-US", options);
-}
+const addRatingButton = document.querySelector(".add-rating-btn");
+const ratingList = document.querySelector(".rating-list");
 
-const today = new Date();
-document.getElementById("startDateDisplay").textContent = formatDate(today);
-document.getElementById("endDateDisplay").textContent = formatDate(today);
 
-document.getElementById("startDateDisplay").addEventListener("click", () => {
-  const startDateInput = document.getElementById("startDate");
-  document.getElementById("startDateDisplay").style.display = "none";
-  startDateInput.hidden = false;
-  startDateInput.focus();
-});
+addRatingButton.addEventListener("click", () => {
+  console.log("Add Rating button clicked");
+  ratingList.classList.remove("hidden");
 
-document.getElementById("endDateDisplay").addEventListener("click", () => {
-  const endDateInput = document.getElementById("endDate");
-  document.getElementById("endDateDisplay").style.display = "none";
-  endDateInput.hidden = false;
-  endDateInput.focus();
-});
-
-document.getElementById("startDate").addEventListener("change", function () {
-  const formattedDate = formatDate(this.value);
-  document.getElementById("startDateDisplay").textContent = formattedDate;
-  document.getElementById("startDateDisplay").style.display = "block";
-  this.hidden = true;
-});
-
-document.getElementById("endDate").addEventListener("change", function () {
-  const formattedDate = formatDate(this.value);
-  document.getElementById("endDateDisplay").textContent = formattedDate;
-  document.getElementById("endDateDisplay").style.display = "block";
-  this.hidden = true;
-});
-
-const textarea = document.querySelector(".review-note > textarea ");
-
-function adjustRows() {
-  if (window.innerWidth <= 435) {
-    textarea.setAttribute("rows", "25");
-  } else if (window.innerWidth <= 768) {
-    textarea.setAttribute("rows", "25");
-  } else if (window.innerWidth <= 1037) {
-    textarea.setAttribute("rows", "18");
-  } else {
-    textarea.setAttribute("rows", "24");
+  if (ratingList.children.length >= 5) {
+    alert("You can only add up to 5 ratings.");
+    addRatingButton.classList.add("hidden");
+    return;
   }
-}
 
-window.addEventListener("resize", adjustRows);
+  const ratingContainer = document.createElement("div");
+  ratingContainer.classList.add("rating-container");
 
-adjustRows();
+  const ratingItem = document.createElement("div");
+  ratingItem.classList.add("rating-item");
 
-const ratingSections = document.querySelectorAll(".rating-section");
+  const ratingInput = document.createElement("input");
+  ratingInput.type = "text";
+  ratingInput.name = "rating_title[]";
+  ratingInput.placeholder = "Rating title";
+  ratingInput.required = true;
+  ratingInput.classList.add("form-input");
+  ratingInput.id = "rating";
 
-ratingSections.forEach((section) => {
-  const stars = section.querySelectorAll(".star-icon");
-  const isFinalRating = section.classList.contains("final-rating");
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.textContent = "×";
+  removeButton.classList.add("remove-rating-btn");
 
-  if (isFinalRating) return;
-
-  stars.forEach((star, index) => {
-    star.addEventListener("click", () => {
-      updateStars(section, index + 1);
-      updateFinalRating();
-    });
-  });
-});
-
-// Update stars for a section based on the rating
-function updateStars(section, rating) {
-  const stars = section.querySelectorAll(".star-icon");
-  const starIconActive = "/icons/ratingStarFilledIcon.png";
-  const starIconInactive = "/icons/ratingStarIcon.svg";
-  stars.forEach((star, index) => {
-    if (index < rating) {
-      star.src = starIconActive;
-    } else {
-      star.src = starIconInactive;
+  removeButton.addEventListener("click", () => {
+    ratingList.removeChild(ratingContainer);
+    if (ratingList.children.length < 5) {
+      addRatingButton.classList.remove("hidden");
     }
-
-    star.alt = `Star ${index + 1} of 5 - Rating ${
-      index < rating ? "Active" : "Inactive"
-    }`;
   });
 
-  section.dataset.rating = rating;
-}
+  ratingItem.appendChild(ratingInput);
+  ratingItem.appendChild(removeButton);
 
-// Calculate and update the final rating
-function updateFinalRating() {
-  const allRatings = Array.from(document.querySelectorAll(".rating-section"))
-    .filter((section) => !section.classList.contains("final-rating"))
-    .map((section) => parseInt(section.dataset.rating || 0, 10));
+  const starsDiv = document.createElement("div");
+  starsDiv.classList.add("rating-stars");
 
-  const finalRating =
-    allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length;
-  const finalRatingSection = document.querySelector(".final-rating");
-
-  if (finalRatingSection) {
-    updateStars(finalRatingSection, Math.round(finalRating));
-  }
-}
-
-const postButton = document.getElementById("post-button");
-const loader = document.getElementById('loader');
-
-postButton.addEventListener("click", async () => {
-  const title = document.getElementById("review-title").value;
-  const author = document.getElementById("review-author").value;
-  const setting_rating =
-    document.getElementById("setting-rating").dataset.rating;
-  const plot_rating = document.getElementById("plot-rating").dataset.rating;
-  const character_rating =
-    document.getElementById("character-rating").dataset.rating;
-  const style_rating = document.getElementById("style-rating").dataset.rating;
-  const engagement_rating =
-    document.getElementById("engagement-rating").dataset.rating;
-  const note = document.getElementById("review-notes").value;
-  const quote = document.getElementById("review-quote").value || null;
-  const moment = document.getElementById("review-moment").value || null;
-  const favorite_character = document.getElementById(
-    "favourite-character"
-  ).value || null;
-  const least_favorite_character = document.getElementById(
-    "least-favourite-character"
-  ).value || null;
-  const ending = document.getElementById("ending").value || null;
-  const start_date = document.getElementById("startDate").value;
-  const end_date = document.getElementById("endDate").value;
-  const genre = document.getElementById("genre").value;
-  const format = document.getElementById("format").value || null;
-  const moment_page_number =
-    document.getElementById("moment-page-number").value || null;
-  if(!title){
-    toastr.error("Title is required");
-    return;
-  }
-  if(!genre){
-    toastr.error("genre is required");
-    return;
-  }
-  if(!note){
-    toastr.error("Note is required");
-    return;
-  }
-  if(!start_date){
-    toastr.error("Start date is required");
-    return;
-  }
-  if(!end_date){
-    toastr.error("End date is required");
-    return;
-  }
-  if(!setting_rating && !plot_rating && !character_rating && !style_rating && !engagement_rating){
-    toastr.error("Ratings are required");
-    return;
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement("span");
+    star.innerHTML = "&#9734;"; // ☆
+    star.classList.add("star-icon");
+    star.dataset.value = i;
+    starsDiv.appendChild(star);
   }
 
-postButton.style.display = 'none';
-    loader.style.display = 'inline-block';
+  const ratingValueInput = document.createElement("input");
+  ratingValueInput.type = "hidden";
+  ratingValueInput.name = "rating_value[]";
+  ratingValueInput.classList.add("rating-value");
 
-  try {
-    const response = await axios.post("/api/create-review", {
-      title,
-      author,
-      setting_rating,
-      plot_rating,
-      character_rating,
-      style_rating,
-      engagement_rating,
-      note,
-      quote,
-      moment,
-      favorite_character,
-      least_favorite_character,
-      ending,
-      start_date,
-      end_date,
-      genre,
-      format,
-      moment_page_number,
-    });
-    toastr.success("Review book created successfully");
-    window.location.href = "/review/" + response.data.slug;
-  } catch (error) {
-    postButton.style.display = 'inline-block';
-    loader.style.display = 'none';
-    toastr.error("An error occurred, please try again");
+  ratingContainer.appendChild(ratingItem);
+  ratingContainer.appendChild(starsDiv);
+  ratingContainer.appendChild(ratingValueInput);
+  ratingList.appendChild(ratingContainer);
+
+  if (ratingList.children.length >= 5) {
+    addRatingButton.classList.add("hidden");
   }
 });
 
-const title = document.getElementById("review-title");
+// Star click handler using Unicode stars
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("star-icon")) {
+    const clickedStar = e.target;
+    const starsContainer = clickedStar.parentElement;
+    const ratingContainer = starsContainer.closest(".rating-container");
+    const stars = Array.from(starsContainer.querySelectorAll(".star-icon"));
+    const value = parseInt(clickedStar.dataset.value);
 
-const titleInput = document.getElementById("review-title");
+    stars.forEach((star, i) => {
+      star.innerHTML = i < value ? "&#9733;" : "&#9734;"; // ★ or ☆
+    });
+
+    const hiddenInput = ratingContainer.querySelector("input.rating-value");
+    if (hiddenInput) {
+      hiddenInput.value = value;
+    }
+  }
+});
+
+
+function decodeHtmlEntities(str) {
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = str;
+  return textarea.value;
+}
+
+
+const titleInput = document.getElementById("title");
 const suggestionList = document.getElementById("book-suggestions");
 
 titleInput.addEventListener("input", async () => {
   const titleValue = titleInput.value.trim();
-  // Clear suggestions if the input is empty
+
   if (!titleValue) {
     suggestionList.innerHTML = "";
     suggestionList.classList.add("hidden");
@@ -208,14 +108,20 @@ titleInput.addEventListener("input", async () => {
   }
 
   try {
-    const response = await axios.get(`/api/book-cover?title=${titleValue}`);
+    const response = await axios.get(`/api/book-details?title=${titleValue}`);
     const books = response.data;
 
-    // If no books found, hide the suggestions
+    console.log("Books found:", books);
     if (books.length === 0) {
       suggestionList.innerHTML = "";
       suggestionList.classList.add("hidden");
-      toastr.info("No books found");
+      Toastify({
+        text: "No books found",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#ff0000",
+      }).showToast();
       return;
     }
 
@@ -232,7 +138,13 @@ titleInput.addEventListener("input", async () => {
     suggestionList.classList.remove("hidden");
   } catch (error) {
     console.error("Error fetching book suggestions:", error);
-    toastr.error("Unable to fetch book suggestions");
+    Toastify({
+      text: "Error fetching book suggestions",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#ff0000",
+    }).showToast();
     suggestionList.innerHTML = "";
     suggestionList.classList.add("hidden");
   }
@@ -241,25 +153,26 @@ titleInput.addEventListener("input", async () => {
 titleInput.addEventListener("focusout", () => {
   setTimeout(() => {
     suggestionList.classList.add("hidden");
-  }, 100);
-}
-);
+  }, 1000);
+});
 
 function selectBook(book) {
   suggestionList.classList.add("hidden");
   const bookCover = document.getElementById("book-cover");
-  const author = document.getElementById("review-author");
+  const author = document.getElementById("author");
   const genre = document.getElementById("genre");
-  const reviewPublisher = document.getElementById("review-publisher");
-  const reviewPublishYear = document.getElementById("review-publish-year");
   const isbn = document.getElementById("isbn");
-
+  const reviewPublisher = document.getElementById("reviewPublisher");
+  const reviewPublishYear = document.getElementById("reviewPublishYear");
+ console.log("Selected book:", book);
   bookCover.src = book.coverUrl || "/images/image 42.png";
   bookCover.alt = `Book Cover for ${book.title}`;
   author.value = book.author || "Unknown";
   genre.value = book.genres || "Not available";
-  reviewPublisher.innerHTML = book.publishers || "Not available";
-  reviewPublishYear.innerHTML = book.publishYear || "Unknown";
-  isbn.value = book.isbn || "Not available";
-  titleInput.value = book.title;
+  reviewPublisher.value = book.publishers || "Not available";
+  reviewPublishYear.value = book.publishYear || "Unknown";
+  isbn.value = book.isbn || "";
+
+  titleInput.value = decodeHtmlEntities(book.title)
 }
+

@@ -4,77 +4,72 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/main.css" />
-    <link rel="stylesheet" href="/css/index.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Duru+Sans&family=Overpass:ital,wght@0,100..900;1,100..900&family=Rambla:ital,wght@0,400;0,700;1,400;1,700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
       rel="stylesheet"
     />
-    <title>SHELFWISE</title>
-    <!-- Toastr -->
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
-    />
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"
-    ></script>
+    <title>ShelfWise</title>
+    
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
-    <link rel="icon" type="image/png" href="/icons/SHELFWISEICON.png">
+    <link rel="icon" type="image/png" href="/icons/SHELFWISEICON.png" />
+
+    <!-- styles -->
+    <% if (styles && styles.length > 0) { %> <% styles.forEach((css) => { %>
+    <link rel="stylesheet" href="<%= css %>" />
+    <% }) %> <% } %>
+
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="/toastify/toastify.css" />
+</script>
   </head>
 
   <body>
     <main>
-      <nav>
-        <div class="nav-header">
-         <div> <button id="sidebar-toggle" class="openbtn">
-          <img src="/icons/filterIcon.png" alt="filter icon" />
-        </button>
-        <a id="navIcon" href="/">SHELFWISE</a>
-      </div>
-      <% if (user == null) { %>
-       
-          <a class="btn-google" href="/auth/google" role="button">
-            <i class="fab fa-google"></i>
-            Sign In with Google
-          </a>
-        
-      <% } else{%>
-          <button id="menu-toggle" aria-label="Toggle Menu">
-            <span id="open-icon">
-              <img
-                src="/icons/menuOpen.png"
-                alt="Open Menu Icon"
-                class="menuIcon"
-              />
-            </span>
-            <span id="close-icon" style="display: none">
-              <img
-                src="/icons/menuClose.png"
-                alt="Close Menu Icon"
-                class="menuIcon"
-              />
-            </span>
-          </button>
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo-icon">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
+          fill="currentColor"
+        ></path>
+      </svg>
+    </div>
+    <h2 class="logo-text">ShelfWise</h2>
+  </div>
+
+  
+
+  <div class="header-right" id="menu">
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/browse-book">Browse Books</a>
+      <a href="/top-reviewer">Top Reviews</a>
+       <% if (user !== null) { %>
+      <a href="/my-review">My Review</a>
+      <a href="#">Logout</a>
+      <% }%>
+    </nav>
+     
+  </div>
+  <div class="logged-in-user">
+  <% if (user == null) { %>
+      <a class="sign-btn" href="/auth/google" role="button">
+        <img src="../icons/googleIcon.png" alt="google icon" class="google-icon" />
+      <span>Sign In</span>
+    </a>
+    <% } else{%>
+          <img src=<%= user.profile_picture %> alt="avatar" class="avatar" />
       <% } %>
-        </div>
-        <ul id="menu">
-          <% if (user && user.author === true) { %>
-            <li><a href="/new-review">New</a></li>
-          <% } %>
-          <% if (user !== null) { %>
-            <li><a href="/anticipated">Anticipated</a></li>
-            <li><a href="/read-later">Read Later</a></li>
-            <li><a href="/streak">Streak</a></li>
-            <li><a href="/profile"><img src="<%= user.profile_picture %>" alt="profile icon" class="profileIcon"></a></li>
-          <% } %>
-        </ul>
-      </nav>
-    
+
+      <div class="burger" id="burger">
+    ☰
+  </div>
+  </div>
+</header>

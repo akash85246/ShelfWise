@@ -1,0 +1,92 @@
+<div class="header-top-reviewer">
+  <p class="title-top-reviewer">Top Book Reviewers</p>
+</div>
+
+<div class="top-reviewer-header">
+  <div class="search-container">
+    <!-- Search Icon -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 256 256"
+    >
+      <path
+        d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+      />
+    </svg>
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Search for a reviewer"
+      id="search-input"
+    />
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" id="review">Most Reviews</button>
+  <button class="tab" id="rated">Highest Rated</button>
+  <button class="tab" id="viewed">Most Viewed</button>
+</div>
+
+<h2 class="section-title">Featured Reviewer</h2>
+
+<div class="reviewer-card">
+  <img
+    class="reviewer-image"
+    id="reviewer-image"
+    alt="Reviewer Image"
+    src="
+     https://lh3.googleusercontent.com/aida-public/AB6AXuDomRkdQ1zx24jJMbvXTMzm_4n7NAAdcShKV1kXZjGX1yrEUsgYj43RQYBvJx8Q_KmcLCkeaZ7SHCfiVbr7vU3WzLdw9rY7guWy8_52v-8nxdZh6CqlO5GkNtNkKq2aBWs6gbNP-WbxHWg7RXKPCF10XLtkltkysbbVqjS4go02lgrHd78FURJ8TURzLURb8bvab-w5xKuUtHE8ewHHrSNJyTxnxktIBJuf6n6e06aMD41a7ecOQzGj5TXyuOcJlBnMreXyCa5kOuk
+    "
+  />
+
+  <div class="reviewer-content">
+    <!-- <p class="reviewer-role">Reviewer of the Month</p>
+    <p class="reviewer-name">Sophia Carter</p>
+    <div class="reviewer-bottom">
+      <p class="reviewer-quote">
+        "Reading is a conversation. All books talk. But a good book listens as
+        well."
+      </p>
+      <a href="#" class="profile-button">View Profile</a>
+    </div> -->
+    <div class="reviewer-content" id="reviewerCard">
+  <p class="reviewer-role" id="reviewerRole">Reviewer of the Month</p>
+  <p class="reviewer-name" id="reviewerName">Name</p>
+  <div class="reviewer-bottom">
+    <p class="reviewer-quote" id="reviewerQuote">
+      "Quote goes here..."
+    </p>
+    <a href="#" class="profile-button" id="profileLink">View Profile</a>
+  </div>
+</div>
+  </div>
+</div>
+
+<h2 class="section-title">Top Reviewers</h2>
+
+<ul class="reviewer-list" id="reviewer-list">
+  <!-- Top reviewers will be dynamically loaded here -->
+</ul>
+
+<!-- hiddden input -->
+ <input type="text" id="user-id" value="<%= user && user.id ? user.id : null %>" class="hidden" />
+
+<p id="end-message" class="text-center text-sm text-gray-500 py-4 hidden">
+  🎉 You've reached the end!
+</p>
+<div id="loading-spinner" class="text-center py-3 hidden">Loading...</div>
+
+<script>
+
+  const topReviewers = {
+    most_viewed: <%- JSON.stringify(topReviewers.most_viewed || {}) %>,
+    highest_rated: <%- JSON.stringify(topReviewers.highest_rated || {}) %>,
+    most_reviewed: <%- JSON.stringify(topReviewers.most_reviewed || {}) %>
+  };
+
+  console.log("Top Reviewers Data:", topReviewers);
+
+</script>

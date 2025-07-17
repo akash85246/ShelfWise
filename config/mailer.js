@@ -1,8 +1,8 @@
-import nodemailer from "nodemailer";
-import Mailgen from "mailgen";
+const nodemailer = require("nodemailer");
+const Mailgen = require("mailgen");
 
-class Mail {
-  static async SendEmail(req, res) {
+
+  async function SendEmail(req, res) {
     try {
       // Email configuration for Gmail
       const nodeConfig = {
@@ -49,6 +49,8 @@ class Mail {
       return res.status(500).send({ error: "Internal server error" });
     }
   }
-}
+module.exports = {
+  SendEmail,
+};
 
-export default Mail;
+

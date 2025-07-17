@@ -1,0 +1,442 @@
+<div class="create-container">
+  <!-- Left Section -->
+  <div class="create-subcontainer create-left">
+    <div class="stick-to-top">
+      <h1 class="form-title"><%- mode == 'create'? 'Write a Review' : 'Edit Review'%></h1>
+      <p class="form-subtitle">
+        <%- mode == 'create' ? 'Share your thoughts on the book.' : 'Update your review and improve your insights.' %>
+      </p>
+
+      <form class="review-form" id="book-review-form">
+        <!-- Book Details -->
+        <div class="form-section">
+          <div class="title-search">
+            <label for="title">Book Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="form-input"
+              value="<%- mode === 'edit' && review ? review.title : '' %>"
+              required
+            />
+            <div id="book-suggestions" class="hidden"></div>
+          </div>
+        </div>
+
+        <!-- Review Text -->
+        <div class="form-section">
+          <label for="review">Book Review</label>
+          <textarea
+            id="review"
+            name="review"
+            rows="20"
+            class="form-textarea"
+            required
+          ><%- mode === 'edit' && review ? review.review : '' %></textarea>
+
+          <div class="form-textarea-container">
+            <div class="moment-container">
+              <label for="moment">Memorable Moment</label>
+              <textarea
+                id="moment"
+                name="moment"
+                rows="10"
+                class="form-textarea"
+                required
+              ><%- mode === 'edit' && review ? review.moment : '' %></textarea>
+              <input
+                type="number"
+                id="moment_page_number"
+                name="moment_page_number"
+                min="1"
+                placeholder="Page Number"
+                value="<%- mode === 'edit' && review ? review.moment_page_number : '' %>"
+              />
+            </div>
+            <div>
+              <label for="quote">Quote to Remember</label>
+              <textarea
+                id="quote"
+                name="quote"
+                rows="10"
+                class="form-textarea"
+                required
+              ><%- mode === 'edit' && review ? review.quote : '' %></textarea>
+            </div>
+          </div>
+          <div class="ending-container">
+            <div>
+              <label for="ending">Ending Opinion</label>
+              <textarea
+                id="ending"
+                name="ending"
+                rows="3"
+                class="form-textarea"
+              ><%- mode === 'edit' && review ? review.ending : '' %></textarea>
+            </div>
+            <div>
+              <label for="genre"> Genre</label>
+              <textarea
+                id="genre"
+                name="genre"
+                class="form-input"
+                rows="4"
+              ><%- mode === 'edit' && review ? review.genre : '' %></textarea>
+            </div>
+          </div>
+        </div>
+
+        <p class="note">Note: Your review will be visible to all users.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Section -->
+  <div class="create-subcontainer create-right">
+    <!-- Book Image -->
+    <div class="stick-to-top">
+      <div class="create-image">
+        <img
+          src="<%- mode === 'edit' && review ? review.cover_url : '/images/image 42.png' %>"
+          alt="Book cover"
+          class="cover-preview"
+          id="book-cover"
+        />
+      </div>
+      <div class="rate-book-actions">
+        <!-- <p class="section-title">Rate the Book</p> -->
+        <button type="button" class="add-rating-btn">Add Rating</button>
+        <ul class="rating-list hidden"></ul>
+      </div>
+
+      <form class="review-form" id="ratings-form">
+        <!-- Ratings -->
+
+        <!-- Special Details -->
+        <div class="form-section">
+          <label for="author">Author</label>
+          <input
+            type="text"
+            id="author"
+            name="author"
+            class="form-input"
+            value="<%- mode === 'edit' && review ? review.author : '' %>"
+            required
+          />
+
+          <label for="format">Format</label>
+          <select id="format" name="format" class="form-input">
+            <option value="">Select Format</option>
+            <option value="Paperback" <%= review && review.format === 'Paperback' ? 'selected' : '' %>>Paperback</option>
+            <option value="Hardcover" <%= review && review.format === 'Hardcover' ? 'selected' : '' %>>Hardcover</option>
+            <option value="eBook" <%= review && review.format === 'eBook' ? 'selected' : '' %>>eBook</option>
+            <option value="Audiobook" <%= review && review.format === 'Audiobook' ? 'selected' : '' %>>Audiobook</option>
+          </select>
+
+
+          <label for="favorite_character">Favorite Character</label>
+          <input
+            type="text"
+            id="favorite_character"
+            name="favorite_character"
+            class="form-input"
+            value="<%- mode === 'edit' && review ? review.favorite_character : '' %>"
+          />
+
+          <label for="least_favorite_character">Least Favorite Character</label>
+          <input
+            type="text"
+            id="least_favorite_character"
+            name="least_favorite_character"
+            class="form-input"
+            value="<%- mode === 'edit' && review ? review.least_favorite_character : '' %>"
+          />
+        </div>
+        <!-- hidden Inputs -->
+        <input type="hidden" id="isbn" name="isbn"  value="<%- mode === 'edit' && review ? review.isbn : '' %>" />
+        <input type="hidden" id="reviewPublisher" name="reviewPublisher" value="<%- mode === 'edit' && review ? review.publisher : '' %>" />
+        <input type="hidden" id="reviewPublishYear" name="reviewPublishYear" value="<%- mode === 'edit' && review ? review.published_year : '' %>" />
+
+        <!-- Submit -->
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary"><%- mode === 'edit' && review ? 'Update' : 'Publish' %> </button>
+          <button type="button" class="btn btn-secondary" id="draft-button">Draft</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  window.existingRatings = <%- JSON.stringify(ratings || []) %>;
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const formLeft = document.getElementById("book-review-form");
+  const formRight = document.getElementById("ratings-form");
+  formRight.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    try {
+      const ratings = [];
+
+      document.querySelectorAll(".rating-container").forEach((container) => {
+        const titleInput = container.querySelector(
+          'input[name="rating_title[]"]'
+        );
+        const valueInput = container.querySelector(
+          'input[name="rating_value[]"]'
+        );
+
+        if (titleInput && valueInput) {
+          ratings.push({
+            title: titleInput.value,
+            value: parseInt(valueInput.value, 10),
+          });
+        }
+      });
+
+      const title = document.getElementById("title").value.trim();
+      const author = document.getElementById("author").value.trim();
+      const review = document.getElementById("review").value.trim();
+      const quote = document.getElementById("quote").value.trim();
+      const moment = document.getElementById("moment").value.trim();
+      const moment_page_number = document
+        .getElementById("moment_page_number")
+        .value.trim();
+      const favorite_character = document
+        .getElementById("favorite_character")
+        .value.trim();
+      const least_favorite_character = document
+        .getElementById("least_favorite_character")
+        .value.trim();
+      const ending = document.getElementById("ending").value.trim();
+      const genre = document.getElementById("genre").value.trim();
+      const format = document.getElementById("format").value.trim();
+      const cover_url = document.getElementById("book-cover").src;
+      const publisher = document.getElementById("reviewPublisher").value.trim();
+      const published_year = document
+        .getElementById("reviewPublishYear")
+        .value.trim();
+      const isbn = document.getElementById("isbn").value.trim();
+
+      const user_id = "<%= user.id %>";
+      const review_id = "<%- mode === 'edit' && review ? review.id : '' %>";
+      const url = "<%- mode === 'edit' && review ? '/api/update-review' : '/api/create-review' %>";
+      const method = "<%- mode === 'edit' && review ? 'patch' : 'post' %>";
+
+      try {
+        const response = await axios({
+    method: method,
+    url: url,
+    data: {
+      user_id,
+      title,
+      author,
+      review,
+      quote,
+      moment,
+      moment_page_number,
+      favorite_character,
+      least_favorite_character,
+      ending,
+      genre,
+      format,
+      cover_url,
+      isbn,
+      publisher,
+      published_year,
+      ratings,
+      review_id,
+    },
+  });
+       
+        console.log("Review updated successfully:", response.data);
+         Toastify({
+          text: "Review updated successfully",
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "linear-gradient(to right, #4caf50, #2e7d32)",
+          close: true,
+        }).showToast();
+
+        if (`<%= mode === 'edit' && review.status === 'draft' ? 'true' : 'false' %>` === 'true') {
+          console.log("Changing status to published");
+          console.log("User ID:", user_id);
+          console.log("Review ID:", review_id);
+
+          await changeStatus(user_id, review_id, 'published');
+        }
+        window.location.href = "/review/" + response.data.slug;
+      } catch (error) {
+        console.error("Error updating review:", error);
+         Toastify({
+          text: "Something went wrong",
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "linear-gradient(to right, #e52d27, #b31217)",
+          close: true,
+        }).showToast();
+      }
+    } catch (error) {
+      console.error("Error updating review:", error);
+      Toastify({
+          text: "Something went wrong",
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "linear-gradient(to right, #e52d27, #b31217)",
+          close: true,
+        }).showToast();
+    }
+  });
+
+  const draftButton = document.getElementById("draft-button");
+  draftButton.addEventListener("click", async function () {
+  try {
+    const ratings = [];
+
+    document.querySelectorAll(".rating-container").forEach((container) => {
+      const titleInput = container.querySelector('input[name="rating_title[]"]');
+      const valueInput = container.querySelector('input[name="rating_value[]"]');
+
+      if (titleInput && valueInput) {
+        ratings.push({
+          title: titleInput.value,
+          value: parseInt(valueInput.value, 10),
+        });
+      }
+    });
+
+    const title = document.getElementById("title").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const review = document.getElementById("review").value.trim();
+    const quote = document.getElementById("quote").value.trim();
+    const moment = document.getElementById("moment").value.trim();
+    const moment_page_number = document.getElementById("moment_page_number").value.trim();
+    const favorite_character = document.getElementById("favorite_character").value.trim();
+    const least_favorite_character = document.getElementById("least_favorite_character").value.trim();
+    const ending = document.getElementById("ending").value.trim();
+    const genre = document.getElementById("genre").value.trim();
+    const format = document.getElementById("format").value.trim();
+    const cover_url = document.getElementById("book-cover").src;
+    const publisher = document.getElementById("reviewPublisher").value.trim();
+    const published_year = document.getElementById("reviewPublishYear").value.trim();
+    const isbn = document.getElementById("isbn").value.trim();
+
+    const user_id = "<%= user.id %>";
+    const review_id = "<%= mode === 'edit' && review ? review.id : '' %>";
+    const url = "<%- mode === 'edit' && review ? '/api/update-review' : '/api/draft-review' %>";
+    const method = "<%- mode === 'edit' && review ? 'patch' : 'post' %>";
+
+   console.log(url);
+
+    
+    try {
+
+      const response = await axios({
+    method: method,
+    url: url,
+    data: {
+      user_id,
+        title,
+        author,
+        review,
+        quote,
+        moment,
+        moment_page_number,
+        favorite_character,
+        least_favorite_character,
+        ending,
+        genre,
+        format,
+        cover_url,
+        isbn,
+        publisher,
+        published_year,
+        ratings,
+        review_id,
+    },
+  });
+
+      
+
+      Toastify({
+        text: "Draft saved successfully",
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #4caf50, #2e7d32)",
+        close: true,
+      }).showToast();
+
+      if (`<%= mode === 'edit' && review.status === 'published' ? 'true' : 'false' %>` === 'true') {
+         await changeStatus(user_id, review_id, 'draft');
+        }
+
+        console.log("Draft saved successfully:", response);
+
+      window.location.href = "/review/" + response.data.slug;
+    } catch (error) {
+      console.error("Error saving draft:", error);
+
+      Toastify({
+        text: "Something went wrong",
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #e52d27, #b31217)",
+        close: true,
+      }).showToast();
+    }
+
+  } catch (outerErr) {
+    console.error("Outer error:", outerErr);
+  }
+});
+
+  async function changeStatus(userId, reviewId, status) {
+      try {
+        console.log("Changing status for user:", userId, "review:", reviewId, "to status:", status);
+        const response = await axios.patch("/api/change-review-status", {
+          userId: userId,
+          reviewId: reviewId,
+          status: status,
+        });
+
+
+        if (response.data.success) {
+          Toastify({
+            text: `Review status changed to ${status}`,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#4caf50",
+          }).showToast();
+        } else {
+          Toastify({
+            text: "Failed to change review status",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ff0000",
+          }).showToast();
+        }
+      } catch (error) {
+        console.error("Error changing review status:", error);
+        Toastify({
+          text: "Error changing review status",
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#ff0000",
+        }).showToast();
+      }
+      
+   }
+      
+
+});
+</script>

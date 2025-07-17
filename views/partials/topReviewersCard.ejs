@@ -1,0 +1,11 @@
+<a href="/profile/<%= reviewer.slug %>" class="reviewer-card">
+  <img
+    class="reviewer-avatar"
+    src="<%= reviewer.profile_picture %>"
+    alt="Reviewer 1"
+  />
+  <div class="reviewer-info">
+    <p class="reviewer-name"><%= reviewer.full_name %></p>
+    <p class="reviewer-meta"><%= reviewer.quote?.length > 30 ? reviewer.quote.slice(0, 30) + "..." : (reviewer.quote || "No reviews available") %></p>
+  </div>
+</a>

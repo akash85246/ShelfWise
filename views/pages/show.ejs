@@ -1,0 +1,230 @@
+<div class="show-container">
+  <div class="show-subcontainer1">
+    <div class="page-sticky">
+    <p class="page-location">Review / <span><%= review.title %></span></p>
+    <div class="book-heading">
+      <div class="book-info-container">
+        <div class="book-info-subcontainer">
+          <div class="book-info">
+            <p><%= review.publisher %> - <%= review.published_year %></p>
+          </div>
+
+          <h1><%= review.title %></h1>
+          <h3><%= review.author %></h3>
+        </div>
+        <!-- <div class="book-info-subcontainer"></div> -->
+      </div>
+      <div class="book-details">
+        <div class="book-cover">
+          <img src="<%= review.cover_url %>" alt="Book Cover" />
+        </div>
+        <p class="isbn"><%= review.isbn %></p>
+      </div>
+    </div>
+    <div class="book-review spiltLine"><%= review.review %></div>
+    <div class="additional-info1">
+      <div class="moment-container spiltLine"><h4 class="heading">Most Suprising Moment</h4> <%= review.moment %><p class="page-number">
+          <%= review.moment_page_number %> <span>Page</span> </p>
+      </div>
+
+    </div>
+    <div class="additional-info2">
+
+            <div class="quote-container spiltLine"><h4 class="heading">Quotes to Remember</h4> <%= review.quote %>
+      </div>
+      <div class="charater-container">
+      <div class="favorite-character-container">
+        <h4 class="heading">Favorite Character</h4>
+        <%= review.favorite_character %>
+        <img src="/icons/favourite.png" alt=" Favorite Character Icon" class="favorite-icon" />
+      </div>
+
+      <div class="least-favorite-character-container">
+        <h4 class="heading">Least Favorite Character</h4>
+        <%= review.least_favorite_character %>  <img src="/icons/leastfavourite.png" alt=" Favorite Character Icon" class="favorite-icon" />
+      </div>
+    </div>
+    </div>
+
+    <div class="ending-container spiltLine"><h4 class="heading">Ending</h4><%= review.ending %></div>
+  </div>
+  </div>
+
+<!-- button for mobile screen -->
+<button id="toggle-sidebar-btn" class="sidebar-toggle-btn">
+  ☰ more info
+</button>
+  <div class="show-subcontainer2">
+    <div class="reviwer-container">
+      <a href="/user/<%= reviewAuthor.slug  %>" class="review-author-info">
+        <img
+          src="<%= reviewAuthor.profile_picture  %>"
+          alt="avatar"
+          class="userAvatar"
+        />
+        <h1 class="review-author"><%= reviewAuthor.full_name %></h1>
+      </a>
+
+      <div class="date-container">
+        <p class="created-at-container">
+          <span>Created</span>
+          <span>
+            <%= new Date(review.created_at).toLocaleDateString('en-GB', { day:
+            '2-digit', month: 'short', year: 'numeric' }) %>
+          </span>
+        </p>
+
+        <p class="updated-at-container">
+          <span>Updated</span>
+          <span>
+            <%= new Date(review.updated_at).toLocaleDateString('en-GB', { day:
+            '2-digit', month: 'short', year: 'numeric' }) %>
+          </span>
+        </p>
+      </div>
+
+      <div class="book-ratings">
+        <ul class="ratings-list">
+          <% bookRatings.forEach((rating) => { %> <%-
+          include("../partials/bookRatingCard.jsx", { rating }) %> <% }) %>
+        </ul>
+      </div>
+
+      <div class="genre-container">
+        <!-- <h4>Genre</h4> -->
+        <ul class="genre-list">
+          <% review.genre.split(',').forEach((genre) => { %>
+          <li class="genre-chip"><%= genre.trim() %></li>
+          <% }) %>
+        </ul>
+      </div>
+      <% if(review.format) {%>
+      <div class="format-container">
+        <h4>Format</h4>
+        <p><%= review.format %></p>
+      </div>
+      <% } %>
+
+      <ul class="quick-links">
+        <li>
+          <button  id="share-modal-button" >
+            <div
+              class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-10"
+              data-icon="Share"
+              data-size="24px"
+              data-weight="regular"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M229.66,109.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,112H165a88,88,0,0,0-85.23,66,8,8,0,0,1-15.5-4A103.94,103.94,0,0,1,165,96h39.71L170.34,61.66a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,229.66,109.66ZM192,208H40V88a8,8,0,0,0-16,0V208a16,16,0,0,0,16,16H192a8,8,0,0,0,0-16Z"
+                ></path>
+              </svg>
+            </div>
+            <p
+              class="text-[#111418] text-base font-normal leading-normal flex-1 truncate"
+            >
+              Share
+            </p>
+          </button>
+        </li>
+        <% if(user && user.id !=null && (user.id === review.user_id)) { %>
+        <li>
+          <button id="edit-review-btn" data-slug="<%= review.slug %>">
+            <div
+              class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-10"
+              data-icon="PencilSimple"
+              data-size="24px"
+              data-weight="regular"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"
+                ></path>
+              </svg>
+            </div>
+            <p
+              class="text-[#111418] text-base font-normal leading-normal flex-1 truncate"
+            >
+              Edit Review
+            </p>
+          </button>
+        </li>
+        <% } else if(user !== null ){%>
+        <li>
+          <button>
+            <div
+              class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-10"
+              data-icon="Flag"
+              data-size="24px"
+              data-weight="regular"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M34.76,42A8,8,0,0,0,32,48V216a8,8,0,0,0,16,0V171.77c26.79-21.16,49.87-9.75,76.45,3.41,16.4,8.11,34.06,16.85,53,16.85,13.93,0,28.54-4.75,43.82-18a8,8,0,0,0,2.76-6V48A8,8,0,0,0,210.76,42c-28,24.23-51.72,12.49-79.21-1.12C103.07,26.76,70.78,10.79,34.76,42ZM208,164.25c-26.79,21.16-49.87,9.74-76.45-3.41-25-12.35-52.81-26.13-83.55-8.4V51.79c26.79-21.16,49.87-9.75,76.45,3.4,25,12.35,52.82,26.13,83.55,8.4Z"
+                ></path>
+              </svg>
+            </div>
+            <p
+              class="text-[#111418] text-base font-normal leading-normal flex-1 truncate"
+            >
+              Report Review
+            </p>
+          </button>
+        </li>
+        <% }%>
+      </ul>
+
+      <ul class="buy-book-option">
+        <li>
+          <a
+            href="https://www.amazon.in/s?k=<%= review.isbn %>"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/icons/amazonIcon.svg" alt="Amazon" />
+            Buy on Amazon
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://www.flipkart.com/search?q=<%= review.isbn %>"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/icons/flipkartIcon.svg" alt="Flipkart" />
+            Buy on Flipkart
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://books.google.com/books?vid=ISBN<%= review.isbn %>"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/icons/googleBookIcon.png" alt="Google Books" />
+            View on Google Books
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<%- include("../partials/shareModal.ejs")  %>

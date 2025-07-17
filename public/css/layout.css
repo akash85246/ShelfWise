@@ -1,0 +1,24 @@
+.main-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #fcfaf8;
+}
+
+@media (max-width: 950px) {
+  .main-container {
+    padding: 1.5rem;
+  }
+}
+@media (max-width: 800px) {
+  .main-container {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 550px) {
+  .main-container {
+    margin: 0.5 auto;
+    padding: 0.5rem;
+  }
+}

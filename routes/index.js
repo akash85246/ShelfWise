@@ -1,7 +1,12 @@
-import express from "express";
-import { db } from "../app.js";
-import axios from "axios";
-import ReviewController from "../controllers/review.controller.js";
+const express = require("express");
+const axios = require("axios");
+const { db } = require("../app");
+const ReviewController = require("../controllers/review.controller");
+const {
+  getUserStats,
+  topThreeUsers,
+  getHomePageReviewsAndReviewer,
+} = require("../db/queries");
 
 const router = express.Router();
 
@@ -51,66 +56,27 @@ async function getBookDetails(title) {
   }
 }
 
-const cache = new Map();
-
-async function getBookDetailsWithCache(title) {
-  if (cache.has(title)) {
-    return cache.get(title);
-  }
-  // console.log(`Fetching details for title: ${title}`);
-  const details = await getBookDetails(title);
-  if (details) {
-    cache.set(title, details);
-  }
-  return details;
-}
-
 router.get("/", async (req, res) => {
   try {
     const user = req.user;
-    const recommendedBooks = await db.query(
-      "SELECT * FROM book_reviews WHERE views >= 0 AND final_rating >= 3 ORDER BY views DESC, final_rating DESC LIMIT 8;"
-    );
-    const popularBooks = await db.query(
-      "SELECT * FROM book_reviews ORDER BY views DESC, created_at DESC LIMIT 8"
-    );
-    const recentBooks = await db.query(
-      "SELECT * FROM book_reviews ORDER BY created_at DESC LIMIT 8"
-    );
-    let likedBooks;
-    if (user) {
-      likedBooks = await db.query(
-        `SELECT 
-            book_reviews.*, 
-            reader_views.view_count, 
-            reader_views.last_viewed_at 
-         FROM 
-            reader_views 
-         JOIN 
-            book_reviews 
-         ON 
-            reader_views.review_id = book_reviews.id 
-         WHERE 
-            reader_views.reader_id = $1 
-         ORDER BY 
-            reader_views.view_count DESC, 
-            reader_views.created_at DESC 
-         LIMIT 8`,
-        [user.id]
-      );
-    } else {
-      likedBooks = await db.query(
-        "SELECT book_reviews.*, reader_views.view_count, reader_views.last_viewed_at FROM reader_views JOIN book_reviews ON reader_views.review_id = book_reviews.id ORDER BY reader_views.view_count DESC, reader_views.created_at DESC LIMIT 8;"
-      );
-    }
+    const { topReviews, topReviewers} = await getHomePageReviewsAndReviewer();
 
-    res.renderWithLayout("index.ejs", {
+    res.renderWithLayout("../pages/index.ejs", {
       listTitle: "Shelfwise",
-      recommendedBooks: recommendedBooks.rows,
-      popularBooks: popularBooks.rows,
-      recentBooks: recentBooks.rows,
-      likedBooks: likedBooks.rows,
+      styles: [
+        "/css/index.css",
+        "/css/header.css",
+        "/css/layout.css",
+        "/css/popularReviewCard.css",
+        "/css/footer.css",
+        "/css/recentReviewsCard.css",
+        "/css/topReviewersCard.css",
+        "/css/categoriesCard.css",
+      ],
+      scripts: ["/js/header.js", "/js/index.js"],
       user: user || null,
+      reviewers: topReviewers|| [],
+      reviews: topReviews || [],
     });
   } catch (error) {
     console.error("Error getting index page:", error);
@@ -118,13 +84,101 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/new-review", async (req, res) => {
+router.get("/browse-book", async (req, res) => {
+  try {
+    const user = req.user;
+    const genre= req.query.genre || "";
+
+    res.renderWithLayout("../pages/browseBook.ejs", {
+      listTitle: "Shelfwise",
+      styles: [
+        "/css/header.css",
+        "/css/browseBook.css",
+        "/css/layout.css",
+        "/css/footer.css",
+      ],
+      scripts: ["/js/browseBook.js", "/js/header.js"],
+      user: user || null,
+      genre: genre,
+    });
+  } catch (error) {
+    console.error("Error getting browse book page:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/top-reviewer", async (req, res) => {
+  try {
+    const user = req.user;
+    const topReviewers = await topThreeUsers();
+
+    res.renderWithLayout("../pages/topReviewer.ejs", {
+      listTitle: "Shelfwise",
+      styles: [
+        "/css/header.css",
+        "/css/topReviewer.css",
+        "/css/layout.css",
+        "/css/footer.css",
+      ],
+      scripts: ["/js/topReviewer.js", "/js/header.js"],
+      user: user || null,
+      topReviewers: {
+        most_viewed: topReviewers.most_viewed_user,
+        highest_rated: topReviewers.highest_rated_user,
+        most_reviewed: topReviewers.most_reviewed_user,
+      },
+    });
+  } catch (error) {
+    console.error("Error getting browse book page:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/create", async (req, res) => {
   const user = req.user;
+
   if (req.isAuthenticated() && user.author == true) {
     try {
-      res.renderWithNewLayout("new.ejs", {
+      res.renderWithLayout("../pages/new.ejs", {
         listTitle: "Shelfwise",
+        styles: [
+          "/css/header.css",
+          "/css/new.css",
+          "/css/layout.css",
+          "/css/footer.css",
+        ],
+        scripts: ["/js/new.js", "/js/header.js"],
         user: user,
+        review: null,
+        ratings: null,
+        mode: "create",
+      });
+    } catch (error) {
+      console.error("Error getting new review page:", error);
+    }
+  } else {
+    res.redirect("/");
+  }
+});
+
+router.get("/my-review", async (req, res) => {
+  const user = req.user;
+
+  if (req.isAuthenticated() && user.author == true) {
+    try {
+      const userStats = await getUserStats(user.id);
+
+      res.renderWithLayout("../pages/myReview.ejs", {
+        listTitle: "Shelfwise",
+        styles: [
+          "/css/header.css",
+          "/css/myReview.css",
+          "/css/layout.css",
+          "/css/footer.css",
+        ],
+        scripts: ["/js/myReview.js", "/js/header.js"],
+        user: user,
+        userStats: userStats,
       });
     } catch (error) {
       console.error("Error getting new review page:", error);
@@ -259,11 +313,13 @@ router.get("/profile", async (req, res) => {
       if (!user) {
         return res.status(401).send("Unauthorized access"); // Handle unauthorized access
       }
-      if(user.author == true){
-        viewHistory=await db.query("SELECT * FROM book_reviews ORDER BY created_at DESC;");
-      }else{
-      viewHistory = await db.query(
-        `
+      if (user.author == true) {
+        viewHistory = await db.query(
+          "SELECT * FROM book_reviews ORDER BY created_at DESC;"
+        );
+      } else {
+        viewHistory = await db.query(
+          `
           SELECT 
               rv.id AS reader_view_id,
               rv.reader_id,
@@ -291,8 +347,9 @@ router.get("/profile", async (req, res) => {
           ORDER BY 
               rv.last_viewed_at DESC;
           `,
-        [user.id]
-      );}
+          [user.id]
+        );
+      }
       res.renderWithProfileLayout("profile.ejs", {
         title: "Users Page",
         user: user,
@@ -307,4 +364,4 @@ router.get("/profile", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

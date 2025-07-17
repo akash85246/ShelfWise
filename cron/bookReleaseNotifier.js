@@ -1,12 +1,9 @@
-// /cron/bookReleaseNotifier.js
-
-import cron from "node-cron";
-import { db } from "../app.js";
-import axios from "axios";
+const cron = require("node-cron");
+const axios = require("axios");
 
 // Function to send email notification to users
 const sendReleaseEmails = async (book) => {
-  const users = await db.query(`SELECT * FROM public.readers ORDER BY id ASC`);
+  // const users = await db.query(`SELECT * FROM public.readers ORDER BY id ASC`);
 
   users.rows.forEach(async (user) => {
     const message = `
@@ -33,12 +30,12 @@ const sendReleaseEmails = async (book) => {
         .then((response) => console.log(response.data))
         .catch((error) => console.error(error));
 
-      db.query(`DELETE FROM public.anticipated_books WHERE id = $1`, [book.id]);
+      // db.query(`DELETE FROM public.anticipated_books WHERE id = $1`, [book.id]);
 
-      db.query(
-        `INSERT INTO to_be_read (title, author,type) VALUES ($1, $2, $3)`,
-        [book.title, book.author, "standalone"]
-      );
+      // db.query(
+      //   `INSERT INTO to_be_read (title, author,type) VALUES ($1, $2, $3)`,
+      //   [book.title, book.author, "standalone"]
+      // );
 
       console.log(`Email sent to ${user.email}`);
     } catch (error) {
@@ -50,9 +47,9 @@ const sendReleaseEmails = async (book) => {
 // Cron job to run daily at midnight and check for books to notify
 cron.schedule("0 0 * * *", async () => {
   console.log("Checking for book releases...");
-  const releasedBooks = await db.query(
-    `SELECT * FROM public.anticipated_books WHERE release_date <= CURRENT_DATE ORDER BY id ASC;`
-  );
+  // const releasedBooks = await db.query(
+  //   `SELECT * FROM public.anticipated_books WHERE release_date <= CURRENT_DATE ORDER BY id ASC;`
+  // );
   //console.log(releasedBooks.rows);
   releasedBooks.rows.forEach(async (book) => {
     await sendReleaseEmails(book);

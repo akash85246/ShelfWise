@@ -1,0 +1,126 @@
+<!-- hero section -->
+<div class="hero-container">
+  <div class="hero-wrapper">
+    <div class="hero-content" style='background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url(../../banners/home-hero-section.png);'>
+      <div class="hero-text">
+        <h1 class="hero-title">Discover. Review. Share.</h1>
+        <h2 class="hero-subtitle">Thousands of book lovers, one platform.</h2>
+      </div>
+
+      <label class="search-label">
+        <div class="search-box">
+          <div class="search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path
+                d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+              ></path>
+            </svg>
+          </div>
+          <input
+            placeholder="Search by title, author, or genre"
+            class="search-input"
+            id="search-input"
+            value=""
+          />
+          <div class="search-button-wrapper">
+            <a class="search-button" href="/create">
+              <span class="search-button-text">Start Reviewing</span>
+            </a>
+          </div>
+        </div>
+        <ul class="result-list hidden" id="result-list"></ul>
+      </label>
+      
+    </div>
+  </div>
+</div>
+
+<!-- popular review card -->
+<ul class="popular-review-cards">
+  <% reviews.forEach((review) => { %>
+    <%- include("../partials/popularReviewCard.ejs" ,{review})  %>
+    <% }) %>
+</ul>
+
+<!-- Categories / Genres -->
+<%
+  const genres = [
+    {
+      name: "Fantasy",
+      description: "Explore magical worlds and epic quests.",
+      image: "image1"
+    },
+    {
+      name: "Thriller",
+      description: "Dive into suspenseful plots and unexpected twists.",
+      image: "image2"
+    },
+    {
+      name: "Romance",
+      description: "Find heartwarming stories of love and connection.",
+      image: "image3"
+    },
+    {
+      name: "Non-Fiction",
+      description: "Learn and grow with insightful and informative reads.",
+      image: "image4"
+    },
+    {
+      name: "Sci-Fi",
+      description: "Discover futuristic technologies and interstellar adventures.",
+      image: "image5"
+    },
+    {
+      name: "Historical",
+      description: "Journey through time with captivating historical narratives.",
+      image: "image6"
+    }
+  ];
+%>
+
+ <h2 class="genre-title">Categories / Genre Highlights</h2>
+ <ul class="genre-grid">
+  <% genres.forEach((genre) => { %>
+    <%- include("../partials/categoriesCard.ejs", { genre }) %>
+  <% }) %>
+ </ul>
+
+ <!-- Top Reviewers -->
+  <h2 class="reviewer-title">Top Reviewers</h2>
+  <ul class="reviewer-container">
+    <% reviewers.forEach((reviewer) => { %>
+      <%- include("../partials/topReviewersCard.ejs", { reviewer }) %>
+    <% }) %>
+  </ul>
+
+<!-- Recent Reviews Feed -->
+<h2 class="reviews-title">Recent Reviews Feed</h2>
+<ul class="review-feed" id="recent-reviews">
+ 
+</ul>
+<!-- view more button  -->
+<div class="recent-button-wrapper">
+  <button id="recent-button" class="recent-button">
+    View More
+    <span class="arrow">&#x2304;</span>
+  </button>
+</div>
+
+<!-- Call to action  -->
+ <% if(user === null){ %>
+ <div class="cta-container">
+  <div class="cta-content">
+    <div class="cta-text">
+      <h1 class="cta-heading">
+        Join 50,000+ readers sharing their love for books.
+      </h1>
+    </div>
+    <div class="cta-button-wrapper" >
+      <a class="cta-button" href="/auth/google">
+        <img src="../icons/googleIcon.png" alt="google icon" class="google-icon" />
+      <span>Sign In</span>
+      </a>
+    </div>
+  </div>
+</div>
+<% } %>

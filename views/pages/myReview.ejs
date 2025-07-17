@@ -1,0 +1,62 @@
+<div class="header-my-review">
+  <p class="title-my-review">My Reviews</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" id="">All Reviews</button>
+  <button class="tab" id="publish-review-button">Published</button>
+  <button class="tab" id="draft-review-button">Draft</button>
+</div>
+
+<div class="insights-container">
+  <div class="insights">
+    <p class="insight-title">Review Insights</p>
+     <span class="insight-published" id="insight-published">Book Review: 0</span>
+    <div class="insight-stats-container">
+        
+      <span class="insight-stats" id="insight-most-reviewed">
+        Most Reviewed Genre: <span><%= userStats.mostReviewedGenre || 'N/A' %></span> 
+        </span>
+
+        <span class="insight-stats" id="insight-highest-rated">
+        Average Rating Given: <span><%= userStats.avgRatingGiven || 'N/A' %></span> 
+        </span>
+
+        <span class="insight-stats" id="insight-recent-review">
+        Recent Review Date: <span><%= userStats.recentReviewDate || 'N/A' %></span> 
+        </span>
+
+        <span class="insight-stats" id="insight-most-viewed">
+        Most Viewed Blog: 
+        <span>
+            <% if (userStats.mostViewedBlog && userStats.mostViewedBlog.title) { %>
+            <a href="/review/<%= userStats.mostViewedBlog.slug %>"><%= userStats.mostViewedBlog.title %></a>
+                (<%= userStats.mostViewedBlog.total_views %> views)
+            <% } else { %>
+                N/A
+             <% } %>
+        </span> 
+        </span>
+
+        <span class="insight-stats" id="insight-total-reviews">
+        Total Reviews: <span><%= userStats.totalReviews || '0' %></span>
+        </span>
+    </div>
+  </div>
+  <img
+    src="<%= userStats.mostViewedBlog.cover_url || '../images/myBookReview.png' %>"
+    alt="book review"
+    class="insights-image"
+  />
+</div>
+
+
+
+<ul class="book-review-list" id="book-review-list"></ul>
+<!-- hiddden input -->
+<input type="text" id="user-id" value="<%= user.id  %>" class="hidden" />
+
+<p id="end-message" class="text-center text-sm text-gray-500 py-4 hidden">
+  🎉 You've reached the end!
+</p>
+<div id="loading-spinner" class="text-center py-3 hidden">Loading...</div>

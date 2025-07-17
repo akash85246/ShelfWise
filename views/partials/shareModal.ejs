@@ -1,0 +1,29 @@
+<div id="shareModal" class="share-modal hidden">
+  <div class="share-modal-content">
+    <div class="share-modal-header">
+      <h2>Share This Review</h2>
+      <span id="closeShareModal" class="close-btn">&times;</span>
+    </div>
+    <p>Share this review with your friends and followers!</p>
+    <input id="shareUrl" type="text" readonly value="<%= shareUrl %>" />
+
+    <div class="share-options">
+      <button id="copyShareLink">Copy</button>
+      <a
+        href="https://wa.me/?text=<%= encodeURIComponent(shareUrl) %>"
+        target="_blank"
+        ><img src="/icons/whatsappIcon.svg" alt="" /> WhatsApp</a
+      >
+      <a
+        href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(shareUrl) %>"
+        target="_blank"
+        ><img src="/icons/twitterIcon.svg" alt=""> Twitter</a
+      >
+      <a
+        href="mailto:?subject=Check out this review&body=<%= encodeURIComponent(shareUrl) %>"
+        target="_blank"
+        ><img src="/icons/emailIcon.svg" alt=""> Email</a
+      >
+    </div>
+  </div>
+</div>

@@ -1,7 +1,11 @@
-import express from "express";
+const express = require("express");
 const router = express.Router();
-import UserController from "../controllers/user.controller.js";
+const UserController = require("../controllers/user.controller");
 
-router.delete("/delete", UserController.deleteUser);
+router.get("/", (req, res) => {
+  res.render("pages/index", { title: "ShelfWise" });
+});
 
-export default router;
+router.get("/search-user", UserController. getSearchAndFilterUser);
+
+module.exports = router;

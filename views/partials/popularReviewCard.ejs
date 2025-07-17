@@ -1,0 +1,13 @@
+<li class="book-card">
+  <div class="book-cover-wrapper">
+    <img
+      src="<%= review.cover_url  %>"
+      alt="The Midnight Library cover"
+      class="book-cover-img"
+    />
+  </div>
+  <div class="book-info">
+    <a href="/review/<%= review.slug  %>" class="book-title"><%= review.title  %> by <%= review.author %> </a>
+    <p class="book-author"><%= review.reviewer_name %></p>
+  </div>
+</li>

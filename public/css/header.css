@@ -1,0 +1,155 @@
+
+body{
+  margin: 0rem;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e7ecf3;
+  white-space: nowrap;
+  background-color: white;
+  color: #0e131b;
+  text-align: center;
+  z-index: 1000;
+  position:sticky;
+  top: 0rem;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Left: Logo */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  color: #0e131b;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+
+
+
+/* Right: Nav + Button */
+.header-right {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #0e131b;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.sign-btn {
+  background-color: #e7ecf3;
+  color: #0e131b;
+  padding: 0.5rem 1rem;
+  font-weight:lighter;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-icon{
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.burger {
+  display: none;
+  font-size: 1.75rem;
+  cursor: pointer;
+}
+
+.logged-in-user{
+  margin-left: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+/* Mobile Styles */
+@media (max-width: 800px) {
+  .burger {
+    display: block;
+    margin-left: 1rem;
+  }
+
+  .header-right {
+    display: none;
+    flex-direction: column;
+    background-color: white;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100vw;
+    padding: 1rem;
+    border-top: 1px solid #ccc;
+  }
+
+  .header-right.open {
+    display: flex;
+    position: absolute;
+    top: 4rem;
+    right: -1rem;
+    width: 100%;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .sign-btn {
+    width: 70%;
+    margin-top: 0.5rem;
+  }
+}

@@ -1,0 +1,102 @@
+
+<div class="header-browse-review">
+  <p class="title-browse-review">Browse Book Reviews</p>
+</div>
+<!-- search bar and filter options for browsing books -->
+<div class="browser-header">
+  <div class="search-container">
+    <!-- Search Icon -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 256 256"
+    >
+      <path
+        d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+      />
+    </svg>
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Search by title, author, ISBN, or keyword"
+      id="search-input"
+    />
+  </div>
+
+  <div class="filters">
+    <div class="filter-select">
+      <label>
+       <select id="genre-select" name="genre">
+  <option disabled <%= !genre ? 'selected' : '' %>>Genre</option>
+  <% const genres = [
+     "Science", "Fantasy", "Romance", "Mystery", "Non-Fiction","Fiction",
+    "Thriller", "Biography", "Autobiography", "Historical", "Horror",
+    "Self-Help", "Philosophy", "Science Fiction", "Poetry", "Drama",
+    "Adventure", "Health & Wellness", "Travel", "Spirituality", "Business",
+    "Psychology", "Education", "Politics", "Comics","Sci-Fi",
+  ]; %>
+  <% genres.forEach(function(item) { %>
+    <option value="<%= item %>" <%= genre === item ? 'selected' : '' %>><%= item %></option>
+  <% }); %>
+</select>
+      </label>
+    </div>
+
+    <div class="filter-select">
+      <label>
+        <select id="format-select">
+          <option disabled selected>Format</option>
+          <option>Hardcover</option>
+          <option>Paperback</option>
+          <option>eBook</option>
+          <option>Audiobook</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="filter-select" >
+      <label>
+        <select id="sort-select">
+          <option disabled selected>Sort by</option>
+          <option>Newest</option>
+          <option>Oldest</option>
+          <option>Rating</option>
+          <option>Alphabetical</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="filter-select" >
+      <label>
+        <select id="published-year-select">
+          <option disabled selected>Published Year</option>
+          <% for (let year = 2025; year >= 1990; year--) { %>
+          <option><%= year %></option>
+          <% } %>
+        </select>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Book Cards Section -->
+<div class="explore-section">
+  <h2>Explore Books</h2>
+  <ul id="books-container" class="books-grid">
+    
+    
+  </ul>
+  <p id="end-message" class="text-center text-sm text-gray-500 py-4 hidden">🎉 You've reached the end!</p>
+  <div id="loading-spinner" class="text-center py-3 hidden">Loading...</div>
+</div>
+<!-- floating go to top button -->
+<button
+  class="go-to-top"
+  onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+>
+  ⇧
+</button>
+
+<!-- hidden input for user ID and genre -->
+<input type="hidden" id="user-id" value="<%= user ? user.id : '' %>" />

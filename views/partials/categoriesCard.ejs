@@ -1,0 +1,11 @@
+<a href="/browse-book?genre=<%= encodeURIComponent(genre.name) %>" class="genre-card">
+    <img
+      class="genre-image"
+      src="../images/genre/<%= genre.image %>.png"
+      alt="Fantasy"
+    />
+    <div class="genre-content">
+      <p class="genre-name"><%= genre.name %></p>
+      <p class="genre-description"><%= genre.description %></p>
+    </div>
+  </a>
