@@ -972,69 +972,6 @@ async function getUserById(id) {
   }
 }
 
-// Create to_be_read table
-async function createToBeReadTable() {
-  const query = `
-    CREATE TABLE IF NOT EXISTS to_be_read (
-      id SERIAL PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
-      author VARCHAR(255) NOT NULL,
-      type VARCHAR(100) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-  `;
-  await pool.query(query);
-  console.log("to_be_read table created");
-}
-
-// Create recommendations table
-async function createRecommendationsTable() {
-  const query = `
-    CREATE TABLE IF NOT EXISTS recommendations (
-      id SERIAL PRIMARY KEY,
-      ip_address INET NOT NULL,
-      book_review_id INTEGER NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      CONSTRAINT fk_book_review FOREIGN KEY (book_review_id) 
-        REFERENCES book_reviews (id) ON DELETE CASCADE
-    );
-  `;
-  await pool.query(query);
-  console.log("recommendations table created");
-}
-
-// Create anticipated_books table
-async function createAnticipatedBooksTable() {
-  const query = `
-    CREATE TABLE IF NOT EXISTS anticipated_books (
-      id SERIAL PRIMARY KEY,
-      title VARCHAR(255) NOT NULL UNIQUE,
-      author VARCHAR(255) NOT NULL,
-      release_date DATE NOT NULL,
-      cdn_link TEXT NOT NULL,
-      emoji VARCHAR(10),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-  `;
-  await pool.query(query);
-  console.log("anticipated_books table created");
-}
-
-// Create trigger on anticipated_books
-async function createAnticipatedBooksTrigger() {
-  const triggerSQL = `
-    CREATE TRIGGER set_updated_at
-    BEFORE UPDATE ON anticipated_books
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-  `;
-  await createTriggerIfNotExists(
-    "set_updated_at",
-    "anticipated_books",
-    triggerSQL
-  );
-}
 
 // Create trigger on book_reviews
 async function createBookReviewsTrigger() {
@@ -1096,10 +1033,6 @@ async function initDB() {
     await createUpdateTimestampFunction();
     await createBookReviewsTable();
     await createBookReviewsTrigger();
-    await createToBeReadTable();
-    await createRecommendationsTable();
-    await createAnticipatedBooksTable();
-    await createAnticipatedBooksTrigger();
     await createReaderViewsTable();
     await createUserRatingsTable();
     await createProfileViewsTable();
