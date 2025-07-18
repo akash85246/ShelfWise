@@ -237,11 +237,13 @@ Here are the planned improvements and features for the project:
 - [x] Responsive design for both desktop and mobile devices.
 - [x] Add a "Top Reviewed Books" section on the homepage.
 - [x] Implement search functionality to filter book reviews.
-- [ ] Add support for social sharing of book reviews.
-- [ ] Enable users to rate books and view average ratings.
-- [ ] Introduce dark mode for better accessibility.
-- [ ] Include multi-language support for a global audience.
-- [ ] Integrate a recommendation system based on user preferences.
+- [x] Share book reviews to external platforms via links or social media.
+- [x] Add report system for users to report inappropriate reviews.
+- [x] Track and display user statistics (reviews written, average rating, profile views, etc.).
+- [x] Create a dedicated page to explore and search other reviewers.
+- [ ] Admin dashboard to manage reports, users, and content.
+- [ ] Implement bookmarking/saving of favorite reviews.
+- [ ] Add comment system for discussions under each review.
 
 See the [open issues](https://github.com/akash85246/ShelfWise/issues) for a full list of proposed features (and known issues).
 
