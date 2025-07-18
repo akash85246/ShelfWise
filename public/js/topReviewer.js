@@ -1,8 +1,30 @@
+const goToTopButton = document.querySelector(".go-to-top");
+
+//show button after every 5 seconds
+setInterval(() => {
+  if (
+    document.body.scrollTop > 500 ||
+    document.documentElement.scrollTop > 500
+  ) {
+    goToTopButton.style.display = "block";
+  } else {
+    goToTopButton.style.display = "none";
+  }
+}, 2000);
+
 let sortBy = "reviews_count";
 let currentPage = 1;
 let loading = false;
 let hasMore = true;
-const randomProfilePicture =["sampleUser1","sampleUser2", "sampleUser3", "sampleUser4", "sampleUser5", "sampleUser6", "sampleUser7"];
+const randomProfilePicture = [
+  "sampleUser1",
+  "sampleUser2",
+  "sampleUser3",
+  "sampleUser4",
+  "sampleUser5",
+  "sampleUser6",
+  "sampleUser7",
+];
 
 function GenerateRandomProfilePicture() {
   const randomIndex = Math.floor(Math.random() * randomProfilePicture.length);
@@ -14,7 +36,6 @@ const searchInput = document.getElementById("search-input");
 const container = document.getElementById("reviewer-list");
 const endMessage = document.getElementById("end-message");
 const userIdInput = document.getElementById("user-id");
-
 
 function updateReviewerCard(sortBy) {
   let reviewer = {};
@@ -28,11 +49,16 @@ function updateReviewerCard(sortBy) {
   }
 
   // Update DOM elements
-  document.getElementById("reviewerName").textContent = reviewer.full_name || "Unnamed Reviewer";
-  document.getElementById("reviewerQuote").textContent =
-    `"${reviewer.quote || 'A good book is a friend that never lets you down.'}"`;
-  document.getElementById("profileLink").href = `/profile/${reviewer.slug || "#"}`;
-  document.getElementById("reviewer-image").src = GenerateRandomProfilePicture();
+  document.getElementById("reviewerName").textContent =
+    reviewer.full_name || "Unnamed Reviewer";
+  document.getElementById("reviewerQuote").textContent = `"${
+    reviewer.quote || "A good book is a friend that never lets you down."
+  }"`;
+  document.getElementById("profileLink").href = `/profile/${
+    reviewer.slug || "#"
+  }`;
+  document.getElementById("reviewer-image").src =
+    GenerateRandomProfilePicture();
 }
 
 tabs.forEach((tab) => {
@@ -104,12 +130,20 @@ function renderProfiles(profiles) {
     card.innerHTML = `
       
         <div class="image-container">
-          <img src="${profile.profile_picture}" alt="Reviewer Image" class="profile-image" />
+          <img src="${
+            profile.profile_picture
+          }" alt="Reviewer Image" class="profile-image" />
         </div>
       <div class="reviewer-info">
-        <a href="/profile/${profile.slug}" class="reviewer-render-name">${profile.full_name}</a>
+        <a href="/profile/${profile.slug}" class="reviewer-render-name">${
+      profile.full_name
+    }</a>
          <p class="reviewer-details">
-           ${profile.quote?.length > 30 ? profile.quote.slice(0, 30) + "..." : (profile.quote || "No reviews available")}
+           ${
+             profile.quote?.length > 30
+               ? profile.quote.slice(0, 30) + "..."
+               : profile.quote || "No Quote available"
+           }
           </p>
          
         </div>

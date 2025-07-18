@@ -105,9 +105,8 @@ async function draftReview(req, res) {
       ratings,
     });
 
-    console.log("Draft created:", result);
+  
    const  slugField = result.slug;
-    console.log("Draft created with slug:", slugField);
 
     res
       .status(201)

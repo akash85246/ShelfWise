@@ -56,7 +56,7 @@
 </button>
   <div class="show-subcontainer2">
     <div class="reviwer-container">
-      <a href="/user/<%= reviewAuthor.slug  %>" class="review-author-info">
+      <a href="/profile/<%= reviewAuthor.slug  %>" class="review-author-info">
         <img
           src="<%= reviewAuthor.profile_picture  %>"
           alt="avatar"
@@ -86,7 +86,7 @@
       <div class="book-ratings">
         <ul class="ratings-list">
           <% bookRatings.forEach((rating) => { %> <%-
-          include("../partials/bookRatingCard.jsx", { rating }) %> <% }) %>
+          include("../partials/bookRatingCard.ejs", { rating }) %> <% }) %>
         </ul>
       </div>
 

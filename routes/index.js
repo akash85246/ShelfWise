@@ -6,55 +6,10 @@ const {
   getUserStats,
   topThreeUsers,
   getHomePageReviewsAndReviewer,
+  getUserByslug,
 } = require("../db/queries");
 
 const router = express.Router();
-
-async function getBookDetails(title) {
-  if (!title) {
-    return null;
-  }
-  try {
-    const searchResponse = await axios.get(
-      `https://openlibrary.org/search.json`,
-      {
-        params: {
-          title,
-          fields: "cover_i,author_name,first_publish_year,subject,publisher",
-          limit: 1,
-        },
-      }
-    );
-    const book = searchResponse.data.docs[0];
-    if (!book) {
-      return null;
-    }
-    const coverUrl = book.cover_i
-      ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
-      : null;
-    const author = book.author_name ? book.author_name.join(", ") : "Unknown";
-    const publishYear = book.first_publish_year || "Unknown";
-    const genres = book.subject
-      ? book.subject.slice(0, 5).join(", ")
-      : "Not available";
-    const publishers = book.publisher
-      ? book.publisher.slice(0, 3).join(", ")
-      : "Not available";
-    const subjects = book.subject ? book.subject.join(", ") : "Not available";
-
-    return {
-      coverUrl,
-      author,
-      publishYear,
-      genres,
-      publishers,
-      subjects,
-    };
-  } catch (error) {
-    console.error("Error fetching book details:", error);
-    return null;
-  }
-}
 
 router.get("/", async (req, res) => {
   try {
@@ -77,6 +32,39 @@ router.get("/", async (req, res) => {
       user: user || null,
       reviewers: topReviewers|| [],
       reviews: topReviews || [],
+    });
+  } catch (error) {
+    console.error("Error getting index page:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+router.get("/profile/:slug", async (req, res) => {
+  try {
+    const user = req.user || null;
+    const slug = req.params.slug;
+    const reviewer = await getUserByslug({slug, userId: user ? user.id : null});
+    if (!reviewer) {
+      return res.status(404).send("User not found");
+    }
+
+    console.log("Reviewer:", reviewer);
+
+    res.renderWithLayout("../pages/profile.ejs", {
+      listTitle: "Shelfwise",
+      styles: [
+        "/css/index.css",
+        "/css/header.css",
+        "/css/layout.css",
+        "/css/footer.css",
+        "/css/profileRatingCard.css",
+        "/css/profile.css",
+      ],
+      scripts: ["/js/header.js", "/js/profile.js","/js/profileRatingCard.js"],
+      user: user || null,
+      reviewer: reviewer || null,
+      
     });
   } catch (error) {
     console.error("Error getting index page:", error);

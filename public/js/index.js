@@ -42,7 +42,7 @@ searchInput.addEventListener("input", async function () {
       noResultsItem.textContent = "No results found";
       resultList.appendChild(noResultsItem);
     }
-    // console.log('Search results:', results);
+   
     console.log(results);
   } catch (error) {
     console.error("Error fetching search results:", error);
@@ -67,8 +67,8 @@ function renderFeed(books) {
     card.className = "review-card";
     card.innerHTML = `
        <div class="review-content">
-      <p class="review-author">Review by ${book.reviewer_name}</p>
-      <p class="review-title">${book.title}</p>
+      <p class="review-author">Review by <a href="/profile/${book.reviewer_slug}" class="reviewe-link"> ${book.reviewer_name} </a> </p>
+      <p class="review-title"><a href="/review/${book.slug}" class="reviewe-link">  ${book.title} </a></p>
       <p class="review-description">
         ${
           book.review?.length > 250
@@ -117,7 +117,12 @@ async function loadFeed() {
 }
 
 recentButton.addEventListener("click", async () => {
+  
   await loadFeed();
+  const recentSection = document.getElementById("recent-reviews");
+  if (recentSection) {
+    recentSection.scrollIntoView({ behavior: "smooth" });
+  }
 });
 
 loadFeed()

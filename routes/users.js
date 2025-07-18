@@ -8,4 +8,8 @@ router.get("/", (req, res) => {
 
 router.get("/search-user", UserController. getSearchAndFilterUser);
 
+router.patch("/update-profile", UserController.patchUpdateUserProfile);
+
+router.patch("/update-rating", UserController.patchUpdateUserRating);
+
 module.exports = router;

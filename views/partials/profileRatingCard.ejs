@@ -1,0 +1,7 @@
+<div class="rating" data-reviewer-id="<%= reviewerId %>" data-initial-rating="<%= rating %>">
+  <% for (let i = 0; i < 5; i++) { %>
+    <span class="star" data-index="<%= i %>">
+      <%= i < rating ? "&#9733;" : "&#9734;" %>
+    </span>
+  <% } %>
+</div>

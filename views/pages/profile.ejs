@@ -1,69 +1,135 @@
-<div class="profile-page">
+<div class="profile-container-main">
+
+<!-- profile info  -->
+<div class="profile-wrapper">
   <div class="profile-header">
-    <div class="photo-wrapper">
-      <div class="photo-tape tape-top"></div>
-      <div class="photo-tape tape-bottom"></div>
-      <div class="photo-container">
-        <img
-          src="<%= user.profile_picture %>"
-          alt="Profile Photo"
-          class="profile-photo"
-        />
-      </div>
-    </div>
-    <div class="about-section">
-      <h1 class="name">
-        <%= user.full_name %>
-        <span class="role"><%= user.author?"author":"reader" %></span>
-      </h1>
-      <ul class="info-list">
-        <li><%= user.email %></li>
-        <li>
-          <%= new Date(user.created_at).toLocaleDateString('en-US', { day:
-          '2-digit', month: 'long', year: 'numeric' }) %>
-        </li>
-      </ul>
-      <div class="button-container">
-        <button id="logout">Log Out</button>
-        <button id="delete">Delete User</button>
-      </div>
-    </div>
+
+    <img src="<%= reviewer.profile_picture %>" alt="profile picture" class="profile-image" >
+    <h2 class="profile-name"><%= reviewer.full_name %></h2>
+    <p class="profile-role">  <%= reviewer.userStats.totalReviews %> Book Reviews</p>
+    <div class="profile-rating">Average User Rating <%= reviewer.userRating.average_rating ? reviewer.userRating.average_rating : 0 %> <%- include("../partials/profileRatingCard.ejs", { reviewerId: reviewer.id, rating: reviewer.ratedByCurrentUser || 0 }) %>(Rated by <%= reviewer.userRating.total_ratings %>)</div>
   </div>
 
-  <div class="profile-content">
-    <ul class="view-list" id="view-list"></ul>
-    <div class="pagination" id="pagination">
-      <button id="prev-btn" disabled>Prev</button>
-      <div id="page-numbers"></div>
-      <button id="next-btn">Next</button>
-    </div>
+  <div class="profile-bio-container">
+
+    <p class="profile-bio" id="quote-text"><%= reviewer.quote %></p>
+
+    <% if (user && user.id === reviewer.id) { %>
+      <textarea id="quote-input" class="hidden profile-bio-input" maxlength="200"><%= reviewer.quote %></textarea>
+      <button id="edit-quote-btn" class="edit-btn">Edit Quote</button>
+    <% } %>
+  </div>
+  
+
+  <div class="profile-tags">
+    <% reviewer.userStats.mostReviewedGenres.forEach(function(genreObj) { %>
+  <span class="tag"><a href="/browse-book?genre=<%= genreObj.genre %>" class="review-link"><%= genreObj.genre %></a></span>
+<% }) %>
   </div>
 </div>
 
-
-<!-- Popout for Logout -->
-<div id="logout-popout" class="popout hidden">
-  <div class="popout-content">
-    <h2>Are you sure you want to log out?</h2>
-    <div class="popout-actions">
-      <button class="btn-cancel" id="logout-cancel">Cancel</button>
-     
-      <button class="btn-confirm" id="logout-confirm">Log Out</button>
-      <div class="loader" style="display: none;"></div>
-      
+<!-- feature review card  -->
+ <% if( reviewer && reviewer.userStats.mostViewedBlog != "N/A") {%>
+ <div class="featured-review">
+  
+  <div class="review-card">
+    <div class="review-content">
+        <h2 class="section-title">Featured Review</h2>
+      <!-- <p class="review-rating">5 ★★★★★</p> -->
+      <p class="review-title"><%= reviewer.userStats.mostViewedBlog.title %></p>
+      <p class="review-description">
+        <%= reviewer.userStats.mostViewedBlog.review?.length > 200 ? reviewer.userStats.mostViewedBlog.review.slice(0, 200) + "..." : (reviewer.userStats.mostViewedBlog.review || "No reviews available")%>
+      </p>
+      <a href="/review/<%= reviewer.userStats.mostViewedBlog.slug %>" class="review-button">Read Full Review</a>
     </div>
+    <div
+      class="review-image"
+      style='background-image: url("<%= reviewer.userStats.mostViewedBlog.cover_url %>");'
+    ></div>
   </div>
 </div>
+<% } %>
 
-<!-- Popout for Delete User -->
-<div id="delete-popout" class="popout hidden">
-  <div class="popout-content">
-    <h2>Are you sure you want to delete your account?</h2>
-    <p class="warning-text">This action cannot be undone.</p>
-    <div class="popout-actions">
-      <button class="btn-cancel" id="delete-cancel">Cancel</button>
-      <button class="btn-confirm danger" id="delete-confirm">Delete</button>
-      <div class="loader" style="display: none;"></div>
-    </div>
+
+<!-- recent reviews section -->
+ <section class="review-section">
+  <h2 class="review-heading">All Reviews</h2>
+  <div class="review-grid" id="review-grid">
+   <!-- dynamically generated reviews will be inserted here -->
   </div>
+</section>
+
+  <p id="end-message" class="text-center text-sm text-gray-500 py-4 hidden">🎉 You've reached the end!</p>
+  <div id="loading-spinner" class="text-center py-3 hidden">Loading...</div>
 </div>
+<!-- floating go to top button -->
+<button
+  class="go-to-top"
+  onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+>
+  ⇧
+</button>
+
+<!-- hidden input for user ID and genre -->
+<input type="hidden" id="user-id" value="<%= user ? user.id : '' %>" />
+</div>
+<input type="hidden" id="author-id" value="<%= reviewer ? reviewer.id : '' %>" />
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const editBtn = document.getElementById("edit-quote-btn");
+  const quoteText = document.getElementById("quote-text");
+  const quoteInput = document.getElementById("quote-input");
+
+  let isEditing = false;
+
+  if (editBtn) {
+    editBtn.addEventListener("click", async () => {
+      if (!isEditing) {
+        // Switch to edit mode
+        quoteText.classList.add("hidden");
+        quoteInput.classList.remove("hidden");
+        editBtn.textContent = "Save Quote";
+        isEditing = true;
+      } else {
+        // Save and switch back
+        const updatedQuote = quoteInput.value.trim();
+
+        const userId= <%= user && user.id ? user.id : null %>;
+        console.log("Updating quote for user ID:", userId);
+
+        try {
+          const res = await axios.patch("/api/update-profile", { userId:userId ,quote: updatedQuote });
+
+          console.log("Response from server:", res.data);
+          if (!res.data || res.data.error) throw new Error("Failed to update quote");
+
+          quoteText.textContent = updatedQuote;
+          Toastify({
+            text: "Quote updated successfully!",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#4CAF50",
+          }).showToast();
+        } catch (err) {
+          console.error("Error updating quote:", err);
+          Toastify({
+            text: "Error updating quote. Try again later.",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#f44336",
+          }).showToast();
+        }
+
+        quoteText.classList.remove("hidden");
+        quoteInput.classList.add("hidden");
+        editBtn.textContent = "Edit Quote";
+        isEditing = false;
+      }
+    });
+  }
+});
+</script>

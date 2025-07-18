@@ -427,7 +427,11 @@ async function searchAndFilterReviews(data) {
   let index = 1;
 
   let query = `
-    SELECT br.*, au.full_name AS reviewer_name
+    SELECT br.*,
+    br.*, 
+  au.full_name       AS reviewer_name, 
+  au.profile_picture AS reviewer_profile_picture, 
+  au.slug            AS reviewer_slug
     FROM book_reviews br
     LEFT JOIN authorized_users au ON br.user_id = au.id
     WHERE 1=1
@@ -531,8 +535,6 @@ async function getHomePageReviewsAndReviewer() {
     top_six_Reviewer,
   ]);
 
-  console.log("Top Reviews:", topReviews);
-  console.log("Top Reviewers:", topReviewers);
   return {
     topReviews: topReviews || [],
     topReviewers: topReviewers || [],
@@ -584,7 +586,7 @@ async function updateViewReview(data) {
   }
 }
 
-const getUserStats = async (userId) => {
+async function getUserStats  (userId) {
   try {
     const queries = {
       mostReviewed: `
@@ -596,7 +598,7 @@ const getUserStats = async (userId) => {
         ) AS genre_list
       GROUP BY genre_trimmed
     ORDER BY count DESC
-    LIMIT 1;
+    LIMIT 10;
       `,
       recentReview: `
         SELECT created_at
@@ -606,7 +608,7 @@ const getUserStats = async (userId) => {
         LIMIT 1;
       `,
       mostViewedBlog: `
-        SELECT br.title,br.author,br.user_id,br.cover_url, br.slug, COALESCE(SUM(rv.view_count), 0) AS total_views
+        SELECT br.title,br.author,br.user_id,br.cover_url,br.review, br.slug, COALESCE(SUM(rv.view_count), 0) AS total_views
         FROM book_reviews br
         LEFT JOIN reader_views rv ON br.id = rv.review_id
         WHERE br.user_id = $1
@@ -642,7 +644,7 @@ const getUserStats = async (userId) => {
     ]);
 
     return {
-      mostReviewedGenre: mostReviewedGenre[0]?.genre || "N/A",
+     mostReviewedGenres: mostReviewedGenre || [],
       recentReviewDate:
         recentReview[0]?.created_at?.toISOString().split("T")[0] || "N/A",
       mostViewedBlog: mostViewedBlog[0] || "N/A",
@@ -735,6 +737,126 @@ async function createUser(user) {
   }
 }
 
+async function getUserByslug(data) {
+  const { slug, userId} = data;
+  const userQuery = `
+    SELECT * FROM authorized_users
+    WHERE slug = $1;
+  `;
+  const userResult = await pool.query(userQuery, [slug]);
+  const user = userResult.rows[0];
+  if (!user) return null;
+
+  const profileOwnerId = user.id;
+
+  const [topBookReviews, userStats, userRatingsData, ratedByUser] = await Promise.all([
+    searchAndFilterReviews({
+      author_id: profileOwnerId,
+      sortBy: "views DESC",
+      page_size: 1,
+      page: 1,
+    }),
+    getUserStats(profileOwnerId),
+    userRatings(profileOwnerId),
+    userId 
+      ? getRatingofUserByOtherUser(profileOwnerId, userId)
+      : Promise.resolve(null)
+  ]);
+
+  user.topBookReview = topBookReviews.length > 0 ? topBookReviews[0] : null;
+  user.userStats = userStats;
+  user.userRating = userRatingsData;
+  user.ratedByCurrentUser = ratedByUser;
+
+
+
+  return user;
+}
+
+async function getRatingofUserByOtherUser(rated_user_id, user_id) {
+  const query = `
+    SELECT rating FROM user_ratings
+    WHERE rated_user_id = $1 AND rated_by_user_id = $2;
+  `;
+  const result = await pool.query(query, [rated_user_id, user_id]);
+  return result.rows[0] ? result.rows[0].rating : null;
+}
+
+async function userRatings(id) {
+  const query = `
+    SELECT ROUND(AVG(rating), 1) AS average_rating, COUNT(*) AS total_ratings
+    FROM user_ratings
+    WHERE rated_user_id = $1;
+  `;
+
+  const result = await pool.query(query, [id]);
+  return result.rows[0];
+}
+
+async function updateUserRating(data) {
+  const { rated_user_id, rating, user_id } = data;
+  try {
+    const query = `
+  INSERT INTO user_ratings (rated_user_id, rating, rated_by_user_id)
+  VALUES ($1, $2, $3)
+  ON CONFLICT (rated_user_id, rated_by_user_id) DO UPDATE
+  SET rating = EXCLUDED.rating
+  RETURNING *;
+`;
+    const values = [rated_user_id, rating, user_id];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error updating user rating:", error);
+    throw error;
+  } 
+  
+}
+
+async function updateUserProfile(data) {
+  const { userId, fullName, profilePicture, quote } = data;
+
+  try {
+    const fields = [];
+    const values = [];
+    let index = 1;
+
+    if (fullName !== undefined) {
+      fields.push(`full_name = $${index++}`);
+      values.push(fullName);
+    }
+    if (profilePicture !== undefined) {
+      fields.push(`profile_picture = $${index++}`);
+      values.push(profilePicture);
+    }
+    if (quote !== undefined) {
+      fields.push(`quote = $${index++}`);
+      values.push(quote);
+    }
+
+    if (fields.length === 0) {
+      throw new Error("No fields provided to update.");
+    }
+
+    // Always update the updated_at timestamp
+    fields.push(`updated_at = CURRENT_TIMESTAMP`);
+
+    const query = `
+      UPDATE authorized_users
+      SET ${fields.join(", ")}
+      WHERE id = $${index}
+      RETURNING *;
+    `;
+    values.push(userId); // final index is for userId
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw error;
+  }
+}
+
 async function searchAndFilterUser(data) {
   const { searchTerm = '', sortBy = 'most_reviewed', page_size = 10, page = 1, user_id } = data;
   const values = [];
@@ -751,7 +873,7 @@ async function searchAndFilterUser(data) {
     COALESCE(SUM(br.views), 0) AS total_views
   `;
 
-  console.log(data);
+  
   if (searchTerm) {
     values.push(`%${searchTerm.toLowerCase()}%`);
     whereClause = `WHERE LOWER(au.full_name) LIKE $${values.length}`;
@@ -937,22 +1059,23 @@ async function createTriggerIfNotExists(triggerName, tableName, triggerSQL) {
     await pool.query(triggerSQL);
     console.log(`Trigger "${triggerName}" created on "${tableName}"`);
   } else {
-    console.log(`ℹ️ Trigger "${triggerName}" already exists on "${tableName}"`);
+    console.log(`Trigger "${triggerName}" already exists on "${tableName}"`);
   }
 }
 
 async function createUserRatingsTable() {
   const query = `
-   CREATE TABLE IF NOT EXISTS public.user_ratings (
-    id SERIAL PRIMARY KEY,
-    rated_user_id INT REFERENCES authorized_users(id) ON DELETE CASCADE,
-    rated_by_user_id INT REFERENCES authorized_users(id) ON DELETE CASCADE,
-    rating INT CHECK (rating >= 1 AND rating <= 5),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
+    CREATE TABLE IF NOT EXISTS public.user_ratings (
+      id SERIAL PRIMARY KEY,
+      rated_user_id INT REFERENCES authorized_users(id) ON DELETE CASCADE,
+      rated_by_user_id INT REFERENCES authorized_users(id) ON DELETE CASCADE,
+      rating INT CHECK (rating >= 1 AND rating <= 5),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT unique_rating_pair UNIQUE (rated_user_id, rated_by_user_id)
+    );
   `;
   await pool.query(query);
-  console.log("user_ratings table created");
+  console.log("user_ratings table created with unique constraint.");
 }
 
 async function createProfileViewsTable() {
@@ -1002,5 +1125,8 @@ module.exports = {
   getUserStats,
   topThreeUsers,
   getHomePageReviewsAndReviewer,
-  createBookDraft
+  createBookDraft,
+  getUserByslug ,
+  updateUserRating,
+  updateUserProfile,
 };
