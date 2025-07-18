@@ -3,7 +3,7 @@ const ratingList = document.querySelector(".rating-list");
 
 
 addRatingButton.addEventListener("click", () => {
-  console.log("Add Rating button clicked");
+  
   ratingList.classList.remove("hidden");
 
   if (ratingList.children.length >= 5) {
@@ -111,7 +111,7 @@ titleInput.addEventListener("input", async () => {
     const response = await axios.get(`/api/book-details?title=${titleValue}`);
     const books = response.data;
 
-    console.log("Books found:", books);
+
     if (books.length === 0) {
       suggestionList.innerHTML = "";
       suggestionList.classList.add("hidden");
@@ -164,7 +164,7 @@ function selectBook(book) {
   const isbn = document.getElementById("isbn");
   const reviewPublisher = document.getElementById("reviewPublisher");
   const reviewPublishYear = document.getElementById("reviewPublishYear");
- console.log("Selected book:", book);
+
   bookCover.src = book.coverUrl || "/images/image 42.png";
   bookCover.alt = `Book Cover for ${book.title}`;
   author.value = book.author || "Unknown";

@@ -2,7 +2,7 @@ const addRatingButton = document.querySelector(".add-rating-btn");
 const ratingList = document.querySelector(".rating-list");
 
 const existingRatings = window.existingRatings || [];
-console.log("Existing Ratings:", existingRatings);
+
 
 existingRatings.forEach(({ title, rating }) => {
   if (ratingList.children.length >= 5) {

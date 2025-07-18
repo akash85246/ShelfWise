@@ -1,59 +1,75 @@
 <div class="show-container">
   <div class="show-subcontainer1">
     <div class="page-sticky">
-    <p class="page-location">Review / <span><%= review.title %></span></p>
-    <div class="book-heading">
-      <div class="book-info-container">
-        <div class="book-info-subcontainer">
-          <div class="book-info">
-            <p><%= review.publisher %> - <%= review.published_year %></p>
+      <p class="page-location">Review / <span><%= review.title %></span></p>
+      <div class="book-heading">
+        <div class="book-info-container">
+          <div class="book-info-subcontainer">
+            <div class="book-info">
+              <p><%= review.publisher %> - <%= review.published_year %></p>
+            </div>
+
+            <h1><%= review.title %></h1>
+            <h3><%= review.author %></h3>
+          </div>
+         
+        </div>
+        <div class="book-details">
+          <div class="book-cover">
+            <img src="<%= review.cover_url %>" alt="Book Cover" />
+          </div>
+          <p class="isbn"><%= review.isbn %></p>
+        </div>
+      </div>
+      <div class="book-review spiltLine"><%= review.review %></div>
+      <div class="additional-info1">
+        <div class="moment-container spiltLine">
+          <h4 class="heading">Most Suprising Moment</h4>
+          <%= review.moment %>
+          <p class="page-number">
+            <%= review.moment_page_number %> <span>Page</span>
+          </p>
+        </div>
+      </div>
+      <div class="additional-info2">
+        <div class="quote-container spiltLine">
+          <h4 class="heading">Quotes to Remember</h4>
+          <%= review.quote %>
+        </div>
+        <div class="charater-container">
+          <div class="favorite-character-container">
+            <h4 class="heading">Favorite Character</h4>
+            <%= review.favorite_character %>
+            <img
+              src="/icons/favourite.png"
+              alt=" Favorite Character Icon"
+              class="favorite-icon"
+            />
           </div>
 
-          <h1><%= review.title %></h1>
-          <h3><%= review.author %></h3>
+          <div class="least-favorite-character-container">
+            <h4 class="heading">Least Favorite Character</h4>
+            <%= review.least_favorite_character %>
+            <img
+              src="/icons/leastfavourite.png"
+              alt=" Favorite Character Icon"
+              class="favorite-icon"
+            />
+          </div>
         </div>
-        <!-- <div class="book-info-subcontainer"></div> -->
-      </div>
-      <div class="book-details">
-        <div class="book-cover">
-          <img src="<%= review.cover_url %>" alt="Book Cover" />
-        </div>
-        <p class="isbn"><%= review.isbn %></p>
-      </div>
-    </div>
-    <div class="book-review spiltLine"><%= review.review %></div>
-    <div class="additional-info1">
-      <div class="moment-container spiltLine"><h4 class="heading">Most Suprising Moment</h4> <%= review.moment %><p class="page-number">
-          <%= review.moment_page_number %> <span>Page</span> </p>
       </div>
 
-    </div>
-    <div class="additional-info2">
-
-            <div class="quote-container spiltLine"><h4 class="heading">Quotes to Remember</h4> <%= review.quote %>
-      </div>
-      <div class="charater-container">
-      <div class="favorite-character-container">
-        <h4 class="heading">Favorite Character</h4>
-        <%= review.favorite_character %>
-        <img src="/icons/favourite.png" alt=" Favorite Character Icon" class="favorite-icon" />
-      </div>
-
-      <div class="least-favorite-character-container">
-        <h4 class="heading">Least Favorite Character</h4>
-        <%= review.least_favorite_character %>  <img src="/icons/leastfavourite.png" alt=" Favorite Character Icon" class="favorite-icon" />
+      <div class="ending-container spiltLine">
+        <h4 class="heading">Ending</h4>
+        <%= review.ending %>
       </div>
     </div>
-    </div>
-
-    <div class="ending-container spiltLine"><h4 class="heading">Ending</h4><%= review.ending %></div>
-  </div>
   </div>
 
-<!-- button for mobile screen -->
-<button id="toggle-sidebar-btn" class="sidebar-toggle-btn">
-  ☰ more info
-</button>
+  <!-- button for mobile screen -->
+  <button id="toggle-sidebar-btn" class="sidebar-toggle-btn">
+    ☰ more info
+  </button>
   <div class="show-subcontainer2">
     <div class="reviwer-container">
       <a href="/profile/<%= reviewAuthor.slug  %>" class="review-author-info">
@@ -94,7 +110,11 @@
         <!-- <h4>Genre</h4> -->
         <ul class="genre-list">
           <% review.genre.split(',').forEach((genre) => { %>
-          <li class="genre-chip"> <a href="/browse-book?genre=<%= genre %>" class="review-link"><%= genre.trim() %></a></li>
+          <li class="genre-chip">
+            <a href="/browse-book?genre=<%= genre %>" class="review-link"
+              ><%= genre.trim() %></a
+            >
+          </li>
           <% }) %>
         </ul>
       </div>
@@ -107,7 +127,7 @@
 
       <ul class="quick-links">
         <li>
-          <button  id="share-modal-button" >
+          <button id="share-modal-button">
             <div
               class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-10"
               data-icon="Share"
@@ -161,9 +181,11 @@
             </p>
           </button>
         </li>
-        <% } else if(user !== null ){%>
+        <% } else if(user !== null ){
+          if(!review.reviewReported ){%>
+
         <li>
-          <button>
+          <button class="report-review-btn" id="report-btn">
             <div
               class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-10"
               data-icon="Flag"
@@ -189,6 +211,37 @@
             </p>
           </button>
         </li>
+
+        <% }else{%>
+
+        <li>
+          <button class="report-review-btn" id="delete-report-btn">
+            <div
+              class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-10"
+              data-icon="Flag"
+              data-size="24px"
+              data-weight="regular"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M34.76,42A8,8,0,0,0,32,48V216a8,8,0,0,0,16,0V171.77c26.79-21.16,49.87-9.75,76.45,3.41,16.4,8.11,34.06,16.85,53,16.85,13.93,0,28.54-4.75,43.82-18a8,8,0,0,0,2.76-6V48A8,8,0,0,0,210.76,42c-28,24.23-51.72,12.49-79.21-1.12C103.07,26.76,70.78,10.79,34.76,42ZM208,164.25c-26.79,21.16-49.87,9.74-76.45-3.41-25-12.35-52.81-26.13-83.55-8.4V51.79c26.79-21.16,49.87-9.75,76.45,3.4,25,12.35,52.82,26.13,83.55,8.4Z"
+                ></path>
+              </svg>
+            </div>
+            <p
+              class="text-[#111418] text-base font-normal leading-normal flex-1 truncate"
+            >
+              Delete Report
+            </p>
+          </button>
+        </li>
+        <% }%>
         <% }%>
       </ul>
 
@@ -227,4 +280,11 @@
     </div>
   </div>
 </div>
-<%- include("../partials/shareModal.ejs")  %>
+
+<input type="text" id="review-id" name="reviewId" value="<%= review.id %>" hidden />
+
+ <%- include("../partials/shareModal.ejs") %> 
+<%
+if(user) {%> 
+  <%- include("../partials/reportModal.ejs", { user: user ,
+review_id: review.id}) %> <% } %>

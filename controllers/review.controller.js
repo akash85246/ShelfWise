@@ -225,7 +225,8 @@ async function getEditBookReview(req, res) {
   if (req.isAuthenticated() && user.author == true) {
     try {
       const { slug } = req.params;
-      const review = await getReviewBySlug({ slug });
+    
+      const review = await getReviewBySlug({ slug, userId: user.id });
 
       if (review === undefined) {
         return res.status(404).json({ message: "Review not found to edit" });
@@ -268,7 +269,9 @@ async function getBookReview(req, res) {
   try {
     const user = req.user || null;
     const { slug } = req.params;
-    const review = await getReviewBySlug({ slug });
+    let userId = user ? user.id : null;
+    const review = await getReviewBySlug({ slug, userId });
+
 
     if (review === undefined) {
       return res
@@ -294,12 +297,13 @@ async function getBookReview(req, res) {
       styles: [
         "/css/header.css",
         "/css/show.css",
+        "/css/reportModal.css",
         "/css/layout.css",
         "/css/bookRatingCard.css",
         "/css/shareModal.css",
         "/css/footer.css",
       ],
-      scripts: ["/js/shareModal.js", "/js/show.js", "/js/header.js"],
+      scripts: ["/js/shareModal.js", "/js/show.js", "/js/header.js","/js/reportModal.js"],
       review: review,
       user: user,
       bookRatings: bookRatings,

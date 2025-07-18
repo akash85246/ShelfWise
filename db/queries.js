@@ -65,7 +65,9 @@ async function createBookReviewsTable() {
       cover_url TEXT,
       isbn VARCHAR(21),
       publisher TEXT,
-      published_year INT
+      published_year INT,
+      CONSTRAINT unique_title_per_user UNIQUE (user_id, title),
+      CONSTRAINT valid_status CHECK (status IN ('published', 'draft'))
     );
   `;
 
@@ -84,7 +86,7 @@ async function createBookReviewsTable() {
 }
 
 async function createBookDraft(data) {
-   const {
+  const {
     user_id,
     title,
     author,
@@ -139,7 +141,7 @@ async function createBookDraft(data) {
         publisher,
         published_year,
         slugField,
-        'draft'
+        "draft",
       ];
 
       const res = await client.query(insertReviewQuery, reviewValues);
@@ -266,7 +268,7 @@ async function createBookReview(data) {
 }
 
 async function toggleReviewStatus(data) {
-  const {userId, reviewId, status} = data;
+  const { userId, reviewId, status } = data;
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -274,7 +276,7 @@ async function toggleReviewStatus(data) {
     if (!review) {
       throw new Error("Review not found");
     }
-    
+
     if (review.user_id != userId) {
       throw new Error("Unauthorized: You can only update your own reviews");
     }
@@ -428,13 +430,14 @@ async function searchAndFilterReviews(data) {
 
   let query = `
     SELECT br.*,
-    br.*, 
-  au.full_name       AS reviewer_name, 
-  au.profile_picture AS reviewer_profile_picture, 
-  au.slug            AS reviewer_slug
-    FROM book_reviews br
-    LEFT JOIN authorized_users au ON br.user_id = au.id
-    WHERE 1=1
+    au.full_name AS reviewer_name, 
+    au.profile_picture AS reviewer_profile_picture, 
+    au.slug AS reviewer_slug,
+    COUNT(rr.id) AS report_count
+  FROM book_reviews br
+  LEFT JOIN authorized_users au ON br.user_id = au.id
+  LEFT JOIN review_reports rr ON br.id = rr.review_id
+  WHERE 1=1
   `;
 
   if (author_id) {
@@ -480,22 +483,28 @@ async function searchAndFilterReviews(data) {
     index++;
   }
 
-  // Validate and apply sorting
+
+  query += ` GROUP BY br.id, au.id `; // Necessary for COUNT + SELECT
+
+
+
   const allowedSorts = ["created_at", "updated_at", "views", "published_year"];
-  let safeSort = "created_at DESC";
+let safeSort = "br.created_at DESC";
 
-  if (sortBy) {
-    const parts = sortBy.trim().split(" ");
-    const column = parts[0];
-    const direction = (parts[1] || "DESC").toUpperCase();
+if (sortBy) {
+  const parts = sortBy.trim().split(" ");
+  const column = parts[0];
+  const direction = (parts[1] || "DESC").toUpperCase();
 
-    if (allowedSorts.includes(column) && ["ASC", "DESC"].includes(direction)) {
-      safeSort = `${column} ${direction}`;
-    }
+  if (allowedSorts.includes(column) && ["ASC", "DESC"].includes(direction)) {
+    safeSort = `br.${column} ${direction}`;
   }
+}
 
-  query += ` ORDER BY ${safeSort} LIMIT $${index} OFFSET $${index + 1}`;
-  values.push(page_size, offset);
+query += ` ORDER BY ${safeSort}, report_count ASC LIMIT $${index} OFFSET $${index + 1}`;
+values.push(page_size, offset);
+
+
 
   const { rows } = await pool.query(query, values);
 
@@ -517,7 +526,6 @@ async function searchAndFilterReviews(data) {
 
   return filteredRows;
 }
-
 
 async function getHomePageReviewsAndReviewer() {
   const top_six_Reviews = searchAndFilterReviews({
@@ -586,7 +594,7 @@ async function updateViewReview(data) {
   }
 }
 
-async function getUserStats  (userId) {
+async function getUserStats(userId) {
   try {
     const queries = {
       mostReviewed: `
@@ -644,7 +652,7 @@ async function getUserStats  (userId) {
     ]);
 
     return {
-     mostReviewedGenres: mostReviewedGenre || [],
+      mostReviewedGenres: mostReviewedGenre || [],
       recentReviewDate:
         recentReview[0]?.created_at?.toISOString().split("T")[0] || "N/A",
       mostViewedBlog: mostViewedBlog[0] || "N/A",
@@ -655,9 +663,9 @@ async function getUserStats  (userId) {
     console.error("Error in getUserStats:", err);
     throw err;
   }
-};
+}
 
-async function getReviewBySlug({ slug }) {
+async function getReviewBySlug({ slug, userId }) {
   const query = `
     SELECT * FROM book_reviews
     WHERE slug = $1;
@@ -665,8 +673,20 @@ async function getReviewBySlug({ slug }) {
   slug = slug.trim();
 
   const result = await pool.query(query, [slug]);
+    const review = result.rows[0];
 
-  return result.rows[0];
+  let isReported = false;
+  if (userId) {
+    isReported = await isReviewReported(review.id, userId);
+  }
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  review.reviewReported = isReported;
+
+  return review;
 }
 
 async function getReviewById(id) {
@@ -675,6 +695,7 @@ async function getReviewById(id) {
     WHERE id = $1;
   `;
   const result = await pool.query(query, [id]);
+
   return result.rows[0];
 }
 
@@ -738,7 +759,7 @@ async function createUser(user) {
 }
 
 async function getUserByslug(data) {
-  const { slug, userId} = data;
+  const { slug, userId } = data;
   const userQuery = `
     SELECT * FROM authorized_users
     WHERE slug = $1;
@@ -749,26 +770,25 @@ async function getUserByslug(data) {
 
   const profileOwnerId = user.id;
 
-  const [topBookReviews, userStats, userRatingsData, ratedByUser] = await Promise.all([
-    searchAndFilterReviews({
-      author_id: profileOwnerId,
-      sortBy: "views DESC",
-      page_size: 1,
-      page: 1,
-    }),
-    getUserStats(profileOwnerId),
-    userRatings(profileOwnerId),
-    userId 
-      ? getRatingofUserByOtherUser(profileOwnerId, userId)
-      : Promise.resolve(null)
-  ]);
+  const [topBookReviews, userStats, userRatingsData, ratedByUser] =
+    await Promise.all([
+      searchAndFilterReviews({
+        author_id: profileOwnerId,
+        sortBy: "views DESC",
+        page_size: 1,
+        page: 1,
+      }),
+      getUserStats(profileOwnerId),
+      userRatings(profileOwnerId),
+      userId
+        ? getRatingofUserByOtherUser(profileOwnerId, userId)
+        : Promise.resolve(null),
+    ]);
 
   user.topBookReview = topBookReviews.length > 0 ? topBookReviews[0] : null;
   user.userStats = userStats;
   user.userRating = userRatingsData;
   user.ratedByCurrentUser = ratedByUser;
-
-
 
   return user;
 }
@@ -809,8 +829,7 @@ async function updateUserRating(data) {
   } catch (error) {
     console.error("Error updating user rating:", error);
     throw error;
-  } 
-  
+  }
 }
 
 async function updateUserProfile(data) {
@@ -858,10 +877,16 @@ async function updateUserProfile(data) {
 }
 
 async function searchAndFilterUser(data) {
-  const { searchTerm = '', sortBy = 'most_reviewed', page_size = 10, page = 1, user_id } = data;
+  const {
+    searchTerm = "",
+    sortBy = "most_reviewed",
+    page_size = 10,
+    page = 1,
+    user_id,
+  } = data;
   const values = [];
-  let whereClause = '';
-  let orderClause = '';
+  let whereClause = "";
+  let orderClause = "";
   let selectClause = `
     au.id,
     au.full_name,
@@ -873,21 +898,20 @@ async function searchAndFilterUser(data) {
     COALESCE(SUM(br.views), 0) AS total_views
   `;
 
-  
   if (searchTerm) {
     values.push(`%${searchTerm.toLowerCase()}%`);
     whereClause = `WHERE LOWER(au.full_name) LIKE $${values.length}`;
   }
 
   switch (sortBy) {
-    case 'highest_rated':
-      orderClause = 'ORDER BY avg_user_rating DESC NULLS LAST';
+    case "highest_rated":
+      orderClause = "ORDER BY avg_user_rating DESC NULLS LAST";
       break;
-    case 'most_viewed':
-      orderClause = 'ORDER BY total_views DESC NULLS LAST';
+    case "most_viewed":
+      orderClause = "ORDER BY total_views DESC NULLS LAST";
       break;
     default:
-      orderClause = 'ORDER BY total_reviews DESC NULLS LAST';
+      orderClause = "ORDER BY total_reviews DESC NULLS LAST";
       break;
   }
 
@@ -915,24 +939,24 @@ async function searchAndFilterUser(data) {
     }
     return result.rows;
   } catch (err) {
-    console.error('Error searching and filtering users:', err);
+    console.error("Error searching and filtering users:", err);
     throw err;
   }
 }
 
 async function topThreeUsers() {
-  const most_viewed_user =searchAndFilterUser({
-    sortBy: 'most_viewed',
+  const most_viewed_user = searchAndFilterUser({
+    sortBy: "most_viewed",
     page_size: 1,
     page: 1,
   });
   const highest_rated_user = searchAndFilterUser({
-    sortBy: 'highest_rated',
+    sortBy: "highest_rated",
     page_size: 1,
     page: 1,
   });
   const most_reviewed_user = searchAndFilterUser({
-    sortBy: 'most_reviewed',
+    sortBy: "most_reviewed",
     page_size: 1,
     page: 1,
   });
@@ -946,7 +970,6 @@ async function topThreeUsers() {
     highest_rated_user: highestRated[0] || null,
     most_reviewed_user: mostReviewed[0] || null,
   };
-  
 }
 
 // Fetch user by email
@@ -971,7 +994,6 @@ async function getUserById(id) {
     throw error;
   }
 }
-
 
 // Create trigger on book_reviews
 async function createBookReviewsTrigger() {
@@ -1026,6 +1048,89 @@ async function createProfileViewsTable() {
   console.log("user_profile_views table created");
 }
 
+async function createReportTable() {
+  const query = `
+    CREATE TABLE IF NOT EXISTS public.review_reports (
+      id SERIAL PRIMARY KEY,
+      user_id INT NOT NULL REFERENCES authorized_users(id) ON DELETE CASCADE,
+      review_id INT NOT NULL REFERENCES book_reviews(id) ON DELETE CASCADE,
+      reason VARCHAR(100) NOT NULL CHECK (
+        reason IN (
+          'Spam',
+          'Plagiarism',
+          'Offensive Content',
+          'Misinformation',
+          'Harassment or Abuse',
+          'Copyright Violation',
+          'Fake Review',
+          'Irrelevant Content',
+          'Misleading Title or Tags',
+          'Low Effort or Incomplete Review',
+          'Promotional or Advertisement',
+          'Duplicate Review',
+          'Personal Attack',
+          'Hate Speech or Discrimination',
+          'Inappropriate Language',
+          'Violence or Threats',
+          'Sexually Explicit Content',
+          'Privacy Violation',
+          'Other'
+        )
+      ),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE (user_id, review_id)
+    );
+  `;
+
+  await pool.query(query);
+  console.log("review_reports table created");
+}
+
+async function createReport(data) {
+  const { userId, reviewId, reason } = data;
+  if (!userId || !reviewId || !reason) {
+    throw new Error(
+      "userId, reviewId, and reason are required to create a report"
+    );
+  }
+  const query = `
+    INSERT INTO review_reports (user_id, review_id, reason)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (user_id, review_id) DO NOTHING
+    RETURNING *;
+  `;
+  const values = [userId, reviewId, reason];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows[0]; // or null if conflict
+  } catch (err) {
+    console.error("Error creating report:", err);
+    throw err;
+  }
+}
+
+async function deleteReport(data) {
+  const { userId, reviewId } = data;
+  if (!userId || !reviewId) {
+    throw new Error("userId and reviewId are required to delete a report");
+  }
+  const query = `
+    DELETE FROM review_reports
+    WHERE user_id = $1 AND review_id = $2
+    RETURNING *;
+  `;
+  const values = [userId, reviewId];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows[0]; 
+  } catch (err) {
+    console.error("Error deleting report:", err);
+    throw err;
+  }
+}
+
 // Init all DB tables and triggers
 async function initDB() {
   try {
@@ -1036,10 +1141,20 @@ async function initDB() {
     await createReaderViewsTable();
     await createUserRatingsTable();
     await createProfileViewsTable();
+    await createReportTable();
     console.log("All tables and triggers initialized");
   } catch (err) {
     console.error("Error initializing DB:", err);
   }
+}
+
+async function isReviewReported(reviewId, userId) {
+  const query = `
+    SELECT 1 FROM review_reports
+    WHERE review_id = $1 AND user_id = $2;
+  `;
+  const result = await pool.query(query, [reviewId, userId]);
+  return result.rowCount > 0;
 }
 
 module.exports = {
@@ -1059,7 +1174,9 @@ module.exports = {
   topThreeUsers,
   getHomePageReviewsAndReviewer,
   createBookDraft,
-  getUserByslug ,
+  getUserByslug,
   updateUserRating,
   updateUserProfile,
+  createReport,
+  deleteReport,
 };

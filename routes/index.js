@@ -1,6 +1,5 @@
 const express = require("express");
 const axios = require("axios");
-const { db } = require("../app");
 const ReviewController = require("../controllers/review.controller");
 const {
   getUserStats,
@@ -49,7 +48,7 @@ router.get("/profile/:slug", async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    console.log("Reviewer:", reviewer);
+
 
     res.renderWithLayout("../pages/profile.ejs", {
       listTitle: "Shelfwise",

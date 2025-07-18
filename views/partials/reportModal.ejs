@@ -1,0 +1,45 @@
+<div id="reportModal" class="hidden reportModal">
+  <div class="modal-content">
+    <button class="close-btn cancel-btn">&times;</button>
+    <div class="modal-header">Report This Review</div>
+   <form id="reportForm">
+  <!-- Hidden field: ID of the user being reported -->
+  <input type="hidden" id="reported_user-id" name="reported_user_id" value="<%= user.id %>">
+
+  <label for="reason" class="modal-label">Select a reason:</label>
+  <select id="reason" name="reason" class="modal-select" required>
+    <option value="" disabled selected>-- Choose a reason --</option>
+    <% [
+      'Spam',
+      'Plagiarism',
+      'Offensive Content',
+      'Misinformation',
+      'Harassment or Abuse',
+      'Copyright Violation',
+      'Fake Review',
+      'Irrelevant Content',
+      'Misleading Title or Tags',
+      'Low Effort or Incomplete Review',
+      'Promotional or Advertisement',
+      'Duplicate Review',
+      'Personal Attack',
+      'Hate Speech or Discrimination',
+      'Inappropriate Language',
+      'Violence or Threats',
+      'Sexually Explicit Content',
+      'Privacy Violation',
+      'Other'
+    ].forEach(reason => { %>
+      <option value="<%= reason %>"><%= reason %></option>
+    <% }) %>
+  </select>
+
+  <div class="modal-buttons">
+    <button type="button" class="modal-button cancel-button cancel-btn">Cancel</button>
+    <button type="submit" class="modal-button submit-button">Submit</button>
+  </div>
+</form>
+  </div>
+</div>
+
+<input type="text" id="report-review-id" name="review_id" value="<%= review_id %>" hidden />

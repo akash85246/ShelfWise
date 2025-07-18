@@ -43,7 +43,7 @@ searchInput.addEventListener("input", async function () {
       resultList.appendChild(noResultsItem);
     }
    
-    console.log(results);
+  
   } catch (error) {
     console.error("Error fetching search results:", error);
   }

@@ -14,6 +14,7 @@ const authRouter = require("./routes/auth");
 const userRouter = require("./routes/users");
 const reviewRouter = require("./routes/review");
 const BrowseBookRouter = require("./routes/browseBook.js");
+const ReportRouter = require("./routes/report.js");
 
 const { initDB, createUser, getUserByEmail } = require("./db/queries");
 
@@ -39,18 +40,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-const db = new pg.Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
-});
 
-db.connect()
-  .then(() => console.log("Connected to the database!"))
-  .catch((err) => console.error("Database connection error:", err));
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -80,6 +70,7 @@ app.use("/", authRouter);
 app.use("/api", userRouter);
 app.use("/api", reviewRouter);
 app.use("/api", BrowseBookRouter);
+app.use("/api", ReportRouter);
 app.use("/", router);
 
 passport.use(
