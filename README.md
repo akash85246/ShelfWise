@@ -68,7 +68,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://shelfwise-qrv8.onrender.com/)
 
-A personal book review platform where user can share his reviews of books. The site integrates Google Authentication for user sign-in and displays book cover images via the Open Library API. Built with Node.js, EJS for templating, PostgreSQL for the database, and styled with modern CSS techniques.
+A community-driven book review platform where anyone can share their reviews of books. The site integrates Google Authentication for user sign-in and displays book cover images via the Open Library API. Built with Node.js, EJS for templating, PostgreSQL for the database, and styled with modern CSS techniques.
 
 ### Features
 
@@ -76,9 +76,8 @@ A personal book review platform where user can share his reviews of books. The s
 - **Book Reviews**: Users can add, edit, and view detailed book reviews.
 - **Book Covers**: Automatically fetches book cover images from the Open Library API.
 - **Responsive Design**: Optimized for both desktop and mobile devices.
-- **Read Later Book List**: Save books to a personalized "Read Later" list for future reference.
-- **Notifications for Upcoming Book Releases**: Get notified about books on their release dates.
-- **Monthly Review Streak Tracker**: Track how many book reviews user post each month to maintain a streak.
+- **User Ratings**: Rate other reviewers based on the quality of their reviews.
+- **Report Reviews**: Flag inappropriate or misleading book reviews for moderation.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -158,132 +157,12 @@ Follow these steps to set up the project locally:
 
     BASE_URL=your_base_url
    ```
-4. Set Up the Database
-   ```sql
-    -- Table for storing book reviews
-    CREATE TABLE book_reviews (
-    id SERIAL PRIMARY KEY,
-    title CHARACTER VARYING(255) NOT NULL UNIQUE,
-    slug CHARACTER VARYING(255) NOT NULL UNIQUE,
-    author CHARACTER VARYING(255),
-    setting_rating INTEGER CHECK (setting_rating >= 0 AND setting_rating <= 5),
-    plot_rating INTEGER CHECK (plot_rating >= 0 AND plot_rating <= 5),
-    character_rating INTEGER CHECK (character_rating >= 0 AND character_rating <= 5),
-    style_rating INTEGER CHECK (style_rating >= 0 AND style_rating <= 5),
-    engagement_rating INTEGER CHECK (engagement_rating >= 0 AND engagement_rating <= 5),
-    note TEXT,
-    quote TEXT,
-    moment TEXT,
-    favorite_character CHARACTER VARYING(255),
-    least_favorite_character CHARACTER VARYING(255),
-    ending TEXT,
-    start_date DATE,
-    end_date DATE,
-    genre CHARACTER VARYING(100),
-    format CHARACTER VARYING(50),
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    final_rating INTEGER CHECK (final_rating >= 0 AND final_rating <= 5),
-    views INTEGER DEFAULT 0,
-    moment_page_number INTEGER CHECK (moment_page_number > 0),
-    cover_url TEXT,
-    isbn CHARACTER VARYING(13),
-    publisher TEXT,
-    published_year INTEGER
-    );
-
-    -- Table for authorized users (authors or admins)
-    CREATE TABLE authorized_users (
-    id SERIAL PRIMARY KEY,
-    google_id VARCHAR(255) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    full_name VARCHAR(100),
-    profile_picture TEXT,
-    author BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    -- Table for readers (general users)
-    CREATE TABLE readers (
-    id SERIAL PRIMARY KEY,
-    google_id VARCHAR(255) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    full_name VARCHAR(100),
-    profile_picture TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    -- Table for tracking reader views on book reviews
-    CREATE TABLE reader_views (
-    id SERIAL PRIMARY KEY,
-    reader_id INT NOT NULL, 
-    review_id INT NOT NULL, 
-    view_count INT DEFAULT 1,
-    last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    FOREIGN KEY (reader_id) REFERENCES readers(id) ON DELETE CASCADE,
-    FOREIGN KEY (review_id) REFERENCES book_reviews(id) ON DELETE CASCADE
-    );
-
-    -- Function to update the "updated_at" column
-    CREATE OR REPLACE FUNCTION update_updated_at_column()
-    RETURNS TRIGGER AS $$
-    BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;
-
-    -- Trigger for updating "updated_at" on reader_views table
-    CREATE TRIGGER set_updated_at
-    BEFORE UPDATE ON reader_views
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
-    -- Table for storing "to-be-read" books
-    CREATE TABLE to_be_read (
-    id SERIAL PRIMARY KEY,           
-    title VARCHAR(255) NOT NULL,     
-    author VARCHAR(255) NOT NULL,   
-    type VARCHAR(100) NOT NULL,      
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-    );
-
-    -- Table for tracking recommendations
-    CREATE TABLE recommendations (
-    id SERIAL PRIMARY KEY,    
-    ip_address INET NOT NULL,        
-    book_review_id INTEGER NOT NULL, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_book_review FOREIGN KEY (book_review_id) 
-    REFERENCES book_reviews (id) ON DELETE CASCADE
-    );
-
-    -- Table for anticipated books
-    CREATE TABLE anticipated_books (
-    id SERIAL PRIMARY KEY,               
-    title VARCHAR(255) NOT NULL UNIQUE,         
-    author VARCHAR(255) NOT NULL,         
-    release_date DATE NOT NULL,           
-    cdn_link TEXT NOT NULL,               
-    emoji VARCHAR(10),                    
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-    );
-
-    -- Trigger for updating "updated_at" on anticipated_books table
-    CREATE TRIGGER set_updated_at
-    BEFORE UPDATE ON anticipated_books
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-   ```
-5. Change git remote url to avoid accidental pushes to base project
+4. Change git remote url to avoid accidental pushes to base project
    ```sh
    git remote set-url origin github_username/repo_name
    git remote -v # confirm the changes
    ```
-6. Run the Project
+5. Run the Project
     ```sh
    nodemon app.js
    ```
@@ -302,33 +181,38 @@ Once the project is running, you can use the following features:
    - Sign in using your Google account to access your personalized dashboard.
 
 2. **Add Book Reviews**
-   - Navigate to the "New" in navigation bar.
-   - Enter the book details (title, author, review, etc.).
+   - Navigate to the "New" option in the navigation bar.
+   - Enter the book details (title, author, review content, etc.).
    - Submit your review, which will be saved and displayed on the main page.
 
 3. **View Book Reviews**
-   - Browse the homepage to see all the book reviews shared by you.
-   - Click on a book to view its details.
-   - Additionally you can search it by name in searchbar at homepage
+   - Browse the browse books page to see all book reviews shared by users.
+   - Click on a book to view its full review and metadata.
+   - Use the search bar on the browse books to filter reviews by title or keyword.
 
-4. **Read Later List**
-   - Mark a book as "Read Later" by clicking the "Read Later" in navigation bar.
-   - Access your list in the "Read Later" section from the navigation bar.
-
-5. **Book Covers**
+4. **Book Covers**
    - The app automatically fetches book cover images using the Open Library API.
-   - If no cover is available, a placeholder image will be shown.
+   - If no cover is available, a default placeholder image is shown.
 
-6. **Notification for Upcoming Book Releases**
-   - You can add books to "Anticipated" in navigation bar. 
-   - If a book in your list has an upcoming release date, you will receive an email notification on the release day.
+5. **Responsive Design**
+   - The platform is fully responsive and optimized for desktop, tablet, and mobile viewing.
 
-7. **Monthly Streak**
-   - Track how many book reviews you’ve added in a month.
-   - View your streak on your "Streak" in navigation bar.
+6. **Share Reviews**
+   - Share any book review with others via social media or direct links.
+   - Each review has share options for broader reach and engagement.
 
-8. **Responsive Design**
-   - Use the site on both desktop and mobile devices without any issues.
+7. **Report Book Reviews**
+   - Found an inappropriate or misleading review? Use the report feature to flag it for admin moderation.
+   - Reports are categorized for better handling and faster review.
+
+8. **Rate Reviewers**
+   - Users can rate reviewers based on the quality and helpfulness of their reviews.
+   - These ratings help surface top contributors in the community.
+
+9. **Discover Other Reviewers**
+   - Explore a dedicated page to browse and search for other reviewers.
+   - View their public profiles, ratings, and shared reviews.
+   - Helps build community by connecting readers and writers.
 
 
 ## Additional Notes
@@ -350,7 +234,6 @@ Here are the planned improvements and features for the project:
 - [x] Google Authentication for user login.
 - [x] Book review management (add, edit, delete reviews).
 - [x] Automatic fetching of book covers using the Open Library API.
-- [x] Email notifications for upcoming book releases.
 - [x] Responsive design for both desktop and mobile devices.
 - [x] Add a "Top Reviewed Books" section on the homepage.
 - [x] Implement search functionality to filter book reviews.

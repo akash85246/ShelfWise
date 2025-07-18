@@ -48,6 +48,12 @@ body{
   margin: 0;
 }
 
+.logo-icon-img{
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  margin-top: -5px;
+}
 
 
 
