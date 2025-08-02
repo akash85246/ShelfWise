@@ -1,5 +1,6 @@
 <!-- hero section -->
 <div class="hero-container">
+  <input type="hidden" id="user-slug" value="<%= user ? user.slug : "" %>">
   <div class="hero-wrapper">
     <div class="hero-content" style='background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url(../../banners/home-hero-section.png);'>
       <div class="hero-text">
@@ -23,8 +24,8 @@
             value=""
           />
           <div class="search-button-wrapper">
-            <a class="search-button" href="/create">
-              <span class="search-button-text">Start Reviewing</span>
+            <a class="search-button" href="/create" id="new-review-button">
+              <span class="search-button-text reviewe-link" id="new-review-button-text">Start Reviewing</span>
             </a>
           </div>
         </div>

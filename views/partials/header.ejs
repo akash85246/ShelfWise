@@ -43,12 +43,12 @@
 
   <div class="header-right" id="menu">
     <nav class="nav-links">
-      <a href="/" class="review-link">Home</a>
-      <a href="/browse-book" class="review-link">Browse Books</a>
-      <a href="/top-reviewer" class="review-link">Top Reviewers</a>
+      <a href="/" class="reviewe-link">Home</a>
+      <a href="/browse-book" class="reviewe-link">Browse Books</a>
+      <a href="/top-reviewer" class="reviewe-link">Top Reviewers</a>
        <% if (user !== null) { %>
-      <a href="/my-review" class="review-link">My Review</a>
-      <a href="/logout" class="review-link">Logout</a>
+      <a href="/my-review" class="reviewe-link">My Review</a>
+      <a href="/logout" class="reviewe-link">Logout</a>
       <% }%>
     </nav>
      
@@ -60,7 +60,7 @@
       <span>Sign In</span>
     </a>
     <% } else{%>
-      <a class="review-link" href="/profile/<%= user.slug %>">
+      <a class="reviewe-link" href="/profile/<%= user.slug %>">
           <img src=<%= user.profile_picture %> alt="avatar" class="avatar" />
        </a>
       <% } %>

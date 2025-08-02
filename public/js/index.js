@@ -42,8 +42,6 @@ searchInput.addEventListener("input", async function () {
       noResultsItem.textContent = "No results found";
       resultList.appendChild(noResultsItem);
     }
-   
-  
   } catch (error) {
     console.error("Error fetching search results:", error);
   }
@@ -67,8 +65,12 @@ function renderFeed(books) {
     card.className = "review-card";
     card.innerHTML = `
        <div class="review-content">
-      <p class="review-author">Review by <a href="/profile/${book.reviewer_slug}" class="reviewe-link"> ${book.reviewer_name} </a> </p>
-      <p class="review-title"><a href="/review/${book.slug}" class="reviewe-link">  ${book.title} </a></p>
+      <p class="review-author">Review by <a href="/profile/${
+        book.reviewer_slug
+      }" class="reviewe-link"> ${book.reviewer_name} </a> </p>
+      <p class="review-title"><a href="/review/${
+        book.slug
+      }" class="reviewe-link">  ${book.title} </a></p>
       <p class="review-description">
         ${
           book.review?.length > 250
@@ -90,9 +92,7 @@ function renderFeed(books) {
 }
 
 async function loadFeed() {
-
   const page_size = 6;
-  
 
   const paramData = {
     sortBy: "created_at",
@@ -117,7 +117,6 @@ async function loadFeed() {
 }
 
 recentButton.addEventListener("click", async () => {
-  
   await loadFeed();
   const recentSection = document.getElementById("recent-reviews");
   if (recentSection) {
@@ -125,4 +124,14 @@ recentButton.addEventListener("click", async () => {
   }
 });
 
-loadFeed()
+loadFeed();
+
+const userSlug = document.getElementById("user-slug").value;
+
+if (userSlug == "") {
+  const newReviewButton = document.getElementById("new-review-button");
+  const newReviewButtonText = document.getElementById("new-review-button-text");
+
+  newReviewButtonText.textContent = "Sign in";
+  newReviewButton.href = "/auth/google";
+}
