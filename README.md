@@ -85,8 +85,6 @@ A community-driven book review platform where anyone can share their reviews of 
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
 * [![Express][Express.js]][Express-url]
 * [![Node][Node.js]][Node-url]
 * [![Vue][Postgres]][Postgresql-url]
@@ -224,8 +222,6 @@ Once the project is running, you can use the following features:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-<!-- ROADMAP -->
 <!-- ROADMAP -->
 ## Roadmap
 
