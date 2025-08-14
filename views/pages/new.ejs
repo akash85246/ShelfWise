@@ -188,6 +188,8 @@
           'input[name="rating_value[]"]'
         );
 
+         
+
         if (titleInput && valueInput) {
           ratings.push({
             title: titleInput.value,
@@ -251,7 +253,6 @@
     },
   });
        
-        console.log("Review updated successfully:", response.data);
          Toastify({
           text: "Review updated successfully",
           duration: 4000,
