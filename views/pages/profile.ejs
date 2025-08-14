@@ -97,12 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const updatedQuote = quoteInput.value.trim();
 
         const userId= <%= user && user.id ? user.id : null %>;
-        console.log("Updating quote for user ID:", userId);
 
         try {
           const res = await axios.patch("/api/update-profile", { userId:userId ,quote: updatedQuote });
 
-          console.log("Response from server:", res.data);
           if (!res.data || res.data.error) throw new Error("Failed to update quote");
 
           quoteText.textContent = updatedQuote;
